@@ -1,0 +1,43 @@
+enum DonationStatus {
+    PLEDGED // Donor expressed intent — money not yet transferred
+    SENT // Donor reports transfer — awaiting recipient confirmation
+    CONFIRMED // Recipient (org or request owner) confirmed receipt
+}
+
+model Donation {
+    // Primary key
+    id String @id @default(uuid())
+
+    // Targets
+    requestId  String  @map("request_id") // Always required
+    donorId    String  @map("donor_id") // FK → User (must have DONOR type)
+    campaignId String? @map("campaign_id") // Optional — links to an org campaign
+
+    // Financial data
+    amount        Decimal @db.Decimal(12, 2) // Precise monetary value — never Float
+    currency      String  @default("BDT") @db.VarChar(3) // ISO 4217 e.g. BDT, USD, GBP
+    paymentMethod String  @map("payment_method") @db.VarChar(50)
+    // paymentMethod values: bank_transfer | cash | cheque | bkash | nagad | other
+    transactionId String? @map("transaction_id")
+
+    // Lifecycle
+    status DonationStatus @default(PLEDGED)
+
+    // Coordination notes (e.g. transfer reference numbers, conditions)
+    notes String? @db.Text
+
+    // Timestamps
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    // ── Relations ──────────────────────────────────────────────────────────────
+    request  Request   @relation(fields: [requestId], references: [id])
+    donor    User      @relation("DonorDonations", fields: [donorId], references: [id])
+    campaign Campaign? @relation(fields: [campaignId], references: [id])
+
+    @@index([requestId])
+    @@index([donorId])
+    @@index([campaignId])
+    @@index([status])
+    @@map("donations")
+}
