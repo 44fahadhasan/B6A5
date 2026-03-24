@@ -44,7 +44,7 @@
     // ==========================
     "baseUrl": ".", // Base for relative paths
     "paths": {
-      "@/*": ["src/*"] // Example: "@/services/user" → src/services/user
+      "@/*": ["./src/*"] // Example: "@/services/user" → src/services/user
     },
 
     // ==========================

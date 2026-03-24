@@ -1,20 +1,29 @@
 enum Role {
   USER // Default — any registered member
   ADMIN // Platform operator — full moderation access
+  SUPER_ADMIN // Highest level — full platform control
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  BANNED
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id            String     @id @default(uuid())
   name          String
   email         String
-  phone         String?  @db.VarChar(20)
-  bio           String?  @db.Text
-  emailVerified Boolean  @default(false)
+  phone         String?    @db.VarChar(20)
+  bio           String?    @db.Text
+  emailVerified Boolean    @default(false)
   avatarUrl     String?
-  location      String?  @db.VarChar(100)
-  role          Role     @default(USER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  location      String?    @db.VarChar(100)
+  role          Role       @default(USER)
+  status        UserStatus @default(INACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 
   // ── Relations ──────────────────────────────────────────────────────────────
   sessions             Session[]

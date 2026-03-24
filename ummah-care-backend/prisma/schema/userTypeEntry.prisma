@@ -4,12 +4,18 @@ enum UserType {
     ORGANIZATION // Can coordinate, assign volunteers, run campaigns
 }
 
-// ── MODEL ────────────────────────────────────────────────────────────────────
+enum UserTypeStatus {
+    PENDING
+    ACTIVE
+    REJECTED
+    SUSPENDED
+}
 
 model UserTypeEntry {
-    id     String   @id @default(uuid())
-    userId String   @map("user_id")
+    id     String         @id @default(uuid())
+    userId String         @map("user_id")
     type   UserType
+    status UserTypeStatus @default(PENDING)
 
     // ── Relations ──────────────────────────────────────────────────────────────
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
