@@ -47,4 +47,8 @@ export interface EnvConfig {
     };
     from: string;
   };
+  superAdmin: {
+    email: string;
+    password: string;
+  };
 }

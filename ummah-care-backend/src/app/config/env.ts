@@ -56,6 +56,10 @@ export function loadConfig(): EnvConfig {
 
       from: getEnv("EMAIL_FROM", "no-reply@yourapp.com"),
     },
+    superAdmin: {
+      email: requireEnv("SUPER_ADMIN_EMAIL"),
+      password: requireEnv("SUPER_ADMIN_PASSWORD"),
+    },
   };
 }
 

@@ -2,12 +2,15 @@ import "dotenv/config";
 import app from "./app";
 import { connectDatabase, disconnectDatabase } from "./app/config";
 import { getConfig } from "./app/config/env";
+import { seedSuperAdmin } from "./app/seeds/supper-admin.seed";
 
 async function bootstrap(): Promise<void> {
   const config = getConfig();
 
   // Connect databases
   await connectDatabase();
+
+  await seedSuperAdmin();
 
   // Start HTTP server
   const server = app.listen(config.port, () => {
