@@ -279,6 +279,45 @@ const logout = async (sessionToken: string) => {
 
   return result;
 };
+
+const getSession = async (sessionToken: string, userId: string) => {
+  const authSession = await auth.api.getSession({
+    headers: new Headers({
+      Authorization: `Bearer ${sessionToken}`,
+    }),
+  });
+
+  if (!authSession) {
+    throw new AppError(status.UNAUTHORIZED, "Invalid session token");
+  }
+
+  if (authSession.user.id !== userId) {
+    throw new AppError(status.UNAUTHORIZED, "Token mismatch");
+  }
+
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    include: {
+      userTypes: true,
+    },
+  });
+
+  const session = {
+    id: authSession.session.id,
+    token: authSession.session.token,
+    expiresAt: authSession.session.expiresAt,
+    createdAt: authSession.session.createdAt,
+    updatedAt: authSession.session.updatedAt,
+    ipAddress: authSession.session.ipAddress || "",
+    userAgent: authSession.session.userAgent || "",
+  };
+
+  return {
+    user,
+    session,
+  };
+};
+
 export const authServices = {
   signUp,
   verifyEmail,
@@ -288,4 +327,5 @@ export const authServices = {
   requestPasswordReset,
   passwordReset,
   logout,
+  getSession,
 };

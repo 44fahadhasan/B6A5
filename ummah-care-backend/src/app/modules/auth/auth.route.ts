@@ -1,3 +1,4 @@
+import { auth } from "@/app/middlewares/auth-middleware";
 import { validateRequest } from "@/app/middlewares/validate-request.middleware";
 import { Router } from "express";
 import { authController } from "./auth.controller";
@@ -35,5 +36,7 @@ router.post(
 router.post("/reset-password", validateRequest(passwordResetSchema), authController.passwordReset);
 
 router.post("/logout", authController.logout);
+
+router.post("/session", auth(), authController.getSession);
 
 export const authRoutes = router;

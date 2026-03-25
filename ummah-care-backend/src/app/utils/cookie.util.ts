@@ -21,7 +21,7 @@ const setCookie = (res: Response, key: string, value: string, options: CookieOpt
 };
 
 const getCookie = (req: Request, key: string) => {
-  const cookie = req.signedCookies[key];
+  const cookie = req.signedCookies?.[key] || req.cookies?.[key] || null;
   return cookie;
 };
 

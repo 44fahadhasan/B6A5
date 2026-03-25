@@ -147,6 +147,24 @@ const logout = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getSession = asyncHandler(async (req: Request, res: Response) => {
+  const currentSessionToken = cookieUtils.getCookie(req, BETTER_AUTH_SESSION_TOKEN_NAME);
+
+  if (!currentSessionToken) {
+    throw new AppError(status.UNAUTHORIZED, "Unauthorized access! No session token provided.");
+  }
+
+  const userId = req.user.id;
+  const result = await authServices.getSession(currentSessionToken, userId);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Session fetched successfully.",
+    data: result,
+  });
+});
+
 export const authController = {
   signUp,
   verifyEmail,
@@ -156,4 +174,5 @@ export const authController = {
   requestPasswordReset,
   passwordReset,
   logout,
+  getSession,
 };
