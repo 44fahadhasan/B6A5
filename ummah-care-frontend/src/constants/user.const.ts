@@ -1,0 +1,25 @@
+export const USER_ROLE = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+  SUPER_ADMIN: "SUPER_ADMIN",
+} as const;
+
+export const USER_STATUS = {
+  ACTIVE: "ACTIVE",
+  INACTIVE: "INACTIVE",
+  SUSPENDED: "SUSPENDED",
+  BANNED: "BANNED",
+} as const;
+
+export const USER_TYPE = {
+  DONOR: "DONOR",
+  VOLUNTEER: "VOLUNTEER",
+  ORGANIZATION: "ORGANIZATION",
+} as const;
+
+export const USER_TYPE_STATUS = {
+  PENDING: "PENDING",
+  ACTIVE: "ACTIVE",
+  REJECTED: "REJECTED",
+  SUSPENDED: "SUSPENDED",
+} as const;
