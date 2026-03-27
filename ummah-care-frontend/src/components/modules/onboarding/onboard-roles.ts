@@ -9,13 +9,13 @@ export const onboardRoles = [
     description: "Help communities and people in need.",
   },
   {
-    type: ORGANIZATION,
-    label: "Organization",
-    description: "Create campaigns and manage volunteers.",
-  },
-  {
     type: DONOR,
     label: "Donor",
     description: "Support causes with donations.",
+  },
+  {
+    type: ORGANIZATION,
+    label: "Organization",
+    description: "Create campaigns and manage volunteers.",
   },
 ];
