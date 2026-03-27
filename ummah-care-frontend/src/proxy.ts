@@ -6,22 +6,37 @@ const { handleTokenRefresh, handleAuthRouteGuard, handleAccessControl } =
 
 export async function proxy(request: NextRequest) {
   try {
+    console.debug(
+      `📍 [Proxy File] Processing: ${request.method} ${request.nextUrl.pathname}`,
+    );
+
     // 1. Token refresh if expired or expiring soon
     const refreshResponse = await handleTokenRefresh(request);
-    if (refreshResponse) return refreshResponse;
+    if (refreshResponse) {
+      console.debug("✅ [Proxy File] Token refresh response returned");
+      return refreshResponse;
+    }
 
     // 2. Prevent logged-in users from visiting auth pages
     const authResponse = await handleAuthRouteGuard(request);
-    if (authResponse) return authResponse;
+    if (authResponse) {
+      console.debug("✅ [Proxy File] Auth guard response returned");
+      return authResponse;
+    }
 
     // 3. Access control for (public, role, userTypes, and status)
     const accessResponse = await handleAccessControl(request);
-    if (accessResponse) return accessResponse;
+    if (accessResponse) {
+      console.debug("✅ [Proxy File] Access control response returned");
+      return accessResponse;
+    }
 
     // All checks passed → allow request
+    console.debug("✅ [Proxy File] All checks passed, allowing request");
     return NextResponse.next();
   } catch (error) {
-    console.error("Error in proxy middleware:", error);
+    console.error("❌ [Proxy File] Critical error in middleware:", error);
+    // On unexpected error, allow the request through (fail open)
     return NextResponse.next();
   }
 }

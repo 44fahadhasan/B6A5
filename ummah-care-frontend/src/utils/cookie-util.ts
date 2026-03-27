@@ -21,10 +21,18 @@ const cookieOptions = (age: number) => {
 };
 
 const setCookie = async (name: string, value: string, age: number) => {
-  const cookieStore = await cookies();
-  const options = cookieOptions(age);
+  try {
+    const cookieStore = await cookies();
+    const options = cookieOptions(age);
 
-  cookieStore.set(name, value, options);
+    cookieStore.set(name, value, options);
+    console.debug(
+      `✅ [CookieUtil] setCookie success for ${name} (age: ${age}s)`,
+    );
+  } catch (error) {
+    console.error(`❌ [CookieUtil] setCookie failed for ${name}:`, error);
+    throw error;
+  }
 };
 
 const getCookie = async (name: string) => {

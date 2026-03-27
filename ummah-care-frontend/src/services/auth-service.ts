@@ -39,6 +39,8 @@ export const authService = {
     try {
       const response = await httpClient.post<ITokenRefreshResponse>(
         "/auth/refresh-token",
+        undefined,
+        { isProtected: false },
       );
       return response;
     } catch (error) {
