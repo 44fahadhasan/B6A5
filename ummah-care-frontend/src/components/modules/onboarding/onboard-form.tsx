@@ -197,17 +197,19 @@ export function OnboardingForm() {
                                       setStep(1);
                                       setIsOrgSelected(false);
 
-                                      form.reset({
-                                        ...form.state.values,
-                                        types: next,
-                                        orgName: "",
-                                        description: "",
-                                        logoUrl: "",
-                                        website: "",
-                                        registrationNumber: "",
-                                        contactEmail: "",
-                                        contactPhone: "",
-                                      });
+                                      // keep selected roles intact
+                                      field.handleChange(next);
+
+                                      form.setFieldValue("orgName", "");
+                                      form.setFieldValue("description", "");
+                                      form.setFieldValue("logoUrl", "");
+                                      form.setFieldValue("website", "");
+                                      form.setFieldValue(
+                                        "registrationNumber",
+                                        "",
+                                      );
+                                      form.setFieldValue("contactEmail", "");
+                                      form.setFieldValue("contactPhone", "");
                                     }
                                   }}
                                 />
