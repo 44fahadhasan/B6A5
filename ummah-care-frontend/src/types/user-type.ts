@@ -4,6 +4,7 @@ import {
   USER_TYPE,
   USER_TYPE_STATUS,
 } from "@/constants/user.const";
+import { ITokenRefreshResponse } from "./auth-type";
 
 export type TUserRole = (typeof USER_ROLE)[keyof typeof USER_ROLE];
 
@@ -35,3 +36,38 @@ export interface IUser {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IUserTypeEntries {
+  type: TUserType;
+  id: string;
+  status: TUserTypeStatus;
+}
+
+export interface IOrganization {
+  id: string;
+  userId: string;
+  orgName: string;
+  description?: string | null;
+  logoUrl?: string | null;
+  website?: string | null;
+  registrationNumber?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  isVerified: boolean;
+  verifiedAt?: string | null;
+  verifiedBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IOnboardWithNoOrg
+  extends ITokenRefreshResponse, IUserTypeEntries {
+  organization?: never;
+}
+
+export interface IOnboardWithOrg
+  extends ITokenRefreshResponse, IUserTypeEntries {
+  organization: IOrganization;
+}
+
+export type IOnboardingResponse = IOnboardWithNoOrg | IOnboardWithOrg;

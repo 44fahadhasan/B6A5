@@ -1,3 +1,9 @@
+import { Onboarding } from "@/components/modules/onboarding";
+
 export default function UserDashboardPage() {
-  return <div>UserDashboardPage</div>;
+  return (
+    <div>
+      <Onboarding />
+    </div>
+  );
 }

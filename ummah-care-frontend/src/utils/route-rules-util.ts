@@ -39,6 +39,11 @@ const volunteerProtectedRoutes: IRouteConfig = {
   patterns: [/^\/volunteer(?:\/|$)/],
 };
 
+const donorProtectedRoutes: IRouteConfig = {
+  exact: [],
+  patterns: [/^\/donor(?:\/|$)/],
+};
+
 const organizationProtectedRoutes: IRouteConfig = {
   exact: [],
   patterns: [/^\/organization(?:\/|$)/],
@@ -77,6 +82,7 @@ const getRouteOwner = (pathname: string): RouteOwner => {
   if (isRouteMatch(path, adminProtectedRoutes)) return USER_ROLE.ADMIN;
   if (isRouteMatch(path, userProtectedRoutes)) return USER_ROLE.USER;
   if (isRouteMatch(path, volunteerProtectedRoutes)) return USER_TYPE.VOLUNTEER;
+  if (isRouteMatch(path, donorProtectedRoutes)) return USER_TYPE.DONOR;
   if (isRouteMatch(path, organizationProtectedRoutes))
     return USER_TYPE.ORGANIZATION;
 
@@ -121,6 +127,10 @@ const isValidRedirectForUser = (redirectPath: string, user: IAuthUserLike) => {
     return hasActiveUserType(user, USER_TYPE.VOLUNTEER);
   }
 
+  if (routeOwner === USER_TYPE.DONOR) {
+    return hasActiveUserType(user, USER_TYPE.DONOR);
+  }
+
   if (routeOwner === USER_TYPE.ORGANIZATION) {
     return hasActiveUserType(user, USER_TYPE.ORGANIZATION);
   }
@@ -134,6 +144,10 @@ const getDefaultDashboardRoute = (user: IAuthUserLike) => {
 
   if (hasActiveUserType(user, USER_TYPE.ORGANIZATION)) {
     return "/organization/dashboard";
+  }
+
+  if (hasActiveUserType(user, USER_TYPE.DONOR)) {
+    return "/donor/dashboard";
   }
 
   if (hasActiveUserType(user, USER_TYPE.VOLUNTEER)) {

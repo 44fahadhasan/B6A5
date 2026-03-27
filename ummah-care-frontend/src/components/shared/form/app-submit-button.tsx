@@ -3,10 +3,9 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-type TAppSubmitButton = {
+type TAppSubmitButton = React.ComponentProps<"button"> & {
   className?: string;
   children: ReactNode;
-  disabled?: boolean;
   isPending?: boolean;
   pendingLabel?: string;
 };
@@ -17,9 +16,11 @@ export default function AppSubmitButton({
   isPending = false,
   disabled = false,
   pendingLabel = "Submitting...",
+  ...props
 }: TAppSubmitButton) {
   return (
     <Button
+      {...props}
       size="sm"
       type="submit"
       aria-busy={isPending}
