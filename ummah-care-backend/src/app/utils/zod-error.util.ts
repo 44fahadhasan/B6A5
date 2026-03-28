@@ -2,22 +2,35 @@ import status from "http-status";
 import z from "zod";
 import type { ErrorResponse, ErrorSource } from "../types";
 
-export const handleZodError = (err: z.ZodError): ErrorResponse => {
-  const statusCode = status.BAD_REQUEST;
-  const message = "Zod validation error";
-  const errorSources: ErrorSource[] = [];
+export const parseSchema = <T>(
+  schema: z.ZodType<T>,
+  query: unknown,
+  source: "body" | "query" = "query",
+): T => {
+  const result = schema.safeParse(query);
 
-  err.issues.forEach((issue) => {
-    errorSources.push({
-      path: issue.path.join(" => "),
-      message: issue.message,
-    });
-  });
+  if (!result.success) {
+    const issues = result.error.issues.map((issue) => ({
+      ...issue,
+      path: issue.path.length ? [source, ...issue.path] : [source],
+    }));
+
+    throw new z.ZodError(issues);
+  }
+
+  return result.data;
+};
+
+export const handleZodError = (err: z.ZodError): ErrorResponse => {
+  const errorSources: ErrorSource[] = err.issues.map((issue) => ({
+    path: issue.path.length ? issue.path.join(" => ") : "root",
+    message: issue.message,
+  }));
 
   return {
-    statusCode,
+    statusCode: status.BAD_REQUEST,
     success: false,
-    message,
+    message: "Validation failed",
     errorSources,
   };
 };
