@@ -48,8 +48,49 @@ const getRequests = async (query: unknown) => {
   };
 };
 
+const getMyRequests = async (userId: string, query: unknown) => {
+  const typedQuery = parseSchema(requestListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: RequestWhereInput = {
+    createdBy: userId,
+  };
+
+  if (typedQuery.status) where.status = typedQuery.status;
+  if (typedQuery.category) where.category = typedQuery.category;
+  if (typedQuery.urgency) where.urgency = typedQuery.urgency;
+  if (typedQuery.helpType) where.helpType = typedQuery.helpType;
+
+  const orderBy = paginationUtils.getOrderBy(
+    typedQuery.sortBy,
+    typedQuery.sortOrder,
+    requestConsts.allowedSortByFields,
+  );
+
+  const [total, requests] = await Promise.all([
+    requestRepository.count(where),
+    requestRepository.findMany(where, skip, take, orderBy),
+  ]);
+
+  return {
+    data: requests,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
 const getRequestById = async (id: string) => {
-  const request = await requestRepository.findById(id);
+  const request = await requestRepository.findById(id, {
+    include: {
+      creator: {
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+          avatarUrl: true,
+        },
+      },
+    },
+  });
 
   if (!request) {
     throw new AppError(status.NOT_FOUND, "Request not found");
@@ -105,6 +146,7 @@ const deleteRequest = async (id: string, userId: string) => {
 export const requestServices = {
   createRequest,
   getRequests,
+  getMyRequests,
   getRequestById,
   updateRequest,
   deleteRequest,

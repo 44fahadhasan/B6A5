@@ -10,6 +10,8 @@ router.post("/", auth(), validateRequest(createRequestSchema), requestController
 
 router.get("/", requestController.getRequests);
 
+router.get("/me", auth(), requestController.getMyRequests);
+
 router.get("/:id", requestController.getRequestById);
 
 router.patch("/:id", auth(), validateRequest(updateRequestSchema), requestController.updateRequest);

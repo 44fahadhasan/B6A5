@@ -34,6 +34,21 @@ const getRequests = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getMyRequests = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const query = req.query;
+
+  const result = await requestServices.getMyRequests(userId, query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "My requests fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 const getRequestById = asyncHandler(async (req: Request, res: Response) => {
   const requestId = req.params.id;
 
@@ -91,6 +106,7 @@ const deleteRequest = asyncHandler(async (req: Request, res: Response) => {
 export const requestController = {
   createRequest,
   getRequests,
+  getMyRequests,
   getRequestById,
   updateRequest,
   deleteRequest,
