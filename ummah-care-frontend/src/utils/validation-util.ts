@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-const formatZodErrors = (issues: z.core.$ZodIssue[]): string[] => {
+export const formatZodErrors = (issues: z.core.$ZodIssue[]): string[] => {
   return issues.map((issue, idx) => {
     const field = String(issue.path?.[0] ?? "field");
 
@@ -25,7 +25,7 @@ type ValidationResult<T> =
   | { success: true; data: z.output<T> }
   | { success: false; message: string; data: null };
 
-export const validatePayload = <T extends z.ZodTypeAny>(
+export const validatePayload = <T extends z.ZodType>(
   payload: Record<string, unknown>,
   zodSchema: T,
 ): ValidationResult<T> => {

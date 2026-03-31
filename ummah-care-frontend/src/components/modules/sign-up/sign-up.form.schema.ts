@@ -1,8 +1,11 @@
 import z from "zod";
 
 export const signUpSchema = z.object({
-  name: z.string().min(3).max(100),
-  email: z.email().toLowerCase(),
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters long")
+    .max(100, "Name must not exceed 100 characters"),
+  email: z.email("Invalid email address").toLowerCase(),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
