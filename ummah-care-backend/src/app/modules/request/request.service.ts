@@ -1,3 +1,4 @@
+import type { TokenPayload } from "@/app/types";
 import AppError from "@/app/utils/app-error.util";
 import { paginationUtils } from "@/app/utils/pagination.util";
 import { parseSchema } from "@/app/utils/zod-error.util";
@@ -99,19 +100,27 @@ const getRequestById = async (id: string) => {
   return request;
 };
 
-const updateRequest = async (id: string, userId: string, payload: UpdateRequestPayload) => {
+const updateRequest = async (id: string, user: TokenPayload, payload: UpdateRequestPayload) => {
   const existing = await requestRepository.findById(id);
 
   if (!existing) {
     throw new AppError(status.NOT_FOUND, "Request not found");
   }
 
-  if (existing.createdBy !== userId) {
+  if (existing.createdBy !== user.id) {
     throw new AppError(status.FORBIDDEN, "You can only update your own requests");
   }
 
   if (existing.status === RequestStatus.COMPLETED || existing.status === RequestStatus.CANCELLED) {
     throw new AppError(status.BAD_REQUEST, "Cannot update a completed or cancelled request");
+  }
+
+  if (user.role === "USER") {
+    if ("status" in payload) {
+      throw new AppError(status.BAD_REQUEST, "Users cannot update request status");
+    }
+  } else if (existing.createdBy === user.id && "status" in payload) {
+    throw new AppError(status.BAD_REQUEST, "Cannot update your own request status");
   }
 
   return requestRepository.update(id, {

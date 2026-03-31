@@ -69,13 +69,13 @@ const getRequestById = asyncHandler(async (req: Request, res: Response) => {
 const updateRequest = asyncHandler(async (req: Request, res: Response) => {
   const requestId = req.params.id;
   const payload = req.body as UpdateRequestPayload;
-  const userId = req.user.id;
+  const user = req.user;
 
   if (!requestId || Array.isArray(requestId)) {
     throw new AppError(status.BAD_REQUEST, "Invalid request ID");
   }
 
-  const updated = await requestServices.updateRequest(requestId, userId, payload);
+  const updated = await requestServices.updateRequest(requestId, user, payload);
 
   sendResponse(res, {
     httpStatusCode: status.OK,
