@@ -17,9 +17,9 @@ export async function AppSidebar() {
     getSession,
   );
 
-  const sessionData = queryClient.getQueryData([QUERY_KEY.SESSION]) as
-    | IApiResponse<ISessionResponse>
-    | undefined;
+  const sessionData = queryClient.getQueryData<IApiResponse<ISessionResponse>>([
+    QUERY_KEY.SESSION,
+  ]);
 
   if (!sessionData?.success) {
     return (

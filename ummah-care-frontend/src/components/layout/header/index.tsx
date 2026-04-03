@@ -15,9 +15,9 @@ export default async function Header() {
     getSession,
   );
 
-  const sessionData = queryClient.getQueryData([QUERY_KEY.SESSION]) as
-    | IApiResponse<ISessionResponse>
-    | undefined;
+  const sessionData = queryClient.getQueryData<IApiResponse<ISessionResponse>>([
+    QUERY_KEY.SESSION,
+  ]);
 
   const user = sessionData?.data?.user;
 
