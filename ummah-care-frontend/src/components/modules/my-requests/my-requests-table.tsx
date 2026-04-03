@@ -2,10 +2,12 @@
 
 import { getMyRequests } from "@/actions/request.action";
 import { requestTableColumns } from "@/components/modules/my-requests/my-request-table-columns";
+import { ErrorMessage } from "@/components/shared/error-message";
 import { DataTable } from "@/components/shared/table/data-table";
+import { TypographyMuted, TypographyP } from "@/components/shared/typography";
 import { QUERY_KEY } from "@/constants/query.const";
 import useDataTable from "@/hooks/use-data-table";
-import { useQuery } from "@tanstack/react-query";
+import { useFetch } from "@/hooks/use-fetch";
 import { MyRequestsTableToolbar } from "./my-requests-table-toolbar";
 
 type MyRequestsTableProps = {
@@ -13,7 +15,7 @@ type MyRequestsTableProps = {
 };
 
 export default function MyRequestsTable({ queryString }: MyRequestsTableProps) {
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useFetch({
     queryKey: [QUERY_KEY.REQUEST.MY_REQUEST, queryString],
     queryFn: () => getMyRequests(queryString),
   });
@@ -21,9 +23,25 @@ export default function MyRequestsTable({ queryString }: MyRequestsTableProps) {
   const requests = data?.data ?? [];
 
   const table = useDataTable({
-    columns: requestTableColumns,
     data: requests,
+    columns: requestTableColumns,
   });
+
+  if (isLoading) {
+    return <TypographyP className="text-center">Loading...</TypographyP>;
+  }
+
+  if (isError || !data?.success) {
+    return <ErrorMessage message={data?.message ?? error?.message} />;
+  }
+
+  if (requests.length === 0) {
+    return (
+      <TypographyMuted className="text-center">
+        You have no requests yet.
+      </TypographyMuted>
+    );
+  }
 
   return (
     <div className="space-y-4">

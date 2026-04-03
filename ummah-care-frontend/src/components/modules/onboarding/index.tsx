@@ -5,21 +5,22 @@ import { TypographySmall } from "@/components/shared/typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEY } from "@/constants/query.const";
+import { useFetch } from "@/hooks/use-fetch";
 import { useState } from "react";
 import { OnboardingForm } from "./onboard-form";
 
 export const Onboarding = () => {
   const [showBanner, setShowBanner] = useState(true);
 
-  const { data } = useQuery({
-    queryKey: ["session"],
+  const { data } = useFetch({
+    queryKey: [QUERY_KEY.SESSION],
     queryFn: () => getSession(),
   });
 
   if (!showBanner) return null;
 
-  const userTypes = data?.success ? (data?.data?.user?.userTypes ?? []) : [];
+  const userTypes = data?.success ? (data.data?.user?.userTypes ?? []) : [];
 
   return (
     <Card className="mb-4 p-4 gap-2 bg-primary/15 ring-primary">

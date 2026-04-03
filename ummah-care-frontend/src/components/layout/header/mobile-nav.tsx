@@ -3,8 +3,9 @@
 import { getSession } from "@/actions/auth-actions";
 import { Button } from "@/components/ui/button";
 import { Portal, PortalBackdrop } from "@/components/ui/portal";
+import { QUERY_KEY } from "@/constants/query.const";
+import { useFetch } from "@/hooks/use-fetch";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import { MenuIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -17,8 +18,8 @@ interface MobileNavProps {
 export function MobileNav({ dashboardPath }: MobileNavProps) {
   const [open, setOpen] = React.useState(false);
 
-  const { data } = useQuery({
-    queryKey: ["session"],
+  const { data } = useFetch({
+    queryKey: [QUERY_KEY.SESSION],
     queryFn: () => getSession(),
   });
 

@@ -18,7 +18,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEY } from "@/constants/query.const";
+import { useFetch } from "@/hooks/use-fetch";
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -40,8 +41,8 @@ export function SidebarFooterContent({
   const router = useRouter();
   const { isMobile } = useSidebar();
 
-  const { data } = useQuery({
-    queryKey: ["session"],
+  const { data } = useFetch({
+    queryKey: [QUERY_KEY.SESSION],
     queryFn: () => getSession(),
   });
 

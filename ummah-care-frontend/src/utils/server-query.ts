@@ -13,5 +13,8 @@ export async function prefetchQuery<T>(
 
   await queryClient.prefetchQuery({ queryKey, queryFn });
 
-  return dehydrate(queryClient);
+  return {
+    queryClient,
+    dehydratedState: dehydrate(queryClient),
+  };
 }

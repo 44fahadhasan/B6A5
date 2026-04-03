@@ -11,7 +11,7 @@ export default async function Requests({
 }: {
   queryString: string;
 }) {
-  const dehydratedState = await prefetchQuery(
+  const { dehydratedState } = await prefetchQuery(
     [QUERY_KEY.REQUEST.REQUEST, queryString],
     () => getRequests(queryString),
   );

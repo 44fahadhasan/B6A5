@@ -2,7 +2,8 @@
 
 import { getSession } from "@/actions/auth-actions";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEY } from "@/constants/query.const";
+import { useFetch } from "@/hooks/use-fetch";
 import Link from "next/link";
 import { navLinks } from "./nav-links";
 
@@ -11,8 +12,8 @@ interface DesktopNavProps {
 }
 
 export default function DesktopNav({ dashboardPath }: DesktopNavProps) {
-  const { data } = useQuery({
-    queryKey: ["session"],
+  const { data } = useFetch({
+    queryKey: [QUERY_KEY.SESSION],
     queryFn: () => getSession(),
   });
 
