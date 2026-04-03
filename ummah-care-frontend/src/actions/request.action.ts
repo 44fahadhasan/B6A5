@@ -3,78 +3,60 @@
 import { myRequestSchema } from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
 import { IRequestResponse } from "@/types";
-import { getErrorMessage } from "@/utils/error-util";
-import { errorResponse } from "@/utils/response-util";
+import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
 
-export const createMyRequest = async (payload: Record<string, unknown>) => {
-  const result = validatePayload(payload, myRequestSchema);
-  if (!result.success) return result;
+export const createMyRequest = async (payload: Record<string, unknown>) =>
+  safeRequest(async () => {
+    const result = validatePayload(payload, myRequestSchema);
+    if (!result.success) return result;
 
-  try {
     const response = await httpClient.post<IRequestResponse>(
       "/requests",
       result.data,
     );
     return response;
-  } catch (error) {
-    return errorResponse(error);
-  }
-};
+  });
 
-export const getRequests = async (queryString: string) => {
-  try {
+export const getRequests = async (queryString?: string) =>
+  safeRequest(async () => {
     const endpoint = queryString ? `/requests?${queryString}` : "/requests";
 
     const response = await httpClient.get<IRequestResponse[]>(endpoint, {
       isProtected: false,
     });
-
     return response;
-  } catch (error) {
-    const message = getErrorMessage(error);
-    throw new Error(message);
-  }
-};
+  });
 
-export const getMyRequests = async (queryString: string) => {
-  try {
+export const getMyRequests = async (queryString?: string) =>
+  safeRequest(async () => {
     const endpoint = queryString
       ? `/requests/me?${queryString}`
       : "/requests/me";
 
     const response = await httpClient.get<IRequestResponse[]>(endpoint);
     return response;
-  } catch (error) {
-    return errorResponse(error);
-  }
-};
+  });
 
 export const updateMyRequest = async (
   requestId: string,
   payload: Record<string, unknown>,
-) => {
-  const result = validatePayload(payload, myRequestSchema);
-  if (!result.success) return result;
+) =>
+  safeRequest(async () => {
+    const result = validatePayload(payload, myRequestSchema);
+    if (!result.success) return result;
 
-  try {
     const response = await httpClient.patch<IRequestResponse>(
       `/requests/${requestId}`,
       result.data,
     );
     return response;
-  } catch (error) {
-    return errorResponse(error);
-  }
-};
+  });
 
-export const deleteMyRequest = async (requestId: string) => {
-  try {
+export const deleteMyRequest = async (requestId: string) =>
+  safeRequest(async () => {
     const response = await httpClient.delete<IRequestResponse>(
       `/requests/${requestId}`,
     );
     return response;
-  } catch (error) {
-    return errorResponse(error);
-  }
-};
+  });

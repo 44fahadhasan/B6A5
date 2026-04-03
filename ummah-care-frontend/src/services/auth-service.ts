@@ -6,72 +6,35 @@ import {
   ISignUpResponse,
   ITokenRefreshResponse,
 } from "@/types";
-import { errorResponse } from "@/utils/response-util";
+import { safeRequest } from "@/utils/safe-request";
 
 export const authService = {
-  signInUser: async (payload: Record<string, unknown>) => {
-    try {
-      const response = await httpClient.post<ISignInResponse>(
-        "/auth/sign-in",
-        payload,
-        { isProtected: false },
-      );
-      return response;
-    } catch (error) {
-      return errorResponse(error);
-    }
-  },
+  signInUser: (payload: Record<string, unknown>) =>
+    safeRequest(async () =>
+      httpClient.post<ISignInResponse>("/auth/sign-in", payload, {
+        isProtected: false,
+      }),
+    ),
 
-  signUpUser: async (payload: Record<string, unknown>) => {
-    try {
-      const response = await httpClient.post<ISignUpResponse>(
-        "/auth/sign-up",
-        payload,
-        { isProtected: false },
-      );
-      return response;
-    } catch (error) {
-      return errorResponse(error);
-    }
-  },
+  signUpUser: (payload: Record<string, unknown>) =>
+    safeRequest(async () =>
+      httpClient.post<ISignUpResponse>("/auth/sign-up", payload, {
+        isProtected: false,
+      }),
+    ),
 
-  tokenRefresh: async () => {
-    try {
-      const response = await httpClient.post<ITokenRefreshResponse>(
-        "/auth/refresh-token",
-        undefined,
-        { isProtected: false },
-      );
-      return response;
-    } catch (error) {
-      return errorResponse(error);
-    }
-  },
+  tokenRefresh: () =>
+    safeRequest(async () =>
+      httpClient.post<ITokenRefreshResponse>("/auth/refresh-token", undefined, {
+        isProtected: false,
+      }),
+    ),
 
-  singOutUser: async () => {
-    try {
-      const response = await httpClient.post("/auth/logout");
-      return response;
-    } catch (error) {
-      return errorResponse(error);
-    }
-  },
+  singOutUser: () => safeRequest(async () => httpClient.post("/auth/logout")),
 
-  getSession: async () => {
-    try {
-      const response = await httpClient.post<ISessionResponse>("/auth/session");
-      return response;
-    } catch (error) {
-      return errorResponse(error);
-    }
-  },
+  getSession: () =>
+    safeRequest(async () => httpClient.post<ISessionResponse>("/auth/session")),
 
-  sendPasswordResetEmail: async (payload: IForgotPasswordPayload) => {
-    try {
-      const response = await httpClient.post("/auth/forgot-password", payload);
-      return response;
-    } catch (error) {
-      return errorResponse(error);
-    }
-  },
+  sendPasswordResetEmail: (payload: IForgotPasswordPayload) =>
+    safeRequest(async () => httpClient.post("/auth/forgot-password", payload)),
 };
