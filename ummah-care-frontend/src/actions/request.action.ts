@@ -3,6 +3,7 @@
 import { myRequestSchema } from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
 import { IRequestResponse } from "@/types";
+import { getErrorMessage } from "@/utils/error-util";
 import { errorResponse } from "@/utils/response-util";
 import { validatePayload } from "@/utils/validation-util";
 
@@ -18,6 +19,21 @@ export const createMyRequest = async (payload: Record<string, unknown>) => {
     return response;
   } catch (error) {
     return errorResponse(error);
+  }
+};
+
+export const getRequests = async (queryString: string) => {
+  try {
+    const endpoint = queryString ? `/requests?${queryString}` : "/requests";
+
+    const response = await httpClient.get<IRequestResponse[]>(endpoint, {
+      isProtected: false,
+    });
+
+    return response;
+  } catch (error) {
+    const message = getErrorMessage(error);
+    throw new Error(message);
   }
 };
 

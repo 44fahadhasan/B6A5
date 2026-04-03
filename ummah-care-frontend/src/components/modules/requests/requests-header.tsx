@@ -1,6 +1,6 @@
+import QuerySearchInput from "@/components/shared/query-filters/query-search-input";
 import { TypographyH3, TypographyMuted } from "@/components/shared/typography";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export function RequestsHeader() {
   return (
@@ -11,7 +11,11 @@ export function RequestsHeader() {
       </div>
 
       <div className="flex gap-2 w-full sm:w-auto">
-        <Input placeholder="Search requests..." className="h-7 sm:w-64" />
+        <QuerySearchInput
+          paramName="search"
+          className="h-7 sm:w-64"
+          placeholder="Search requests..."
+        />
 
         <Button size="sm">Search</Button>
       </div>

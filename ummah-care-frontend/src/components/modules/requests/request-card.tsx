@@ -4,37 +4,75 @@ import {
 } from "@/components/shared/typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { IRequestResponse } from "@/types";
+import { formatExpiryDate } from "@/utils/date-utils";
+import { format } from "date-fns";
 import Link from "next/link";
+import {
+  categoryVariantMap,
+  getVariant,
+  helpTypeVariantMap,
+  statusVariantMap,
+  urgencyVariantMap,
+} from "./badge-variants";
 
-export function RequestCard() {
+export function RequestCard({ request }: { request: IRequestResponse }) {
+  const isUrgent = request.urgency === "HIGH" || request.urgency === "CRITICAL";
+
   return (
     <div className="border rounded-xl p-5 flex flex-col gap-4 bg-background hover:shadow-sm transition">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="font-medium text-sm leading-snug">
-          Need blood donor urgently
-        </h3>
+        <h3 className="font-medium text-sm leading-snug">{request.title}</h3>
 
-        <Badge variant="destructive">HIGH</Badge>
+        <Badge variant={getVariant(urgencyVariantMap, request.urgency)}>
+          {request.urgency}
+        </Badge>
       </div>
 
       <TypographyMuted className="line-clamp-2">
-        Looking for O+ blood donor for emergency surgery
+        {request.description}
       </TypographyMuted>
 
       <div className="flex flex-wrap gap-2">
-        <Badge variant="secondary">Medical</Badge>
-        <Badge variant="secondary">Physical</Badge>
+        <Badge variant={getVariant(helpTypeVariantMap, request.helpType)}>
+          {request.helpType}
+        </Badge>
+
+        <Badge variant={getVariant(categoryVariantMap, request.category)}>
+          {request.category}
+        </Badge>
       </div>
 
       <div className="flex items-center justify-between">
-        <Badge>OPEN</Badge>
+        <Badge variant={getVariant(statusVariantMap, request.status)}>
+          {request.status}
+        </Badge>
 
-        <TypographySmall>Expires: Apr 30</TypographySmall>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <TypographySmall className="cursor-default">
+              {formatExpiryDate(request.expiresAt)}
+            </TypographySmall>
+          </TooltipTrigger>
+          <TooltipContent>
+            {format(new Date(request.expiresAt), "PPpp")}
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <div className="flex gap-2 mt-auto">
-        <Button size="sm" asChild className="flex-1">
-          <Link href="#">{"HIGH" === "HIGH" ? "Help Now" : "Offer Help"}</Link>
+        <Button
+          asChild
+          size="sm"
+          className="flex-1"
+          variant={isUrgent ? "destructive" : "default"}
+        >
+          <Link href="#">{isUrgent ? "Help Now" : "Offer Help"}</Link>
         </Button>
 
         <Button variant="outline" size="sm" asChild>

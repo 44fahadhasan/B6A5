@@ -2,7 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["mockmind-api.uifaces.co", "github.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "mockmind-api.uifaces.co",
+      },
+      {
+        protocol: "https",
+        hostname: "github.com",
+      },
+    ],
   },
 };
 

@@ -1,3 +1,4 @@
+import QueryResetButton from "@/components/shared/query-filters/query-reset-button";
 import { Button } from "@/components/ui/button";
 import {
   Empty,
@@ -23,9 +24,7 @@ export function RequestsEmptyState() {
           <Link href="/dashboard/my-requests">Post a Help Request</Link>
         </Button>
 
-        <Button variant="outline" size="sm">
-          Reset Filters
-        </Button>
+        <QueryResetButton className="ml-0">Reset Filters</QueryResetButton>
       </EmptyContent>
     </Empty>
   );
