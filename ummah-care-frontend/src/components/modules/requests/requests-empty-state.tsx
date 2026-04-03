@@ -15,7 +15,7 @@ export function RequestsEmptyState() {
       <EmptyHeader>
         <EmptyTitle>No Requests Found</EmptyTitle>
         <EmptyDescription>
-          There are no help requests matching your filters.
+          There are no help requests matching.
         </EmptyDescription>
       </EmptyHeader>
 
