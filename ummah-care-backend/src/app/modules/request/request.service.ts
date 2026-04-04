@@ -2,7 +2,7 @@ import type { TokenPayload } from "@/app/types";
 import AppError from "@/app/utils/app-error.util";
 import { paginationUtils } from "@/app/utils/pagination.util";
 import { parseSchema } from "@/app/utils/zod-error.util";
-import { RequestStatus } from "@/generated/prisma/enums";
+import { RequestStatus, Role } from "@/generated/prisma/enums";
 import type { RequestWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
 import { requestConsts } from "./request.const";
@@ -104,25 +104,49 @@ const updateRequest = async (id: string, user: TokenPayload, payload: UpdateRequ
   const existing = await requestRepository.findById(id);
 
   if (!existing) {
-    throw new AppError(status.NOT_FOUND, "Request not found");
+    throw new AppError(status.NOT_FOUND, "Request not found.");
   }
 
-  if (existing.createdBy !== user.id) {
-    throw new AppError(status.FORBIDDEN, "You can only update your own requests");
-  }
+  const isStatusUpdate = "status" in payload;
+  const isOwner = existing.createdBy === user.id;
+  const isAdmin = user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN;
 
+  // Block updates on completed or cancelled requests
   if (existing.status === RequestStatus.COMPLETED || existing.status === RequestStatus.CANCELLED) {
-    throw new AppError(status.BAD_REQUEST, "Cannot update a completed or cancelled request");
+    throw new AppError(
+      status.BAD_REQUEST,
+      "This request is already completed or cancelled and cannot be updated.",
+    );
   }
 
-  if (user.role === "USER") {
-    if ("status" in payload) {
-      throw new AppError(status.BAD_REQUEST, "Users cannot update request status");
+  if (isStatusUpdate) {
+    const newStatus = payload.status;
+
+    // USER: only allow owner to cancel their request
+    if (user.role === Role.USER) {
+      if (!isOwner || newStatus !== RequestStatus.CANCELLED) {
+        throw new AppError(status.BAD_REQUEST, "You can only cancel your own request.");
+      }
     }
-  } else if (existing.createdBy === user.id && "status" in payload) {
-    throw new AppError(status.BAD_REQUEST, "Cannot update your own request status");
+    // VOLUNTEER / ORGANIZATION: allow only IN_PROGRESS or COMPLETED
+    else if (!isAdmin) {
+      if (newStatus !== RequestStatus.IN_PROGRESS && newStatus !== RequestStatus.COMPLETED) {
+        throw new AppError(
+          status.BAD_REQUEST,
+          "You can only mark the request as In Progress or Completed.",
+        );
+      }
+    }
   }
 
+  // Restrict non-admins who are not owners to update only status
+  if (!isAdmin && !isOwner) {
+    return requestRepository.update(id, {
+      status: payload.status ?? existing.status,
+    });
+  }
+
+  // Full update allowed for owners and admins
   return requestRepository.update(id, {
     title: payload.title ?? existing.title,
     description: payload.description ?? existing.description,
