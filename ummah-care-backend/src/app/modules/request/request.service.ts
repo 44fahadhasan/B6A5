@@ -32,6 +32,23 @@ const getRequests = async (query: unknown) => {
   if (typedQuery.helpType) where.helpType = typedQuery.helpType;
   if (typedQuery.createdBy) where.createdBy = typedQuery.createdBy;
 
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        title: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        description: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
     typedQuery.sortOrder,

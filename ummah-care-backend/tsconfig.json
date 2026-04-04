@@ -42,7 +42,6 @@
     // ==========================
     // Path Aliases
     // ==========================
-    "baseUrl": ".", // Base for relative paths
     "paths": {
       "@/*": ["./src/*"] // Example: "@/services/user" → src/services/user
     },

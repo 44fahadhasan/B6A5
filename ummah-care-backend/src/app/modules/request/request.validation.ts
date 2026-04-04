@@ -29,4 +29,5 @@ export const requestListQuerySchema = paginationUtils.paginationQuerySchema.exte
   helpType: z.enum(HelpType).optional(),
   status: z.enum(RequestStatus).optional(),
   createdBy: z.uuid().optional(),
+  search: z.string().optional(),
 });
