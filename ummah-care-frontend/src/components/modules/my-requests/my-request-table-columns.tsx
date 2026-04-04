@@ -115,15 +115,26 @@ export const requestTableColumns: ColumnDef<IRequestResponse>[] = [
       <DataTableRowActions
         row={row}
         actions={[
-          (rowData) => (
-            <DataTableModal
-              mode="edit"
-              title={`Edit: ${rowData.title}`}
-              description="Update the request details below."
-            >
-              <MyRequestForm data={rowData} />
-            </DataTableModal>
-          ),
+          (rowData) => {
+            const status = row.getValue("status");
+
+            if (
+              status !== REQUEST_STATUS.CANCELLED &&
+              status !== REQUEST_STATUS.COMPLETED
+            ) {
+              return (
+                <DataTableModal
+                  mode="edit"
+                  title={`Edit: ${rowData.title}`}
+                  description="Update the request details below."
+                >
+                  <MyRequestForm data={rowData} />
+                </DataTableModal>
+              );
+            }
+
+            return null;
+          },
 
           (rowData) => (
             <DataTableModal
