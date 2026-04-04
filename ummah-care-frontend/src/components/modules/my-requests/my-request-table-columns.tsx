@@ -146,13 +146,23 @@ export const requestTableColumns: ColumnDef<IRequestResponse>[] = [
             </DataTableModal>
           ),
 
-          (rowData) =>
-            row.getValue("status") !== REQUEST_STATUS.CANCELLED && (
-              <MyRequestCancelAction
-                id={rowData.id}
-                label={row.getValue("title")}
-              />
-            ),
+          (rowData) => {
+            const status = row.getValue("status");
+
+            if (
+              status !== REQUEST_STATUS.CANCELLED &&
+              status !== REQUEST_STATUS.COMPLETED
+            ) {
+              return (
+                <MyRequestCancelAction
+                  id={rowData.id}
+                  label={row.getValue("title")}
+                />
+              );
+            }
+
+            return null;
+          },
 
           (rowData) => (
             <DataTableRowDeleteAction
