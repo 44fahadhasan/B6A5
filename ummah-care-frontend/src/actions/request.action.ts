@@ -1,6 +1,9 @@
 "use server";
 
-import { myRequestSchema } from "@/components/modules/my-requests/my-requests.schema";
+import {
+  myRequestCancelSchema,
+  myRequestSchema,
+} from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
 import { IRequestDetailsResponse, IRequestResponse } from "@/types";
 import { safeRequest } from "@/utils/safe-request";
@@ -55,6 +58,21 @@ export const updateMyRequest = async (
 ) =>
   safeRequest(async () => {
     const result = validatePayload(payload, myRequestSchema);
+    if (!result.success) return result;
+
+    const response = await httpClient.patch<IRequestResponse>(
+      `/requests/${requestId}`,
+      result.data,
+    );
+    return response;
+  });
+
+export const cancelMyRequest = async (
+  requestId: string,
+  payload: Record<string, unknown>,
+) =>
+  safeRequest(async () => {
+    const result = validatePayload(payload, myRequestCancelSchema);
     if (!result.success) return result;
 
     const response = await httpClient.patch<IRequestResponse>(

@@ -13,11 +13,13 @@ type UseAsyncFormSubmitProps<TFormData, TResponse> = {
   errorMessage?: string;
   mutateAsync: AsyncFn<TFormData, TResponse>;
   onSuccess?: (response: IApiResponse<TResponse>) => void;
+  onError?: (error: IApiErrorResponse) => void;
 };
 
 export function useAsyncFormSubmit<TFormData, TResponse>({
   mutateAsync,
   onSuccess,
+  onError,
   loadingMessage,
   successMessage,
   errorMessage,
@@ -29,6 +31,10 @@ export function useAsyncFormSubmit<TFormData, TResponse>({
 
     try {
       const response = await mutateAsync(value);
+
+      if (onError && !response.success) {
+        onError(response as IApiErrorResponse);
+      }
 
       if (!response.success) {
         toast.error(response.message ?? errorMessage ?? "Failed", {
@@ -48,10 +54,19 @@ export function useAsyncFormSubmit<TFormData, TResponse>({
 
       return response as IApiResponse<TResponse>;
     } catch (err) {
-      toast.error(
-        (err as Error).message ?? errorMessage ?? "Something went wrong",
-        { id: toastId },
-      );
+      const errMsg =
+        (err as Error).message ?? errorMessage ?? "Something went wrong";
+
+      toast.error(errMsg, { id: toastId });
+
+      if (onError) {
+        onError({
+          data: null,
+          message: errMsg,
+          success: false,
+        });
+      }
+
       return null;
     }
   };

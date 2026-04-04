@@ -1,4 +1,9 @@
-import { CATEGORY, HELP_TYPE, URGENCY } from "@/constants/request.const";
+import {
+  CATEGORY,
+  HELP_TYPE,
+  REQUEST_STATUS,
+  URGENCY,
+} from "@/constants/request.const";
 import z from "zod";
 
 export const myRequestSchema = z.object({
@@ -24,4 +29,8 @@ export const myRequestSchema = z.object({
     .optional(),
 
   isAnonymous: z.boolean().optional().default(false),
+});
+
+export const myRequestCancelSchema = z.object({
+  status: z.enum(REQUEST_STATUS),
 });

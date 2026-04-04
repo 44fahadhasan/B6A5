@@ -10,6 +10,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../../shared/table/data-table-column-header";
 import { DataTableModal } from "../../shared/table/data-table-modal";
 import { DataTableRowActions } from "../../shared/table/data-table-row-actions";
+import { MyRequestCancelAction } from "./my-request-cancel-action";
 import MyRequestDetails from "./my-request-details";
 import MyRequestForm from "./my-request-form";
 import { categories, statuses, urgencies } from "./my-requests-table-data";
@@ -131,6 +132,13 @@ export const requestTableColumns: ColumnDef<IRequestResponse>[] = [
             >
               <MyRequestDetails data={rowData} />
             </DataTableModal>
+          ),
+
+          (rowData) => (
+            <MyRequestCancelAction
+              id={rowData.id}
+              label={row.getValue("title")}
+            />
           ),
 
           (rowData) => (
