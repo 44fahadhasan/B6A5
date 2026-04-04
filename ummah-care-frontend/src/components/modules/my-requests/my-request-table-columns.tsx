@@ -5,6 +5,7 @@ import { DataTableRowDeleteAction } from "@/components/shared/table/data-table-r
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QUERY_KEY } from "@/constants/query.const";
+import { REQUEST_STATUS } from "@/constants/request.const";
 import { IRequestResponse } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../../shared/table/data-table-column-header";
@@ -134,12 +135,13 @@ export const requestTableColumns: ColumnDef<IRequestResponse>[] = [
             </DataTableModal>
           ),
 
-          (rowData) => (
-            <MyRequestCancelAction
-              id={rowData.id}
-              label={row.getValue("title")}
-            />
-          ),
+          (rowData) =>
+            row.getValue("status") !== REQUEST_STATUS.CANCELLED && (
+              <MyRequestCancelAction
+                id={rowData.id}
+                label={row.getValue("title")}
+              />
+            ),
 
           (rowData) => (
             <DataTableRowDeleteAction
