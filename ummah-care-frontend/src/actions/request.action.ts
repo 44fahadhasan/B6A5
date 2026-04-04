@@ -2,7 +2,7 @@
 
 import { myRequestSchema } from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
-import { IRequestResponse } from "@/types";
+import { IRequestDetailsResponse, IRequestResponse } from "@/types";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
 
@@ -35,6 +35,17 @@ export const getMyRequests = async (queryString?: string) =>
       : "/requests/me";
 
     const response = await httpClient.get<IRequestResponse[]>(endpoint);
+    return response;
+  });
+
+export const getRequestById = async (id: string) =>
+  safeRequest(async () => {
+    const response = await httpClient.get<IRequestDetailsResponse>(
+      `/requests/${id}`,
+      {
+        isProtected: false,
+      },
+    );
     return response;
   });
 

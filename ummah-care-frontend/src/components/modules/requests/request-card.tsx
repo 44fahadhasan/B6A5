@@ -76,7 +76,7 @@ export function RequestCard({ request }: { request: IRequestResponse }) {
         </Button>
 
         <Button variant="outline" size="sm" asChild>
-          <Link href="#">View</Link>
+          <Link href={`/requests/${request.id}`}>View</Link>
         </Button>
       </div>
     </div>

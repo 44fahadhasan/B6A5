@@ -22,3 +22,16 @@ export interface IRequestResponse extends TRequestPayload {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface ICreator {
+  name: string;
+  email: string;
+  phone?: string;
+  avatarUrl?: string;
+}
+
+export interface IRequestDetailsResponse extends IRequestResponse {
+  isAnonymous: boolean;
+  creator: ICreator;
+  createdBy: string;
+}

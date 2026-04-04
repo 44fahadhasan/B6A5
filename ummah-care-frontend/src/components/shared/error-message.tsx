@@ -13,8 +13,8 @@ type ErrorMessageProps = {
 };
 
 export function ErrorMessage({
-  name,
-  message = '"Something went wrong"',
+  name = "Error",
+  message = "Something went wrong",
 }: ErrorMessageProps) {
   return (
     <Card size="sm" className={cn("ring-destructive bg-destructive/10")}>
