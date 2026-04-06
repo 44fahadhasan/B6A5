@@ -6,6 +6,7 @@ import {
   ISignUpResponse,
   ITokenRefreshResponse,
 } from "@/types";
+import { getErrorMessage } from "@/utils/error-util";
 import { safeRequest } from "@/utils/safe-request";
 
 export const authService = {
@@ -32,8 +33,18 @@ export const authService = {
 
   singOutUser: () => safeRequest(async () => httpClient.post("/auth/logout")),
 
-  getSession: () =>
-    safeRequest(async () => httpClient.post<ISessionResponse>("/auth/session")),
+  getSession: async () => {
+    try {
+      const res = await httpClient.post<ISessionResponse>("/auth/session");
+      return res;
+    } catch (error) {
+      return {
+        data: null,
+        success: false,
+        message: getErrorMessage(error),
+      };
+    }
+  },
 
   sendPasswordResetEmail: (payload: IForgotPasswordPayload) =>
     safeRequest(async () => httpClient.post("/auth/forgot-password", payload)),

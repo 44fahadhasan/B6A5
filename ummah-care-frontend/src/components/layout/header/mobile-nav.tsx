@@ -1,10 +1,8 @@
 "use client";
 
-import { getSession } from "@/actions/auth-actions";
 import { Button } from "@/components/ui/button";
 import { Portal, PortalBackdrop } from "@/components/ui/portal";
-import { QUERY_KEY } from "@/constants/query.const";
-import { useFetch } from "@/hooks/use-fetch";
+import { useSession } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
 import { MenuIcon, XIcon } from "lucide-react";
 import Link from "next/link";
@@ -18,10 +16,7 @@ interface MobileNavProps {
 export function MobileNav({ dashboardPath }: MobileNavProps) {
   const [open, setOpen] = React.useState(false);
 
-  const { data } = useFetch({
-    queryKey: [QUERY_KEY.SESSION],
-    queryFn: () => getSession(),
-  });
+  const session = useSession();
 
   return (
     <div className="md:hidden">
@@ -63,7 +58,7 @@ export function MobileNav({ dashboardPath }: MobileNavProps) {
               ))}
             </div>
             <div className="mt-12 flex flex-col gap-2">
-              {data?.success ? (
+              {session ? (
                 <Button asChild size="sm">
                   <Link href={dashboardPath}>Dashboard</Link>
                 </Button>

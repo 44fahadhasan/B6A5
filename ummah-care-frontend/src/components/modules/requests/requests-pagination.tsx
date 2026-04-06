@@ -33,7 +33,7 @@ export function RequestsPagination({ meta }: { meta: IPaginationMeta }) {
   return (
     <div className="flex flex-col items-center gap-4">
       <TypographyP>
-        Showing {start} to {end} of {totalItems} requests
+        Showing {start} to {end} of {totalItems} items
       </TypographyP>
 
       <div className="flex items-center space-x-6 lg:space-x-8">

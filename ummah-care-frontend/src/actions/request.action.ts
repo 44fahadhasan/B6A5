@@ -5,7 +5,11 @@ import {
   myRequestSchema,
 } from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
-import { IRequestDetailsResponse, IRequestResponse } from "@/types";
+import {
+  IMyRequestResponse,
+  IRequestDetailsResponse,
+  IRequestResponse,
+} from "@/types";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
 
@@ -38,6 +42,19 @@ export const getMyRequests = async (queryString?: string) =>
       : "/requests/me";
 
     const response = await httpClient.get<IRequestResponse[]>(endpoint);
+    return response;
+  });
+
+export const getResponsesByRequest = async (
+  requestId: string,
+  queryString?: string,
+) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/requests/${requestId}/responses?${queryString}`
+      : `/requests/${requestId}/responses`;
+
+    const response = await httpClient.get<IMyRequestResponse[]>(endpoint);
     return response;
   });
 

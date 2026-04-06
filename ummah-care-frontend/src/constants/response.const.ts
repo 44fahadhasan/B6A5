@@ -1,0 +1,5 @@
+export const RESPONSE_TYPE = {
+  VOLUNTEER: "VOLUNTEER",
+  DONATE: "DONATE",
+  COORDINATE: "COORDINATE",
+} as const;

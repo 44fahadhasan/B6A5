@@ -9,6 +9,7 @@ import { cookieUtils } from "@/utils/cookie-util";
 import { routeRulesUtil } from "@/utils/route-rules-util";
 import { tokenUtils } from "@/utils/token-util";
 import { validatePayload } from "@/utils/validation-util";
+import { cache } from "react";
 
 const {
   SESSION_TOKEN_NAME,
@@ -110,10 +111,10 @@ export async function singOutUser() {
   return response;
 }
 
-export async function getSession() {
+export const getSession = cache(async () => {
   const response = await authService.getSession();
   return response;
-}
+});
 
 export async function sendPasswordResetEmail(payload: Record<string, unknown>) {
   const result = validatePayload(payload, forgotPasswordSchema);

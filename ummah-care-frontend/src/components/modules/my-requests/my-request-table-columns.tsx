@@ -3,11 +3,13 @@
 import { deleteMyRequest } from "@/actions/request.action";
 import { DataTableRowDeleteAction } from "@/components/shared/table/data-table-row-delete-action";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QUERY_KEY } from "@/constants/query.const";
 import { REQUEST_STATUS } from "@/constants/request.const";
 import { IRequestResponse } from "@/types";
 import { type ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import { DataTableColumnHeader } from "../../shared/table/data-table-column-header";
 import { DataTableModal } from "../../shared/table/data-table-modal";
 import { DataTableRowActions } from "../../shared/table/data-table-row-actions";
@@ -108,6 +110,21 @@ export const requestTableColumns: ColumnDef<IRequestResponse>[] = [
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+  },
+  {
+    id: "replies",
+    accessorKey: "replies",
+    enableSorting: false,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Replies" />
+    ),
+    cell: ({ row }) => (
+      <Button asChild variant="link" className="pl-0">
+        <Link href={`/dashboard/my-requests/${row.original.id}/responses`}>
+          See Replies
+        </Link>
+      </Button>
+    ),
   },
   {
     id: "actions",

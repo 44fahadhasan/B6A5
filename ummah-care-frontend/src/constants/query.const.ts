@@ -4,5 +4,10 @@ export const QUERY_KEY = {
     REQUEST: "requests",
     REQUEST_DETAILS: "request-details",
     MY_REQUEST: "my-requests",
+    MY_REQUEST_RESPONSES: "my-request-response",
+  },
+  RESPONSE: {
+    RESPONSE: "response",
+    RESPONSES: "responses",
   },
 } as const;

@@ -1,0 +1,39 @@
+"use client";
+
+import { getResponsesByRequest } from "@/actions/request.action";
+import { DataList } from "@/components/shared/data-list";
+import { QUERY_KEY } from "@/constants/query.const";
+import { useFetch } from "@/hooks/use-fetch";
+import { MyRequestResponsesEmptyState } from "../requests/requests-empty-state";
+import MyRequestResponseCard from "./my-request-response-card";
+import { MyRequestResponsesLoadingSkeleton } from "./my-request-response-loading-skeleton";
+
+type MyRequestResponseListProps = {
+  requestId: string;
+  queryString: string;
+};
+
+export function MyRequestResponseList({
+  requestId,
+  queryString,
+}: MyRequestResponseListProps) {
+  const { data, isLoading, isError, error } = useFetch({
+    queryKey: [QUERY_KEY.REQUEST.MY_REQUEST_RESPONSES, requestId],
+    queryFn: () => getResponsesByRequest(requestId, queryString),
+  });
+
+  return (
+    <DataList
+      data={data}
+      isLoading={isLoading}
+      isError={isError}
+      error={error}
+      loadingState={<MyRequestResponsesLoadingSkeleton />}
+      emptyState={<MyRequestResponsesEmptyState />}
+      className="grid-cols-none!"
+      renderItem={(response) => (
+        <MyRequestResponseCard key={response.id} response={response} />
+      )}
+    />
+  );
+}

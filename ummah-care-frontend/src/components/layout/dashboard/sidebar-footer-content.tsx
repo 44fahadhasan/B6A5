@@ -1,6 +1,6 @@
 "use client";
 
-import { getSession, singOutUser } from "@/actions/auth-actions";
+import { singOutUser } from "@/actions/auth-actions";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -19,7 +19,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { QUERY_KEY } from "@/constants/query.const";
-import { useFetch } from "@/hooks/use-fetch";
+import { useSession } from "@/hooks/use-session";
+import { getInitials } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -29,25 +31,19 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-function getInitials(name: string) {
-  const words = name.trim().split(" ");
-  if (words.length === 1) return words[0][0].toUpperCase();
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
-}
-
 export function SidebarFooterContent({
   ...props
 }: React.ComponentProps<typeof SidebarFooter>) {
   const router = useRouter();
   const { isMobile } = useSidebar();
 
-  const { data } = useFetch({
-    queryKey: [QUERY_KEY.SESSION],
-    queryFn: () => getSession(),
-  });
+  const queryClient = useQueryClient();
 
-  if (!data?.data?.user) return;
-  const user = data.data.user;
+  const session = useSession();
+
+  if (!session) return;
+
+  const user = session.user;
 
   const handleSingOut = async () => {
     try {
@@ -58,6 +54,7 @@ export function SidebarFooterContent({
         return;
       }
 
+      queryClient.setQueryData([QUERY_KEY.SESSION], null);
       toast.success(message ?? "Sing out successfully!");
       router.push("/");
     } catch (error) {

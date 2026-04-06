@@ -1,7 +1,6 @@
 import { TypographyMuted } from "@/components/shared/typography";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,8 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { getInitials } from "@/lib/utils";
 import { IRequestDetailsResponse } from "@/types";
-import Link from "next/link";
 import {
   categoryVariantMap,
   getVariant,
@@ -18,16 +17,11 @@ import {
   statusVariantMap,
   urgencyVariantMap,
 } from "../requests/badge-variants";
+import ResponseButton from "../responses/response-button";
 
 type RequestDetailsContentProps = {
   request: IRequestDetailsResponse;
 };
-
-function getInitials(name: string) {
-  const words = name.trim().split(" ");
-  if (words.length === 1) return words[0][0].toUpperCase();
-  return (words[0][0] + words[words.length - 1][0]).toUpperCase();
-}
 
 export default function RequestDetailsContent({
   request,
@@ -79,13 +73,7 @@ export default function RequestDetailsContent({
           </div>
         </div>
         <div className="flex gap-2 mt-4">
-          <Button
-            asChild
-            variant={isUrgent ? "destructive" : "default"}
-            className="flex-1 text-center"
-          >
-            <Link href={""}>{isUrgent ? "Help Now" : "Offer Help"}</Link>
-          </Button>
+          <ResponseButton isUrgent={isUrgent} requestId={request.id} />
         </div>
       </CardContent>
     </Card>

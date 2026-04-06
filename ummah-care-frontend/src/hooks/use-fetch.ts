@@ -8,6 +8,7 @@ type UseFetchOptions<T> = {
   enabled?: boolean;
   staleTime?: number;
   gcTime?: number;
+  refetchOnWindowFocus?: boolean | "always";
 };
 
 export function useFetch<T>({
@@ -16,6 +17,14 @@ export function useFetch<T>({
   enabled = true,
   staleTime = 1000 * 60 * 5, // 5 min
   gcTime = 1000 * 60 * 10, // 10 min
+  refetchOnWindowFocus = false,
 }: UseFetchOptions<T>) {
-  return useQuery<T>({ queryKey, queryFn, enabled, staleTime, gcTime });
+  return useQuery<T>({
+    queryKey,
+    queryFn,
+    enabled,
+    staleTime,
+    gcTime,
+    refetchOnWindowFocus,
+  });
 }

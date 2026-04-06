@@ -4,10 +4,11 @@ import { getMyRequests } from "@/actions/request.action";
 import { requestTableColumns } from "@/components/modules/my-requests/my-request-table-columns";
 import { ErrorMessage } from "@/components/shared/error-message";
 import { DataTable } from "@/components/shared/table/data-table";
-import { TypographyMuted, TypographyP } from "@/components/shared/typography";
+import { TypographyP } from "@/components/shared/typography";
 import { QUERY_KEY } from "@/constants/query.const";
 import useDataTable from "@/hooks/use-data-table";
 import { useFetch } from "@/hooks/use-fetch";
+import { MyRequestEmptyCard } from "./my-request-empty-card";
 import { MyRequestsTableToolbar } from "./my-requests-table-toolbar";
 
 type MyRequestsTableProps = {
@@ -36,11 +37,7 @@ export default function MyRequestsTable({ queryString }: MyRequestsTableProps) {
   }
 
   if (requests.length === 0) {
-    return (
-      <TypographyMuted className="text-center">
-        You have no requests yet.
-      </TypographyMuted>
-    );
+    return <MyRequestEmptyCard />;
   }
 
   return (

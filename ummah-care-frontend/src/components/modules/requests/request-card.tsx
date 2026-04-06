@@ -13,6 +13,7 @@ import { IRequestResponse } from "@/types";
 import { formatExpiryDate } from "@/utils/date-utils";
 import { format } from "date-fns";
 import Link from "next/link";
+import ResponseButton from "../responses/response-button";
 import {
   categoryVariantMap,
   getVariant,
@@ -66,14 +67,7 @@ export function RequestCard({ request }: { request: IRequestResponse }) {
       </div>
 
       <div className="flex gap-2 mt-auto">
-        <Button
-          asChild
-          size="sm"
-          className="flex-1"
-          variant={isUrgent ? "destructive" : "default"}
-        >
-          <Link href="#">{isUrgent ? "Help Now" : "Offer Help"}</Link>
-        </Button>
+        <ResponseButton isUrgent={isUrgent} requestId={request.id} />
 
         <Button variant="outline" size="sm" asChild>
           <Link href={`/requests/${request.id}`}>View</Link>

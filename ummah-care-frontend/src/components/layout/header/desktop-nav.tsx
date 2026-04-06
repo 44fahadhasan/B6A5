@@ -1,9 +1,7 @@
 "use client";
 
-import { getSession } from "@/actions/auth-actions";
 import { Button } from "@/components/ui/button";
-import { QUERY_KEY } from "@/constants/query.const";
-import { useFetch } from "@/hooks/use-fetch";
+import { useSession } from "@/hooks/use-session";
 import Link from "next/link";
 import { navLinks } from "./nav-links";
 
@@ -12,10 +10,7 @@ interface DesktopNavProps {
 }
 
 export default function DesktopNav({ dashboardPath }: DesktopNavProps) {
-  const { data } = useFetch({
-    queryKey: [QUERY_KEY.SESSION],
-    queryFn: () => getSession(),
-  });
+  const session = useSession();
 
   return (
     <div className="hidden items-center gap-2 md:flex">
@@ -26,7 +21,7 @@ export default function DesktopNav({ dashboardPath }: DesktopNavProps) {
           </Button>
         ))}
       </div>
-      {data?.success ? (
+      {session ? (
         <Button asChild size="sm">
           <Link href={dashboardPath}>Dashboard</Link>
         </Button>
