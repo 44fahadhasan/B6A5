@@ -1,5 +1,3 @@
-"use client";
-
 import QueryResetButton from "@/components/shared/query-filters/query-reset-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,19 +9,19 @@ import {
 } from "@/components/ui/empty";
 import Link from "next/link";
 
-export function MyRequestResponsesEmptyState() {
+export function RequestsEmptyState() {
   return (
     <Empty>
       <EmptyHeader>
-        <EmptyTitle>No Responses Yet</EmptyTitle>
+        <EmptyTitle>No Requests Found</EmptyTitle>
         <EmptyDescription>
-          This help request hasn’t received any responses yet.
+          There are no help requests matching.
         </EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent className="flex-row justify-center gap-2">
         <Button size="sm" asChild>
-          <Link href="/dashboard/my-requests">Back to Request</Link>
+          <Link href="/dashboard/my-requests">Post a Help Request</Link>
         </Button>
 
         <QueryResetButton className="ml-0">Reset Filters</QueryResetButton>

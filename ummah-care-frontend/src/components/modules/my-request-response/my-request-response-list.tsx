@@ -4,8 +4,8 @@ import { getResponsesByRequest } from "@/actions/request.action";
 import { DataList } from "@/components/shared/data-list";
 import { QUERY_KEY } from "@/constants/query.const";
 import { useFetch } from "@/hooks/use-fetch";
-import { MyRequestResponsesEmptyState } from "../requests/requests-empty-state";
 import MyRequestResponseCard from "./my-request-response-card";
+import { MyRequestResponsesEmptyState } from "./my-request-response-empty-state";
 import { MyRequestResponsesLoadingSkeleton } from "./my-request-response-loading-skeleton";
 
 type MyRequestResponseListProps = {

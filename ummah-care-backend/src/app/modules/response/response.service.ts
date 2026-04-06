@@ -25,7 +25,7 @@ const createResponse = async (user: TokenPayload, payload: CreateResponsePayload
   // Check if request exists and is open
   const request = await prisma.request.findUnique({
     where: { id: payload.requestId },
-    select: { status: true },
+    select: { status: true, createdBy: true },
   });
 
   if (!request) {
@@ -34,6 +34,10 @@ const createResponse = async (user: TokenPayload, payload: CreateResponsePayload
 
   if (request.status !== RequestStatus.OPEN) {
     throw new AppError(status.BAD_REQUEST, "You can only respond to open requests");
+  }
+
+  if (request.createdBy === user.id) {
+    throw new AppError(status.BAD_REQUEST, "You are not allowed to respond to your own request.");
   }
 
   return responseRepository.create({
