@@ -12,6 +12,8 @@ router.get("/", requestController.getRequests);
 
 router.get("/me", auth(), requestController.getMyRequests);
 
+router.get("/:id/responses", auth(), requestController.getResponsesByRequest);
+
 router.get("/:id", requestController.getRequestById);
 
 router.patch("/:id", auth(), validateRequest(updateRequestSchema), requestController.updateRequest);
