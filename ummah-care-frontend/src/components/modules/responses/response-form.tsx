@@ -10,9 +10,9 @@ import { USER_STATUS } from "@/constants/user.const";
 import { useRefreshQuery } from "@/hooks/use-refresh-query";
 import { useSession } from "@/hooks/use-session";
 import {
-  ICreateResponse,
+  ICreateMyResponse,
   IResponse,
-  IUpdateResponse,
+  IUpdateMyResponse,
   TResponsePayload,
   TResponseType,
 } from "@/types";
@@ -28,7 +28,7 @@ type ResponseFormProps = {
 export default function ResponseForm({ data, requestId }: ResponseFormProps) {
   const isUpdate = Boolean(data);
 
-  const { refresh } = useRefreshQuery([QUERY_KEY.RESPONSE.RESPONSES]);
+  const { refresh } = useRefreshQuery([QUERY_KEY.RESPONSE.MY_RESPONSES]);
 
   const session = useSession();
 
@@ -64,7 +64,7 @@ export default function ResponseForm({ data, requestId }: ResponseFormProps) {
     : createResponse;
 
   return (
-    <AppForm<TResponsePayload, ICreateResponse | IUpdateResponse>
+    <AppForm<TResponsePayload, ICreateMyResponse | IUpdateMyResponse>
       mutationFn={mutationFn}
       schema={createResponseSchema}
       defaultValues={defaultValues}

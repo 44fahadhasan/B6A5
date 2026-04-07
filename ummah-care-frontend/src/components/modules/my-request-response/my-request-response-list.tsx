@@ -1,6 +1,6 @@
 "use client";
 
-import { getResponsesByRequest } from "@/actions/request.action";
+import { getResponses } from "@/actions/response.actions";
 import { DataList } from "@/components/shared/data-list";
 import { QUERY_KEY } from "@/constants/query.const";
 import { useFetch } from "@/hooks/use-fetch";
@@ -9,17 +9,15 @@ import { MyRequestResponsesEmptyState } from "./my-request-response-empty-state"
 import { MyRequestResponsesLoadingSkeleton } from "./my-request-response-loading-skeleton";
 
 type MyRequestResponseListProps = {
-  requestId: string;
   queryString: string;
 };
 
 export function MyRequestResponseList({
-  requestId,
   queryString,
 }: MyRequestResponseListProps) {
   const { data, isLoading, isError, error } = useFetch({
-    queryKey: [QUERY_KEY.REQUEST.MY_REQUEST_RESPONSES, requestId],
-    queryFn: () => getResponsesByRequest(requestId, queryString),
+    queryKey: [QUERY_KEY.RESPONSE.MY_REQUEST_RESPONSES, queryString],
+    queryFn: () => getResponses(queryString),
   });
 
   return (

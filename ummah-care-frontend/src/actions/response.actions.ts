@@ -3,11 +3,12 @@
 import { createResponseSchema } from "@/components/modules/responses/response.schema";
 import { httpClient } from "@/lib/http-client";
 import {
-  ICreateResponse,
-  IDeleteResponse,
-  IResponse,
-  IResponseDetails,
-  IUpdateResponse,
+  ICreateMyResponse,
+  IDeleteMyResponse,
+  IMyResponse,
+  IMyResponseDetails,
+  IResponses,
+  IUpdateMyResponse,
 } from "@/types";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
@@ -17,7 +18,7 @@ export const createResponse = async (payload: Record<string, unknown>) =>
     const result = validatePayload(payload, createResponseSchema);
     if (!result.success) return result;
 
-    const response = await httpClient.post<ICreateResponse>(
+    const response = await httpClient.post<ICreateMyResponse>(
       "/responses",
       result.data,
     );
@@ -28,7 +29,7 @@ export const getResponses = async (queryString?: string) =>
   safeRequest(async () => {
     const endpoint = queryString ? `/responses?${queryString}` : "/responses";
 
-    const response = await httpClient.get<IResponse[]>(endpoint);
+    const response = await httpClient.get<IResponses[]>(endpoint);
     return response;
   });
 
@@ -38,14 +39,16 @@ export const getMyResponses = async (queryString?: string) =>
       ? `/responses/me?${queryString}`
       : "/responses/me";
 
-    const response = await httpClient.get<IResponse[]>(endpoint);
+    const response = await httpClient.get<IMyResponse[]>(endpoint);
 
     return response;
   });
 
 export const getResponseById = async (id: string) =>
   safeRequest(async () => {
-    const response = await httpClient.get<IResponseDetails>(`/responses/${id}`);
+    const response = await httpClient.get<IMyResponseDetails>(
+      `/responses/${id}`,
+    );
     return response;
   });
 
@@ -57,7 +60,7 @@ export const updateResponse = async (
     const result = validatePayload(payload, createResponseSchema);
     if (!result.success) return result;
 
-    const response = await httpClient.patch<IUpdateResponse>(
+    const response = await httpClient.patch<IUpdateMyResponse>(
       `/responses/${responseId}`,
       result.data,
     );
@@ -66,7 +69,7 @@ export const updateResponse = async (
 
 export const deleteResponse = async (responseId: string) =>
   safeRequest(async () => {
-    const response = await httpClient.delete<IDeleteResponse>(
+    const response = await httpClient.delete<IDeleteMyResponse>(
       `/responses/${responseId}`,
     );
     return response;

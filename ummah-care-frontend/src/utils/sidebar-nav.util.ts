@@ -51,7 +51,7 @@ const getDashboardNavSections = (user: TokenPayload): INavSection[] => {
           icon: "Home",
         },
         {
-          title: "Dashboard",
+          title: "Default Dashboard",
           href: defaultDashboardRoute,
           icon: "LayoutDashboard",
         },

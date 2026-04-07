@@ -23,6 +23,8 @@ import { toast } from "sonner";
 interface DataTableRowDeleteActionProps {
   id: string;
   label?: string;
+  showIcon?: boolean;
+  showSeparator?: boolean;
   queryKey: string;
   deleteFun: (id: string) => Promise<IApiResponse | IApiErrorResponse>;
 }
@@ -32,6 +34,8 @@ export function DataTableRowDeleteAction({
   label,
   queryKey,
   deleteFun,
+  showIcon = true,
+  showSeparator = true,
 }: DataTableRowDeleteActionProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -64,14 +68,15 @@ export function DataTableRowDeleteAction({
     <AlertDialog open={open}>
       <AlertDialogTrigger asChild>
         <div>
-          <DropdownMenuSeparator />
+          {showSeparator && <DropdownMenuSeparator />}
           <Button
+            size="sm"
             variant="destructive"
             onClick={() => setOpen(true)}
             className="flex justify-between w-full"
           >
             Delete
-            <Delete />
+            {showIcon && <Delete />}
           </Button>
         </div>
       </AlertDialogTrigger>

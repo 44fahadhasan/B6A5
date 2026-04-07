@@ -16,7 +16,11 @@ export default async function MyRequestResponsesPage({
   const { id } = await params;
 
   const queryParamsObjects = await searchParams;
-  const queryString = buildQueryString(queryParamsObjects);
 
-  return <MyRequestResponses requestId={id} queryString={queryString} />;
+  const queryString = buildQueryString({
+    requestId: id,
+    ...queryParamsObjects,
+  });
+
+  return <MyRequestResponses queryString={queryString} />;
 }

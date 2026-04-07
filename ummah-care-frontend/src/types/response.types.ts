@@ -1,24 +1,24 @@
 import { createResponseSchema } from "@/components/modules/responses/response.schema";
 import { RESPONSE_TYPE } from "@/constants/response.const";
 import z from "zod";
-import { TRequestStatus } from "./request.type";
+import { TCategory, THelpType, TRequestStatus, TUrgency } from "./request.type";
 import { TUserRole } from "./user-type";
 
 export type TResponseType = (typeof RESPONSE_TYPE)[keyof typeof RESPONSE_TYPE];
 
 export type TResponsePayload = z.infer<typeof createResponseSchema>;
 
-export interface ICreateResponse extends TResponsePayload {
+export interface ICreateMyResponse extends TResponsePayload {
   id: string;
   userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export type IUpdateResponse = ICreateResponse;
-export type IDeleteResponse = ICreateResponse;
+export type IUpdateMyResponse = ICreateMyResponse;
+export type IDeleteMyResponse = ICreateMyResponse;
 
-export interface IResponseUser {
+export interface IUserAndCreator {
   id: string;
   name: string;
   email: string;
@@ -27,10 +27,15 @@ export interface IResponseUser {
   role: TUserRole;
 }
 
-export interface IRequest {
+export interface IRequestSummary {
   id: string;
   title: string;
   status: TRequestStatus;
+  category: TCategory;
+  urgency: TUrgency;
+  helpType: THelpType;
+  expiresAt: string;
+  creator: IUserAndCreator;
 }
 
 export interface IResponse {
@@ -41,10 +46,21 @@ export interface IResponse {
   message: string;
   createdAt: string;
   updatedAt: string;
-  user: IResponseUser;
-  request: IRequest;
 }
 
-export interface IResponseDetails extends IResponse {
-  request: IRequest & { createdBy: string };
+export interface IResponses extends IResponse {
+  user: IUserAndCreator;
+  request: IRequestSummary;
+}
+
+export interface IMyRequestResponse extends IResponse {
+  user: IUserAndCreator;
+}
+
+export interface IMyResponse extends IResponse {
+  request: IRequestSummary;
+}
+
+export interface IMyResponseDetails extends IResponse {
+  request: IRequestSummary;
 }

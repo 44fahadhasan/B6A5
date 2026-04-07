@@ -12,17 +12,17 @@ export const volunteerNavItems: INavSection[] = [
     ],
   },
   {
-    title: "Activities",
+    title: "Activity",
     items: [
       {
         title: "My Tasks",
-        href: "/volunteer/tasks",
+        href: "/volunteer/dashboard/my-tasks",
         icon: "CheckCircle",
       },
       {
-        title: "My Applications",
-        href: "/volunteer/applications",
-        icon: "ClipboardList",
+        title: "My Responses",
+        href: "/volunteer/dashboard/my-responses",
+        icon: "MessageCircle",
       },
     ],
   },
