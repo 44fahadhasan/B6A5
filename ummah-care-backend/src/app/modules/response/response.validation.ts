@@ -1,5 +1,5 @@
 import { paginationUtils } from "@/app/utils/pagination.util";
-import { ResponseType } from "@/generated/prisma/enums";
+import { Category, HelpType, RequestStatus, ResponseType, Urgency } from "@/generated/prisma/enums";
 import { z } from "zod";
 
 export const createResponseSchema = z.object({
@@ -20,5 +20,10 @@ export const updateResponseSchema = z
 export const responseListQuerySchema = paginationUtils.paginationQuerySchema.extend({
   requestId: z.uuid().optional(),
   responseType: z.enum(ResponseType).optional(),
+  category: z.enum(Category).optional(),
+  urgency: z.enum(Urgency).optional(),
+  helpType: z.enum(HelpType).optional(),
+  status: z.enum(RequestStatus).optional(),
   createdBy: z.uuid().optional(),
+  search: z.string().optional(),
 });

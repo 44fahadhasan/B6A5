@@ -3,10 +3,8 @@ import AppError from "@/app/utils/app-error.util";
 import { paginationUtils } from "@/app/utils/pagination.util";
 import { parseSchema } from "@/app/utils/zod-error.util";
 import { RequestStatus, Role } from "@/generated/prisma/enums";
-import type { RequestWhereInput, ResponseWhereInput } from "@/generated/prisma/models";
+import type { RequestWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
-import { responseRepository } from "../response/response.repository";
-import { responseListQuerySchema } from "../response/response.validation";
 import { requestConsts } from "./request.const";
 import { requestRepository } from "./request.repository";
 import type { CreateRequestPayload, UpdateRequestPayload } from "./request.type";
@@ -94,54 +92,6 @@ const getMyRequests = async (userId: string, query: unknown) => {
 
   return {
     data: requests,
-    meta: paginationUtils.getPaginationMeta(total, page, limit),
-  };
-};
-
-const getResponsesByRequest = async (requestId: string, query: unknown, userId: string) => {
-  const existing = await requestRepository.findById(requestId);
-
-  if (!existing) {
-    throw new AppError(status.NOT_FOUND, "Request not found");
-  }
-
-  if (existing.createdBy !== userId) {
-    throw new AppError(status.FORBIDDEN, "You can only get your own requests");
-  }
-
-  const typedQuery = parseSchema(responseListQuerySchema, query);
-  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
-
-  const where: ResponseWhereInput = {
-    requestId,
-  };
-
-  if (typedQuery.requestId) where.requestId = typedQuery.requestId;
-  if (typedQuery.responseType) where.responseType = typedQuery.responseType;
-
-  const orderBy = paginationUtils.getOrderBy(
-    typedQuery.sortBy,
-    typedQuery.sortOrder,
-    requestConsts.allowedSortByFields,
-  );
-
-  const [total, responses] = await Promise.all([
-    responseRepository.count(where),
-    responseRepository.findMany(where, skip, take, orderBy, {
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-            avatarUrl: true,
-          },
-        },
-      },
-    }),
-  ]);
-
-  return {
-    data: responses,
     meta: paginationUtils.getPaginationMeta(total, page, limit),
   };
 };
@@ -247,7 +197,6 @@ export const requestServices = {
   createRequest,
   getRequests,
   getMyRequests,
-  getResponsesByRequest,
   getRequestById,
   updateRequest,
   deleteRequest,

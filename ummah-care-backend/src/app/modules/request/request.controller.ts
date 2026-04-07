@@ -49,26 +49,6 @@ const getMyRequests = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-const getResponsesByRequest = asyncHandler(async (req: Request, res: Response) => {
-  const requestId = req.params.id;
-  const query = req.query;
-  const userId = req.user.id;
-
-  if (!requestId || Array.isArray(requestId)) {
-    throw new AppError(status.BAD_REQUEST, "Invalid request ID");
-  }
-
-  const result = await requestServices.getResponsesByRequest(requestId, query, userId);
-
-  sendResponse(res, {
-    httpStatusCode: status.OK,
-    success: true,
-    message: "Responses fetched successfully.",
-    data: result.data,
-    meta: result.meta,
-  });
-});
-
 const getRequestById = asyncHandler(async (req: Request, res: Response) => {
   const requestId = req.params.id;
 
@@ -127,7 +107,6 @@ export const requestController = {
   createRequest,
   getRequests,
   getMyRequests,
-  getResponsesByRequest,
   getRequestById,
   updateRequest,
   deleteRequest,

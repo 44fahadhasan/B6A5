@@ -4,7 +4,7 @@ import AppError from "@/app/utils/app-error.util";
 import { paginationUtils } from "@/app/utils/pagination.util";
 import { parseSchema } from "@/app/utils/zod-error.util";
 import { RequestStatus, Role } from "@/generated/prisma/enums";
-import type { ResponseWhereInput } from "@/generated/prisma/models";
+import type { ResponseInclude, ResponseWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
 import { responseConsts } from "./response.const";
 import { responseRepository } from "./response.repository";
@@ -52,8 +52,9 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
 
   const where: ResponseWhereInput = {};
 
+  const isAdmin = user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN;
+
   if (typedQuery.requestId) {
-    // Check if user owns the request or is admin
     const request = await prisma.request.findUnique({
       where: { id: typedQuery.requestId },
       select: { createdBy: true },
@@ -64,7 +65,6 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
     }
 
     const isOwner = request.createdBy === user.id;
-    const isAdmin = user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN;
 
     if (!isOwner && !isAdmin) {
       throw new AppError(status.FORBIDDEN, "You can only view responses to your own requests");
@@ -73,8 +73,30 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
     where.requestId = typedQuery.requestId;
   }
 
+  where.request = {
+    ...(typedQuery.status && { status: typedQuery.status }),
+    ...(typedQuery.category && { category: typedQuery.category }),
+    ...(typedQuery.urgency && { urgency: typedQuery.urgency }),
+    ...(typedQuery.helpType && { helpType: typedQuery.helpType }),
+  };
+
   if (typedQuery.responseType) where.responseType = typedQuery.responseType;
   if (typedQuery.createdBy) where.userId = typedQuery.createdBy;
+
+  if (isAdmin && typedQuery.search?.trim()) {
+    const search = typedQuery.search.trim();
+
+    where.OR = [
+      { request: { title: { contains: search, mode: "insensitive" } } },
+      { request: { description: { contains: search, mode: "insensitive" } } },
+      { request: { creator: { name: { contains: search, mode: "insensitive" } } } },
+      { request: { creator: { email: { contains: search, mode: "insensitive" } } } },
+      { request: { creator: { phone: { contains: search, mode: "insensitive" } } } },
+      { user: { name: { contains: search, mode: "insensitive" } } },
+      { user: { email: { contains: search, mode: "insensitive" } } },
+      { user: { phone: { contains: search, mode: "insensitive" } } },
+    ];
+  }
 
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
@@ -82,29 +104,43 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
     responseConsts.allowedSortByFields,
   );
 
-  const [total, responses] = await Promise.all([
-    responseRepository.count(where),
-    responseRepository.findMany(where, skip, take, orderBy, {
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            phone: true,
-            avatarUrl: true,
-            role: true,
-          },
-        },
-        request: {
-          select: {
-            id: true,
-            title: true,
-            status: true,
+  const include: ResponseInclude = {
+    user: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        avatarUrl: true,
+        role: true,
+      },
+    },
+    ...(isAdmin && {
+      request: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          category: true,
+          urgency: true,
+          helpType: true,
+          expiresAt: true,
+          creator: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+              avatarUrl: true,
+            },
           },
         },
       },
     }),
+  };
+
+  const [total, responses] = await Promise.all([
+    responseRepository.count(where),
+    responseRepository.findMany(where, skip, take, orderBy, { include }),
   ]);
 
   return {
@@ -117,12 +153,28 @@ const getMyResponses = async (userId: string, query: unknown) => {
   const typedQuery = parseSchema(responseListQuerySchema, query);
   const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
 
-  const where: ResponseWhereInput = {
-    userId,
+  const where: ResponseWhereInput = { userId };
+
+  where.request = {
+    ...(typedQuery.status ? { status: typedQuery.status } : {}),
+    ...(typedQuery.category ? { category: typedQuery.category } : {}),
+    ...(typedQuery.urgency ? { urgency: typedQuery.urgency } : {}),
+    ...(typedQuery.helpType ? { helpType: typedQuery.helpType } : {}),
   };
 
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
   if (typedQuery.responseType) where.responseType = typedQuery.responseType;
+
+  if (typedQuery.search) {
+    const search = typedQuery.search.trim();
+    where.OR = [
+      { request: { title: { contains: search, mode: "insensitive" } } },
+      { request: { description: { contains: search, mode: "insensitive" } } },
+      { request: { creator: { name: { contains: search, mode: "insensitive" } } } },
+      { request: { creator: { email: { contains: search, mode: "insensitive" } } } },
+      { request: { creator: { phone: { contains: search, mode: "insensitive" } } } },
+    ];
+  }
 
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
@@ -141,6 +193,16 @@ const getMyResponses = async (userId: string, query: unknown) => {
             status: true,
             category: true,
             urgency: true,
+            helpType: true,
+            expiresAt: true,
+            creator: {
+              select: {
+                name: true,
+                email: true,
+                phone: true,
+                avatarUrl: true,
+              },
+            },
           },
         },
       },
@@ -156,22 +218,23 @@ const getMyResponses = async (userId: string, query: unknown) => {
 const getResponseById = async (id: string, user: TokenPayload) => {
   const response = await responseRepository.findById(id, {
     include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-          avatarUrl: true,
-          role: true,
-        },
-      },
       request: {
         select: {
           id: true,
           title: true,
           status: true,
-          createdBy: true,
+          category: true,
+          urgency: true,
+          helpType: true,
+          expiresAt: true,
+          creator: {
+            select: {
+              name: true,
+              email: true,
+              phone: true,
+              avatarUrl: true,
+            },
+          },
         },
       },
     },
