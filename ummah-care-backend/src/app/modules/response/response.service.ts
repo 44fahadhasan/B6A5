@@ -127,10 +127,12 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
           expiresAt: true,
           creator: {
             select: {
+              id: true,
               name: true,
               email: true,
               phone: true,
               avatarUrl: true,
+              role: true,
             },
           },
         },
@@ -197,10 +199,12 @@ const getMyResponses = async (userId: string, query: unknown) => {
             expiresAt: true,
             creator: {
               select: {
+                id: true,
                 name: true,
                 email: true,
                 phone: true,
                 avatarUrl: true,
+                role: true,
               },
             },
           },
