@@ -97,6 +97,9 @@ export default function MyResponseCard({ response }: MyResponseCardProps) {
         <AppModal className="sm:max-w-sm" triggerText="Edit">
           <ResponseForm requestId={response.id} data={response} />
         </AppModal>
+        <AppModal className="sm:max-w-sm" triggerText="Continue to next">
+          <ResponseForm requestId={response.id} data={response} />
+        </AppModal>
       </CardFooter>
     </Card>
   );

@@ -33,3 +33,9 @@ export interface ICreator {
   phone?: string;
   avatarUrl?: string;
 }
+
+export interface IRequestDetailsResponse extends IRequestResponse {
+  isAnonymous: boolean;
+  creator: ICreator;
+  createdBy: string;
+}
