@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import MessageConversation from "../message/message-conversation";
 import MessageForm from "../message/message-form";
 import ResponseForm from "../responses/response-form";
+import MangeRequestStatus from "./mange-request-status";
 import MyResponseDetails from "./my-responses-details";
 
 type MyResponseCardProps = {
@@ -109,25 +110,38 @@ export default function MyResponseCard({ response }: MyResponseCardProps) {
             <ResponseForm requestId={response.id} data={response} />
           </AppModal>
         </div>
-        <AppModal
-          heightClass="max-h-[30vh] sm:max-h-[35vh] md:max-h-[40vh] lg:max-h-[50vh]"
-          className="sm:max-w-lg"
-          triggerText="Chat"
-          title="Chat with Request Owner"
-          description="Communicate directly with the request owner about this request."
-          modalFooterChildren={
-            <MessageForm
+        <div className="flex gap-3">
+          <AppModal
+            className="sm:max-w-sm"
+            triggerText="Update Status"
+            title="Update Request Status"
+            description="Change the current status of this request."
+          >
+            <MangeRequestStatus
               requestId={response.requestId}
-              receiverId={response.request.creator.id}
+              currentStatus={response.request.status}
             />
-          }
-        >
-          <MessageConversation
-            currentUserId={response.userId}
-            requestId={response.requestId}
-            participantId={response.request.creator.id}
-          />
-        </AppModal>
+          </AppModal>
+          <AppModal
+            heightClass="max-h-[30vh] sm:max-h-[35vh] md:max-h-[40vh] lg:max-h-[50vh]"
+            className="sm:max-w-lg"
+            triggerText="Chat"
+            title="Chat with Request Owner"
+            description="Communicate directly with the request owner about this request."
+            modalFooterChildren={
+              <MessageForm
+                requestId={response.requestId}
+                receiverId={response.request.creator.id}
+              />
+            }
+          >
+            <MessageConversation
+              currentUserId={response.userId}
+              requestId={response.requestId}
+              participantId={response.request.creator.id}
+            />
+          </AppModal>
+        </div>
       </CardFooter>
     </Card>
   );

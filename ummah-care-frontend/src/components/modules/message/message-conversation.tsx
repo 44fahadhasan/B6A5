@@ -99,15 +99,17 @@ export default function MessageConversation({
               }`}
             >
               <div className="flex items-center gap-1">
-                <DataTableRowDeleteAction
-                  className="px-2 h-5"
-                  showIcon={false}
-                  showSeparator={false}
-                  id={msg.id}
-                  label={msg.message}
-                  queryKey={QUERY_KEY.RESPONSE.MY_RESPONSES}
-                  deleteFun={deleteMessage}
-                />
+                {isSender && (
+                  <DataTableRowDeleteAction
+                    className="px-2 h-5"
+                    showIcon={false}
+                    showSeparator={false}
+                    id={msg.id}
+                    label={msg.message}
+                    queryKey={QUERY_KEY.RESPONSE.MY_RESPONSES}
+                    deleteFun={deleteMessage}
+                  />
+                )}
                 <Badge
                   variant={isSender ? "default" : "secondary"}
                   className="whitespace-pre-wrap h-auto"

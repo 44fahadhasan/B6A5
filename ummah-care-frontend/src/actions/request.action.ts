@@ -3,6 +3,7 @@
 import {
   myRequestCancelSchema,
   myRequestSchema,
+  requestStatusUpdateSchema,
 } from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
 import { IRequestDetailsResponse, IRequestResponse } from "@/types";
@@ -73,6 +74,21 @@ export const cancelMyRequest = async (
 ) =>
   safeRequest(async () => {
     const result = validatePayload(payload, myRequestCancelSchema);
+    if (!result.success) return result;
+
+    const response = await httpClient.patch<IRequestResponse>(
+      `/requests/${requestId}`,
+      result.data,
+    );
+    return response;
+  });
+
+export const updateRequestStatus = async (
+  requestId: string,
+  payload: Record<string, unknown>,
+) =>
+  safeRequest(async () => {
+    const result = validatePayload(payload, requestStatusUpdateSchema);
     if (!result.success) return result;
 
     const response = await httpClient.patch<IRequestResponse>(

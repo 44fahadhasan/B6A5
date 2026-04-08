@@ -34,3 +34,5 @@ export const myRequestSchema = z.object({
 export const myRequestCancelSchema = z.object({
   status: z.enum(REQUEST_STATUS),
 });
+
+export const requestStatusUpdateSchema = myRequestCancelSchema;

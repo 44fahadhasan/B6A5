@@ -1,6 +1,7 @@
 import {
   myRequestCancelSchema,
   myRequestSchema,
+  requestStatusUpdateSchema,
 } from "@/components/modules/my-requests/my-requests.schema";
 import {
   CATEGORY,
@@ -18,6 +19,9 @@ export type TRequestStatus =
 
 export type TRequestPayload = z.infer<typeof myRequestSchema>;
 export type TRequestCancelPayload = z.infer<typeof myRequestCancelSchema>;
+export type TRequestStatusUpdatePayload = z.infer<
+  typeof requestStatusUpdateSchema
+>;
 
 export interface IRequestResponse extends TRequestPayload {
   id: string;
