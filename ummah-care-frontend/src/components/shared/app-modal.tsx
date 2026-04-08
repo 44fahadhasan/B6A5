@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -29,6 +30,8 @@ type AppModalProps = {
     | "destructive";
   icon?: ReactNode;
   onOpenChange?: (open: boolean) => void;
+  modalFooterChildren?: ReactNode;
+  heightClass?: string;
 };
 
 export function AppModal({
@@ -41,6 +44,8 @@ export function AppModal({
   variant = "default",
   icon,
   onOpenChange,
+  modalFooterChildren,
+  heightClass,
 }: AppModalProps) {
   return (
     <Dialog onOpenChange={onOpenChange}>
@@ -65,7 +70,14 @@ export function AppModal({
             )}
           </DialogHeader>
         )}
-        <ScrollArea className="max-h-[70vh] pr-4">{children}</ScrollArea>
+        <ScrollArea className={cn("max-h-[70vh] pr-4", heightClass)}>
+          {children}
+        </ScrollArea>
+        {modalFooterChildren && (
+          <DialogFooter>
+            <div className="flex-1">{modalFooterChildren}</div>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -11,4 +11,7 @@ export const QUERY_KEY = {
     MY_RESPONSES_DETAILS: "my-responses-details",
     MY_REQUEST_RESPONSES: "my-request-response",
   },
+  MESSAGE: {
+    MY_CONVERSATION: "my-conversation",
+  },
 } as const;

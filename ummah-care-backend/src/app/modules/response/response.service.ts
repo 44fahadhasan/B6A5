@@ -105,6 +105,11 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
   );
 
   const include: ResponseInclude = {
+    request: {
+      select: {
+        createdBy: true,
+      },
+    },
     user: {
       select: {
         id: true,

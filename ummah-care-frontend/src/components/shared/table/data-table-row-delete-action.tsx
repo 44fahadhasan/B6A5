@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useRefreshQuery } from "@/hooks/use-refresh-query";
+import { cn } from "@/lib/utils";
 import { IApiErrorResponse, IApiResponse } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { Delete } from "lucide-react";
@@ -23,6 +24,7 @@ import { toast } from "sonner";
 interface DataTableRowDeleteActionProps {
   id: string;
   label?: string;
+  className?: string;
   showIcon?: boolean;
   showSeparator?: boolean;
   queryKey: string;
@@ -36,6 +38,7 @@ export function DataTableRowDeleteAction({
   deleteFun,
   showIcon = true,
   showSeparator = true,
+  className,
 }: DataTableRowDeleteActionProps) {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -73,7 +76,7 @@ export function DataTableRowDeleteAction({
             size="sm"
             variant="destructive"
             onClick={() => setOpen(true)}
-            className="flex justify-between w-full"
+            className={cn("flex justify-between w-full", className)}
           >
             Delete
             {showIcon && <Delete />}

@@ -21,6 +21,8 @@ import { getInitials } from "@/lib/utils";
 import { IMyResponse } from "@/types";
 import { formatExpiryDate } from "@/utils/date-utils";
 import { format } from "date-fns";
+import MessageConversation from "../message/message-conversation";
+import MessageForm from "../message/message-form";
 import ResponseForm from "../responses/response-form";
 import MyResponseDetails from "./my-responses-details";
 
@@ -36,7 +38,7 @@ export default function MyResponseCard({ response }: MyResponseCardProps) {
     <Card>
       <CardContent className="p-4 space-y-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
+          <Avatar size="lg">
             <AvatarImage src={creator.avatarUrl ?? ""} alt={creator.name} />
             <AvatarFallback>{getInitials(creator.name)}</AvatarFallback>
           </Avatar>
@@ -82,23 +84,49 @@ export default function MyResponseCard({ response }: MyResponseCardProps) {
           </TypographyMuted>
         </div>
       </CardContent>
-      <CardFooter className="justify-end gap-3">
-        <DataTableRowDeleteAction
-          showIcon={false}
-          showSeparator={false}
-          id={response.id}
-          label={response.request.title}
-          queryKey={QUERY_KEY.RESPONSE.MY_RESPONSES}
-          deleteFun={deleteResponse}
-        />
-        <AppModal className="sm:max-w-2xl" triggerText="View Details">
-          <MyResponseDetails responseId={response.id} />
-        </AppModal>
-        <AppModal className="sm:max-w-sm" triggerText="Edit">
-          <ResponseForm requestId={response.id} data={response} />
-        </AppModal>
-        <AppModal className="sm:max-w-sm" triggerText="Continue to next">
-          <ResponseForm requestId={response.id} data={response} />
+      <CardFooter className="flex-wrap justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <DataTableRowDeleteAction
+            showIcon={false}
+            showSeparator={false}
+            id={response.id}
+            label={response.request.title}
+            queryKey={QUERY_KEY.RESPONSE.MY_RESPONSES}
+            deleteFun={deleteResponse}
+          />
+          <AppModal
+            variant="outline"
+            className="sm:max-w-2xl"
+            triggerText="View Details"
+          >
+            <MyResponseDetails responseId={response.id} />
+          </AppModal>
+          <AppModal
+            variant="outline"
+            className="sm:max-w-sm"
+            triggerText="Edit"
+          >
+            <ResponseForm requestId={response.id} data={response} />
+          </AppModal>
+        </div>
+        <AppModal
+          heightClass="max-h-[30vh] sm:max-h-[35vh] md:max-h-[40vh] lg:max-h-[50vh]"
+          className="sm:max-w-lg"
+          triggerText="Chat"
+          title="Chat with Request Owner"
+          description="Communicate directly with the request owner about this request."
+          modalFooterChildren={
+            <MessageForm
+              requestId={response.requestId}
+              receiverId={response.request.creator.id}
+            />
+          }
+        >
+          <MessageConversation
+            currentUserId={response.userId}
+            requestId={response.requestId}
+            participantId={response.request.creator.id}
+          />
         </AppModal>
       </CardFooter>
     </Card>

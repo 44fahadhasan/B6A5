@@ -1,12 +1,15 @@
 "use client";
 
+import { AppModal } from "@/components/shared/app-modal";
 import { TypographyH3, TypographyMuted } from "@/components/shared/typography";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { getInitials } from "@/lib/utils";
 import { IMyRequestResponse } from "@/types";
 import { format } from "date-fns";
+import MessageConversation from "../message/message-conversation";
+import MessageForm from "../message/message-form";
 
 type MyRequestResponseCardProps = {
   response: IMyRequestResponse;
@@ -15,7 +18,7 @@ type MyRequestResponseCardProps = {
 export default function MyRequestResponseCard({
   response,
 }: MyRequestResponseCardProps) {
-  const { user, responseType, message, createdAt } = response;
+  const { user, responseType, message, createdAt, request } = response;
 
   return (
     <Card>
@@ -57,6 +60,27 @@ export default function MyRequestResponseCard({
           </div>
         </div>
       </CardContent>
+      <CardFooter className="justify-end">
+        <AppModal
+          heightClass="max-h-[30vh] sm:max-h-[35vh] md:max-h-[40vh] lg:max-h-[50vh]"
+          className="sm:max-w-lg"
+          triggerText="Chat"
+          title="Chat About Your Request"
+          description="Connect with people who are helping with your request."
+          modalFooterChildren={
+            <MessageForm
+              requestId={response.requestId}
+              receiverId={response.userId}
+            />
+          }
+        >
+          <MessageConversation
+            currentUserId={request.createdBy}
+            participantId={user.id}
+            requestId={response.requestId}
+          />
+        </AppModal>
+      </CardFooter>
     </Card>
   );
 }

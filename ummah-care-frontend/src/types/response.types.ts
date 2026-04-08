@@ -55,6 +55,9 @@ export interface IResponses extends IResponse {
 
 export interface IMyRequestResponse extends IResponse {
   user: IUserAndCreator;
+  request: {
+    createdBy: string;
+  };
 }
 
 export interface IMyResponse extends IResponse {
