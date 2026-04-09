@@ -51,4 +51,10 @@ export interface EnvConfig {
     email: string;
     password: string;
   };
+
+  stripe: {
+    secretKey: string;
+    publishableKey: string;
+    webhookSecret: string;
+  };
 }

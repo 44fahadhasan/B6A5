@@ -60,6 +60,12 @@ export function loadConfig(): EnvConfig {
       email: requireEnv("SUPER_ADMIN_EMAIL"),
       password: requireEnv("SUPER_ADMIN_PASSWORD"),
     },
+
+    stripe: {
+      secretKey: requireEnv("STRIPE_SECRET_KEY"),
+      publishableKey: requireEnv("STRIPE_PUBLISHABLE_KEY"),
+      webhookSecret: requireEnv("STRIPE_WEBHOOK_SECRET"),
+    },
   };
 }
 

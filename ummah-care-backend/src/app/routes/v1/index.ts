@@ -1,4 +1,5 @@
 import { authRoutes } from "@/app/modules/auth/auth.route";
+import { donationRoutes } from "@/app/modules/donation/donation.route";
 import { messageRoutes } from "@/app/modules/message/message.route";
 import { requestRoutes } from "@/app/modules/request/request.route";
 import { responseRoutes } from "@/app/modules/response/response.route";
@@ -14,6 +15,7 @@ const routes: Routes[] = [
   { path: "/requests", router: requestRoutes },
   { path: "/responses", router: responseRoutes },
   { path: "/messages", router: messageRoutes },
+  { path: "/donations", router: donationRoutes },
 ];
 
 routes.forEach((route) => router.use(route.path, route.router));
