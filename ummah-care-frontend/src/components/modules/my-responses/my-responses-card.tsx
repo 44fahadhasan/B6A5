@@ -21,6 +21,7 @@ import { getInitials } from "@/lib/utils";
 import { IMyResponse } from "@/types";
 import { formatExpiryDate } from "@/utils/date-utils";
 import { format } from "date-fns";
+import DonateForm from "../donate/donate-form";
 import MessageConversation from "../message/message-conversation";
 import MessageForm from "../message/message-form";
 import ResponseForm from "../responses/response-form";
@@ -111,6 +112,14 @@ export default function MyResponseCard({ response }: MyResponseCardProps) {
           </AppModal>
         </div>
         <div className="flex gap-3">
+          <AppModal
+            className="sm:max-w-sm"
+            triggerText="Make a Donation"
+            title="Make a Donation"
+            description="Support this request by making a generous donation to help those in need."
+          >
+            <DonateForm requestId={response.requestId} />
+          </AppModal>
           <AppModal
             className="sm:max-w-sm"
             triggerText="Update Status"
