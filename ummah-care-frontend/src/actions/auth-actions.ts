@@ -3,6 +3,7 @@
 import { forgotPasswordSchema } from "@/components/modules/forgot-password/forgot-password.form.schema";
 import { signInSchema } from "@/components/modules/sign-in/sign-in.form.schema";
 import { signUpSchema } from "@/components/modules/sign-up/sign-up.form.schema";
+import { verifyEmailSchema } from "@/components/modules/verify-email/verify-email.form.schema";
 import { TOKEN_CONFIG } from "@/constants/token.const";
 import { authService } from "@/services/auth-service";
 import { cookieUtils } from "@/utils/cookie-util";
@@ -68,6 +69,14 @@ export async function signUpUser(payload: Record<string, unknown>) {
   if (!result.success) return result;
 
   const response = await authService.signUpUser(result.data);
+  return response;
+}
+
+export async function verifyEmailUser(payload: Record<string, unknown>) {
+  const result = validatePayload(payload, verifyEmailSchema);
+  if (!result.success) return result;
+
+  const response = await authService.verifyEmailUser(result.data);
   return response;
 }
 

@@ -6,11 +6,14 @@ import AppInputField from "@/components/shared/form/app-input-field ";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ISignUpPayload, signUpSchema } from "./sign-up.form.schema";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const router = useRouter();
 
   return (
     <AppForm<ISignUpPayload>
@@ -22,6 +25,7 @@ export default function SignUpForm() {
       successMessage="Sign up successful!"
       errorMessage="Sign up failed"
       className="space-y-5 pt-8"
+      onSuccess={() => router.push("/verify-email")}
     >
       {(form) => (
         <FieldGroup>

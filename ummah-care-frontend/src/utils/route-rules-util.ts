@@ -22,7 +22,12 @@ interface IRouteConfig {
   patterns: RegExp[];
 }
 
-const authRoutes = ["/sign-up", "/sign-in", "/forgot-password"] as const;
+const authRoutes = [
+  "/sign-up",
+  "/sign-in",
+  "/forgot-password",
+  "/verify-email",
+] as const;
 
 const commonProtectedRoutes: IRouteConfig = {
   exact: ["/my-profile"],

@@ -44,6 +44,12 @@ export default function SignInForm({ redirectPath }: SignInFromProps) {
         const res = await mutateAsync(value);
 
         if (!res.success) {
+          if (res.message?.includes("Email not verified")) {
+            toast.error("Please verify your email first.", { id: toastId });
+            router.push("/verify-email");
+            return;
+          }
+
           toast.error(res.message ?? "Sign in failed", {
             id: toastId,
             style: {

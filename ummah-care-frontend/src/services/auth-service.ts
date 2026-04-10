@@ -1,4 +1,5 @@
 import { IForgotPasswordPayload } from "@/components/modules/forgot-password/forgot-password.form.schema";
+import { IVerifyEmailPayload } from "@/components/modules/verify-email/verify-email.form.schema";
 import { httpClient } from "@/lib/http-client";
 import {
   ISessionResponse,
@@ -20,6 +21,13 @@ export const authService = {
   signUpUser: (payload: Record<string, unknown>) =>
     safeRequest(async () =>
       httpClient.post<ISignUpResponse>("/auth/sign-up", payload, {
+        isProtected: false,
+      }),
+    ),
+
+  verifyEmailUser: (payload: IVerifyEmailPayload) =>
+    safeRequest(async () =>
+      httpClient.post("/auth/verify-email", payload, {
         isProtected: false,
       }),
     ),
