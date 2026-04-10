@@ -25,9 +25,9 @@ export const updateRequestSchema = createRequestSchema
 
 export const requestListQuerySchema = paginationUtils.paginationQuerySchema.extend({
   category: z.enum(Category).optional(),
-  urgency: z.enum(Urgency).optional(),
+  urgency: z.union([z.enum(Urgency), z.array(z.enum(Urgency))]).optional(),
   helpType: z.enum(HelpType).optional(),
-  status: z.enum(RequestStatus).optional(),
+  status: z.union([z.enum(RequestStatus), z.array(z.enum(RequestStatus))]).optional(),
   createdBy: z.uuid().optional(),
   search: z.string().optional(),
 });

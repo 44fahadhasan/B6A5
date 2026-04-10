@@ -30,15 +30,20 @@ interface DataTableFacetedFilterProps<TData, TValue> {
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
+  selectedValues?: Set<string>;
+  onSelectionChange?: (values: Set<string>) => void;
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  selectedValues: propSelectedValues,
+  onSelectionChange,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const columnSelectedValues = new Set(column?.getFilterValue() as string[]);
+  const selectedValues = propSelectedValues ?? columnSelectedValues;
 
   return (
     <Popover>
@@ -93,15 +98,20 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
+                      const newSelected = new Set(selectedValues);
                       if (isSelected) {
-                        selectedValues.delete(option.value);
+                        newSelected.delete(option.value);
                       } else {
-                        selectedValues.add(option.value);
+                        newSelected.add(option.value);
                       }
-                      const filterValues = Array.from(selectedValues);
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined,
-                      );
+                      if (onSelectionChange) {
+                        onSelectionChange(newSelected);
+                      } else {
+                        const filterValues = Array.from(newSelected);
+                        column?.setFilterValue(
+                          filterValues.length ? filterValues : undefined,
+                        );
+                      }
                     }}
                   >
                     <div
@@ -132,7 +142,13 @@ export function DataTableFacetedFilter<TData, TValue>({
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={() => {
+                      if (onSelectionChange) {
+                        onSelectionChange(new Set());
+                      } else {
+                        column?.setFilterValue(undefined);
+                      }
+                    }}
                     className="justify-center text-center"
                   >
                     Clear filters

@@ -25,10 +25,18 @@ const getRequests = async (query: unknown) => {
 
   const where: RequestWhereInput = {};
 
-  where.status = typedQuery.status ?? RequestStatus.OPEN;
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  } else {
+    where.status = RequestStatus.OPEN;
+  }
 
   if (typedQuery.category) where.category = typedQuery.category;
-  if (typedQuery.urgency) where.urgency = typedQuery.urgency;
+  if (typedQuery.urgency) {
+    const urgencies = Array.isArray(typedQuery.urgency) ? typedQuery.urgency : [typedQuery.urgency];
+    where.urgency = { in: urgencies };
+  }
   if (typedQuery.helpType) where.helpType = typedQuery.helpType;
   if (typedQuery.createdBy) where.createdBy = typedQuery.createdBy;
 
@@ -74,10 +82,33 @@ const getMyRequests = async (userId: string, query: unknown) => {
     createdBy: userId,
   };
 
-  if (typedQuery.status) where.status = typedQuery.status;
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
   if (typedQuery.category) where.category = typedQuery.category;
-  if (typedQuery.urgency) where.urgency = typedQuery.urgency;
+  if (typedQuery.urgency) {
+    const urgencies = Array.isArray(typedQuery.urgency) ? typedQuery.urgency : [typedQuery.urgency];
+    where.urgency = { in: urgencies };
+  }
   if (typedQuery.helpType) where.helpType = typedQuery.helpType;
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        title: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        description: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
 
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
