@@ -75,7 +75,7 @@ export default function MyRequestResponseCard({
           }
         >
           <MessageConversation
-            currentUserId={request.createdBy}
+            currentUserId={request.creator.id}
             participantId={user.id}
             requestId={response.requestId}
           />

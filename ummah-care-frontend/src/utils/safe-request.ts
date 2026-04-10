@@ -1,9 +1,18 @@
+import { IApiErrorResponse } from "@/types";
 import { getErrorMessage } from "./error-util";
 
-export async function safeRequest<T>(fn: () => Promise<T>): Promise<T> {
+type SafeResponse<T> = T | IApiErrorResponse;
+
+export async function safeRequest<T>(
+  fn: () => Promise<T>,
+): Promise<SafeResponse<T>> {
   try {
     return await fn();
   } catch (error) {
-    throw new Error(getErrorMessage(error));
+    return {
+      success: false,
+      message: getErrorMessage(error),
+      data: null,
+    };
   }
 }

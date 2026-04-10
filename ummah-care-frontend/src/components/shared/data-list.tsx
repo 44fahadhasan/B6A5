@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { IApiResponse } from "@/types";
+import { IApiErrorResponse, IApiResponse } from "@/types";
 import { ReactNode } from "react";
 import { RequestsPagination } from "../modules/requests/requests-pagination";
 import { ErrorMessage } from "./error-message";
 
 type DataListProps<T> = {
-  data?: IApiResponse<T[]>;
+  data?: IApiResponse<T[]> | IApiErrorResponse;
   isLoading: boolean;
   isError: boolean;
   error?: Error | null;
@@ -47,7 +47,9 @@ export function DataList<T>({
       >
         {items.map(renderItem)}
       </div>
-      {data?.meta && <RequestsPagination meta={data.meta} />}
+      {data?.success && "meta" in data && data.meta && (
+        <RequestsPagination meta={data.meta} />
+      )}
     </div>
   ) : (
     emptyState

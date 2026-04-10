@@ -70,7 +70,7 @@ export default function DonateForm({ requestId, campaignId }: DonateFormProps) {
             cancelUrl: PAYMENT_CALLBACK_URL.CANCEL,
           });
 
-          if (!paymentRes.success) {
+          if (!paymentRes.success || !paymentRes.data) {
             setPaymentError(paymentRes.message);
             return;
           }
