@@ -49,6 +49,20 @@ const getMyRequests = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getAllRequests = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await requestServices.getAllRequests(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "All requests fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 const getRequestById = asyncHandler(async (req: Request, res: Response) => {
   const requestId = req.params.id;
 
@@ -107,6 +121,7 @@ export const requestController = {
   createRequest,
   getRequests,
   getMyRequests,
+  getAllRequests,
   getRequestById,
   updateRequest,
   deleteRequest,

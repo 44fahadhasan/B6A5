@@ -74,6 +74,98 @@ const getRequests = async (query: unknown) => {
   };
 };
 
+const getAllRequests = async (query: unknown) => {
+  const typedQuery = parseSchema(requestListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: RequestWhereInput = {};
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.category) where.category = typedQuery.category;
+  if (typedQuery.urgency) {
+    const urgencies = Array.isArray(typedQuery.urgency) ? typedQuery.urgency : [typedQuery.urgency];
+    where.urgency = { in: urgencies };
+  }
+  if (typedQuery.helpType) where.helpType = typedQuery.helpType;
+  if (typedQuery.createdBy) where.createdBy = typedQuery.createdBy;
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        title: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        creator: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        creator: {
+          email: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        creator: {
+          phone: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(
+    typedQuery.sortBy,
+    typedQuery.sortOrder,
+    requestConsts.allowedSortByFields,
+  );
+
+  const [total, requests] = await Promise.all([
+    requestRepository.count(where),
+    requestRepository.findMany(where, skip, take, orderBy, {
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            avatarUrl: true,
+          },
+        },
+        _count: {
+          select: {
+            responses: true,
+            donations: true,
+            assignments: true,
+            messages: true,
+            reviews: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: requests,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
 const getMyRequests = async (userId: string, query: unknown) => {
   const typedQuery = parseSchema(requestListQuerySchema, query);
   const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
@@ -228,6 +320,7 @@ export const requestServices = {
   createRequest,
   getRequests,
   getMyRequests,
+  getAllRequests,
   getRequestById,
   updateRequest,
   deleteRequest,
