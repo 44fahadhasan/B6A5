@@ -6,7 +6,7 @@ export const QUERY_KEY = {
     MY_REQUEST: "my-requests",
   },
   RESPONSE: {
-    RESPONSE: "response",
+    ALL_RESPONSE: "all_response",
     MY_RESPONSES: "my-responses",
     MY_RESPONSES_DETAILS: "my-responses-details",
     MY_REQUEST_RESPONSES: "my-request-response",

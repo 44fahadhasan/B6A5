@@ -51,7 +51,7 @@ export const adminNavItems: INavSection[] = [
       },
       {
         title: "All Responses",
-        href: "/admin/responses",
+        href: "/admin/dashboard/all-responses",
         icon: "MessageCircle",
       },
     ],

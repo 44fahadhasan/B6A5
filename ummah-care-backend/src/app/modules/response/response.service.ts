@@ -74,21 +74,28 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
   }
 
   where.request = {
-    ...(typedQuery.status && { status: typedQuery.status }),
-    ...(typedQuery.category && { category: typedQuery.category }),
-    ...(typedQuery.urgency && { urgency: typedQuery.urgency }),
-    ...(typedQuery.helpType && { helpType: typedQuery.helpType }),
+    is: {
+      ...(typedQuery.status && {
+        status: Array.isArray(typedQuery.status) ? { in: typedQuery.status } : typedQuery.status,
+      }),
+      ...(typedQuery.category && { category: typedQuery.category }),
+      ...(typedQuery.urgency && {
+        urgency: Array.isArray(typedQuery.urgency)
+          ? { in: typedQuery.urgency }
+          : typedQuery.urgency,
+      }),
+      ...(typedQuery.helpType && { helpType: typedQuery.helpType }),
+    },
   };
 
   if (typedQuery.responseType) where.responseType = typedQuery.responseType;
   if (typedQuery.createdBy) where.userId = typedQuery.createdBy;
 
-  if (isAdmin && typedQuery.search?.trim()) {
+  if (typedQuery.search?.trim()) {
     const search = typedQuery.search.trim();
 
     where.OR = [
       { request: { title: { contains: search, mode: "insensitive" } } },
-      { request: { description: { contains: search, mode: "insensitive" } } },
       { request: { creator: { name: { contains: search, mode: "insensitive" } } } },
       { request: { creator: { email: { contains: search, mode: "insensitive" } } } },
       { request: { creator: { phone: { contains: search, mode: "insensitive" } } } },
@@ -105,15 +112,6 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
   );
 
   const include: ResponseInclude = {
-    request: {
-      select: {
-        creator: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    },
     user: {
       select: {
         id: true,
@@ -124,29 +122,27 @@ const getResponses = async (user: TokenPayload, query: unknown) => {
         role: true,
       },
     },
-    ...(isAdmin && {
-      request: {
-        select: {
-          id: true,
-          title: true,
-          status: true,
-          category: true,
-          urgency: true,
-          helpType: true,
-          expiresAt: true,
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              phone: true,
-              avatarUrl: true,
-              role: true,
-            },
+    request: {
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        category: true,
+        urgency: true,
+        helpType: true,
+        expiresAt: true,
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            avatarUrl: true,
+            role: true,
           },
         },
       },
-    }),
+    },
   };
 
   const [total, responses] = await Promise.all([
@@ -167,10 +163,18 @@ const getMyResponses = async (userId: string, query: unknown) => {
   const where: ResponseWhereInput = { userId };
 
   where.request = {
-    ...(typedQuery.status ? { status: typedQuery.status } : {}),
-    ...(typedQuery.category ? { category: typedQuery.category } : {}),
-    ...(typedQuery.urgency ? { urgency: typedQuery.urgency } : {}),
-    ...(typedQuery.helpType ? { helpType: typedQuery.helpType } : {}),
+    is: {
+      ...(typedQuery.status && {
+        status: Array.isArray(typedQuery.status) ? { in: typedQuery.status } : typedQuery.status,
+      }),
+      ...(typedQuery.category && { category: typedQuery.category }),
+      ...(typedQuery.urgency && {
+        urgency: Array.isArray(typedQuery.urgency)
+          ? { in: typedQuery.urgency }
+          : typedQuery.urgency,
+      }),
+      ...(typedQuery.helpType && { helpType: typedQuery.helpType }),
+    },
   };
 
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
