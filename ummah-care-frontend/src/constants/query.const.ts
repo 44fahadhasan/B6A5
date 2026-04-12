@@ -1,6 +1,7 @@
 export const QUERY_KEY = {
   SESSION: "session",
   REQUEST: {
+    REQUEST: "requests",
     ALL_REQUEST: "all_requests",
     REQUEST_DETAILS: "request-details",
     MY_REQUEST: "my-requests",
@@ -18,5 +19,8 @@ export const QUERY_KEY = {
     DONATIONS: "donations",
     MY_DONATIONS: "my-donations",
     RECEIVED_DONATIONS: "received-donations",
+  },
+  USER: {
+    ALL_USERS: "all_users",
   },
 } as const;

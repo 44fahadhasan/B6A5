@@ -54,6 +54,21 @@ const onboarding = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await userServices.getAllUsers(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "All users fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 export const userController = {
   onboarding,
+  getAllUsers,
 };

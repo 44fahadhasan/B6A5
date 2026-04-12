@@ -19,7 +19,7 @@ export const adminNavItems: INavSection[] = [
     items: [
       {
         title: "All Users",
-        href: "/admin/users",
+        href: "/admin/dashboard/all-users",
         icon: "Users",
       },
       {

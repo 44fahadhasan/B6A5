@@ -1,11 +1,15 @@
 import { prisma } from "@/app/lib/prisma";
 import type { TokenPayload } from "@/app/types";
 import AppError from "@/app/utils/app-error.util";
+import { paginationUtils } from "@/app/utils/pagination.util";
 import { tokenUtils } from "@/app/utils/token.util";
+import { parseSchema } from "@/app/utils/zod-error.util";
 import type { Organization } from "@/generated/prisma/client";
 import { UserStatus, UserType, UserTypeStatus } from "@/generated/prisma/enums";
+import type { UserWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
 import type { OnboardingPayload } from "./user.validation";
+import { userListQuerySchema } from "./user.validation";
 
 const onboarding = async (userId: string, payload: OnboardingPayload) => {
   if (!payload.types || payload.types.length === 0) {
@@ -74,6 +78,91 @@ const onboarding = async (userId: string, payload: OnboardingPayload) => {
     : { accessToken, refreshToken, userTypeEntries };
 };
 
+const getAllUsers = async (query: unknown) => {
+  const typedQuery = parseSchema(userListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: UserWhereInput = {};
+
+  if (typedQuery.role) {
+    const roles = Array.isArray(typedQuery.role) ? typedQuery.role : [typedQuery.role];
+    where.role = { in: roles };
+  }
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        name: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        email: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        phone: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(typedQuery.sortBy, typedQuery.sortOrder, [
+    "name",
+    "email",
+    "createdAt",
+    "updatedAt",
+  ]);
+
+  const [total, users] = await Promise.all([
+    prisma.user.count({ where }),
+    prisma.user.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+      include: {
+        userTypes: {
+          select: {
+            type: true,
+            status: true,
+          },
+        },
+        organization: {
+          select: {
+            orgName: true,
+            description: true,
+            contactEmail: true,
+            contactPhone: true,
+          },
+        },
+        _count: {
+          select: {
+            createdRequests: true,
+            donations: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: users,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
 export const userServices = {
   onboarding,
+  getAllUsers,
 };

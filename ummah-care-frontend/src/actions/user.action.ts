@@ -3,7 +3,7 @@
 import { onboardingSchema } from "@/components/modules/onboarding/onboard-form.schema";
 import { USER_TYPE } from "@/constants/user.const";
 import { httpClient } from "@/lib/http-client";
-import { IOnboardingResponse } from "@/types";
+import { IAllUsersResponse, IOnboardingResponse } from "@/types";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
 
@@ -31,5 +31,15 @@ export const completeOnboarding = async (payload: Record<string, unknown>) =>
       "/users/me/onboarding",
       result.data,
     );
+    return response;
+  });
+
+export const getAllUsers = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/users/all-users?${queryString}`
+      : "/users/all-users";
+
+    const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
     return response;
   });

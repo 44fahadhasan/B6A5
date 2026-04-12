@@ -60,6 +60,15 @@ export interface IOrganization {
   updatedAt: string;
 }
 
+export interface IAllUsersResponse extends IUser {
+  userTypes: IUserType[];
+  organization?: IOrganization;
+  _count: {
+    createdRequests: number;
+    donations: number;
+  };
+}
+
 export interface IOnboardWithNoOrg
   extends ITokenRefreshResponse, IUserTypeEntries {
   organization?: never;
