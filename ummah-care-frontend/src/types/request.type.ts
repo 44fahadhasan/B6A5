@@ -43,3 +43,14 @@ export interface IRequestDetailsResponse extends IRequestResponse {
   creator: ICreator;
   createdBy: string;
 }
+
+export interface IAllRequestResponse extends IRequestResponse {
+  creator: ICreator;
+  _count: {
+    responses: number;
+    donations: number;
+    assignments: number;
+    messages: number;
+    reviews: number;
+  };
+}

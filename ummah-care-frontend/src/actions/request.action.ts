@@ -6,7 +6,11 @@ import {
   requestStatusUpdateSchema,
 } from "@/components/modules/my-requests/my-requests.schema";
 import { httpClient } from "@/lib/http-client";
-import { IRequestDetailsResponse, IRequestResponse } from "@/types";
+import {
+  IAllRequestResponse,
+  IRequestDetailsResponse,
+  IRequestResponse,
+} from "@/types";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
 
@@ -39,6 +43,16 @@ export const getMyRequests = async (queryString?: string) =>
       : "/requests/me";
 
     const response = await httpClient.get<IRequestResponse[]>(endpoint);
+    return response;
+  });
+
+export const getAllRequests = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/requests/all-requests?${queryString}`
+      : "/requests/all-requests";
+
+    const response = await httpClient.get<IAllRequestResponse[]>(endpoint);
     return response;
   });
 

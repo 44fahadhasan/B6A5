@@ -46,7 +46,7 @@ export const adminNavItems: INavSection[] = [
     items: [
       {
         title: "All Requests",
-        href: "/admin/requests",
+        href: "/admin/dashboard/all-requests",
         icon: "ClipboardList",
       },
       {

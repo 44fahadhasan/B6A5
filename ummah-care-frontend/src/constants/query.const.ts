@@ -1,7 +1,7 @@
 export const QUERY_KEY = {
   SESSION: "session",
   REQUEST: {
-    REQUEST: "requests",
+    ALL_REQUEST: "all_requests",
     REQUEST_DETAILS: "request-details",
     MY_REQUEST: "my-requests",
   },
