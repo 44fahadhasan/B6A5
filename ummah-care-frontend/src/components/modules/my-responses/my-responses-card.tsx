@@ -17,6 +17,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { QUERY_KEY } from "@/constants/query.const";
+import { HELP_TYPE } from "@/constants/request.const";
+import { RESPONSE_TYPE } from "@/constants/response.const";
 import { getInitials } from "@/lib/utils";
 import { IMyResponse } from "@/types";
 import { formatExpiryDate } from "@/utils/date-utils";
@@ -108,18 +110,25 @@ export default function MyResponseCard({ response }: MyResponseCardProps) {
             className="sm:max-w-sm"
             triggerText="Edit"
           >
-            <ResponseForm requestId={response.id} data={response} />
+            <ResponseForm
+              requestId={response.id}
+              data={response}
+              helpType={response.request.helpType}
+            />
           </AppModal>
         </div>
         <div className="flex gap-3">
-          <AppModal
-            className="sm:max-w-sm"
-            triggerText="Make a Donation"
-            title="Make a Donation"
-            description="Support this request by making a generous donation to help those in need."
-          >
-            <DonateForm requestId={response.requestId} />
-          </AppModal>
+          {request.helpType !== HELP_TYPE.PHYSICAL &&
+            responseType === RESPONSE_TYPE.DONATE && (
+              <AppModal
+                className="sm:max-w-sm"
+                triggerText="Support with Donation"
+                title="Make a Donation"
+                description="Your contribution can bring relief and make a meaningful difference within the Ummah."
+              >
+                <DonateForm requestId={response.requestId} />
+              </AppModal>
+            )}
           <AppModal
             className="sm:max-w-sm"
             triggerText="Update Status"

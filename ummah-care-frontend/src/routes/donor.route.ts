@@ -5,19 +5,24 @@ export const donorNavItems: INavSection[] = [
     title: "Dashboard",
     items: [
       {
-        title: "Overview",
+        title: "Donor Dashboard",
         href: "/donor/dashboard",
         icon: "LayoutDashboard",
       },
     ],
   },
   {
-    title: "Activities",
+    title: "Donor Activities",
     items: [
       {
+        title: "Donation Responses",
+        href: "/donor/dashboard/my-responses",
+        icon: "Wallet",
+      },
+      {
         title: "My Donations",
-        href: "/donor/donations",
-        icon: "DollarSign",
+        href: "/donor/dashboard/my-donations",
+        icon: "HandHeart",
       },
     ],
   },

@@ -12,18 +12,18 @@ export const volunteerNavItems: INavSection[] = [
     ],
   },
   {
-    title: "Activity",
+    title: "Volunteer Activities",
     items: [
       {
-        title: "My Tasks",
-        href: "/volunteer/dashboard/my-tasks",
-        icon: "CheckCircle",
-      },
-      {
-        title: "My Responses",
+        title: "Help Responses",
         href: "/volunteer/dashboard/my-responses",
-        icon: "MessageCircle",
+        icon: "HelpingHand",
       },
+      // {
+      //   title: "Assigned Tasks",
+      //   href: "/volunteer/dashboard/tasks",
+      //   icon: "CheckCircle",
+      // },
     ],
   },
 ];

@@ -1,53 +1,9 @@
 import { INavSection } from "@/types";
 
 export const adminNavItems: INavSection[] = [
+  // PLATFORM OVERVIEW
   {
-    title: "Overview",
-    items: [
-      {
-        title: "Root Dashboard",
-        href: "/dashboard",
-        icon: "LayoutDashboard",
-      },
-    ],
-  },
-  {
-    title: "Activity",
-    items: [
-      {
-        title: "My Requests",
-        href: "/dashboard/my-requests",
-        icon: "ClipboardList",
-      },
-    ],
-  },
-  {
-    title: "Overview",
-    items: [
-      {
-        title: "Volunteer Dashboard",
-        href: "/volunteer/dashboard",
-        icon: "LayoutDashboard",
-      },
-    ],
-  },
-  {
-    title: "Activity",
-    items: [
-      {
-        title: "My Tasks",
-        href: "/volunteer/dashboard/my-tasks",
-        icon: "CheckCircle",
-      },
-      {
-        title: "My Responses",
-        href: "/volunteer/dashboard/my-responses",
-        icon: "MessageCircle",
-      },
-    ],
-  },
-  {
-    title: "Overview",
+    title: "Platform Overview",
     items: [
       {
         title: "Admin Dashboard",
@@ -56,6 +12,8 @@ export const adminNavItems: INavSection[] = [
       },
     ],
   },
+
+  // USER MANAGEMENT
   {
     title: "User Management",
     items: [
@@ -64,46 +22,147 @@ export const adminNavItems: INavSection[] = [
         href: "/admin/users",
         icon: "Users",
       },
-    ],
-  },
-  {
-    title: "Operations",
-    items: [
+      {
+        title: "Volunteers",
+        href: "/admin/volunteers",
+        icon: "HeartHandshake",
+      },
       {
         title: "Organizations",
         href: "/admin/organizations",
         icon: "Building2",
       },
       {
-        title: "Volunteers",
-        href: "/admin/volunteers",
-        icon: "HeartHandshake",
+        title: "Donors",
+        href: "/admin/donors",
+        icon: "HandHeart",
       },
     ],
   },
+
+  // HELP REQUEST OPERATIONS
   {
-    title: "Reports & Logs",
+    title: "Help Requests",
     items: [
       {
-        title: "Reports",
-        href: "/admin/reports",
-        icon: "BarChart3",
+        title: "All Requests",
+        href: "/admin/requests",
+        icon: "ClipboardList",
       },
       {
-        title: "System Logs",
-        href: "/admin/logs",
-        icon: "FileText",
+        title: "All Responses",
+        href: "/admin/responses",
+        icon: "MessageCircle",
       },
     ],
   },
+
+  // DONATION MANAGEMENT
   {
-    title: "Settings",
+    title: "Donation Management",
     items: [
       {
-        title: "Platform Settings",
-        href: "/admin/settings",
-        icon: "Settings",
+        title: "All Donations",
+        href: "/admin/donations",
+        icon: "Heart",
       },
     ],
   },
+
+  // REPORTING
+  // {
+  //   title: "Reports & Monitoring",
+  //   items: [
+  //     {
+  //       title: "Reports",
+  //       href: "/admin/reports",
+  //       icon: "BarChart3",
+  //     },
+  //     {
+  //       title: "Activity Logs",
+  //       href: "/admin/logs",
+  //       icon: "FileText",
+  //     },
+  //   ],
+  // },
+
+  // SYSTEM SETTINGS
+  // {
+  //   title: "System Settings",
+  //   items: [
+  //     {
+  //       title: "Platform Settings",
+  //       href: "/admin/settings",
+  //       icon: "Settings",
+  //     },
+  //   ],
+  // },
+
+  // USER ROLE AREA
+  {
+    title: "User Area",
+    items: [
+      {
+        title: "User Dashboard",
+        href: "/dashboard",
+        icon: "LayoutDashboard",
+      },
+      {
+        title: "My Requests",
+        href: "/dashboard/my-requests",
+        icon: "ClipboardList",
+      },
+    ],
+  },
+
+  // VOLUNTEER ROLE AREA
+  {
+    title: "Volunteer Area",
+    items: [
+      {
+        title: "Volunteer Dashboard",
+        href: "/volunteer/dashboard",
+        icon: "LayoutDashboard",
+      },
+      {
+        title: "My Responses",
+        href: "/volunteer/dashboard/my-responses",
+        icon: "MessageCircle",
+      },
+    ],
+  },
+
+  // DONOR ROLE AREA
+  {
+    title: "Donor Area",
+    items: [
+      {
+        title: "Donor Dashboard",
+        href: "/donor/dashboard",
+        icon: "LayoutDashboard",
+      },
+      {
+        title: "My Donations",
+        href: "/donor/dashboard/my-donations",
+        icon: "HandHeart",
+      },
+    ],
+  },
+
+  // ORGANIZATION ROLE AREA
+  // {
+  //   title: "Organization Area",
+  //   items: [
+  //     {
+  //       title: "Organization Dashboard",
+  //       href: "/organization/dashboard",
+  //       icon: "LayoutDashboard",
+  //     },
+  //     {
+  //       title: "Organization Requests",
+  //       href: "/organization/dashboard/requests",
+  //       icon: "ClipboardList",
+  //     },
+  //   ],
+  // },
 ];

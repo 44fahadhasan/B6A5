@@ -73,7 +73,11 @@ export default function RequestDetailsContent({
           </div>
         </div>
         <div className="flex gap-2 mt-4">
-          <ResponseButton isUrgent={isUrgent} requestId={request.id} />
+          <ResponseButton
+            helpType={request.helpType}
+            isUrgent={isUrgent}
+            requestId={request.id}
+          />
         </div>
       </CardContent>
     </Card>

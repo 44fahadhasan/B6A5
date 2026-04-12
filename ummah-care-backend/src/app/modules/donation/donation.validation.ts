@@ -1,3 +1,5 @@
+import { paginationUtils } from "@/app/utils/pagination.util";
+import { DonationStatus } from "@/generated/prisma/enums";
 import z from "zod";
 
 export const createDonationSchema = z.object({
@@ -17,4 +19,9 @@ export const createDonationSchema = z.object({
 export const initiateDonationPaymentSchema = z.object({
   successUrl: z.url("Invalid success URL"),
   cancelUrl: z.url("Invalid cancel URL"),
+});
+
+export const donationListQuerySchema = paginationUtils.paginationQuerySchema.extend({
+  status: z.union([z.enum(DonationStatus), z.array(z.enum(DonationStatus))]).optional(),
+  search: z.string().optional(),
 });

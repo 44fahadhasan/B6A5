@@ -5,7 +5,7 @@ export const userNavItems: INavSection[] = [
     title: "Overview",
     items: [
       {
-        title: "Root Dashboard",
+        title: "Dashboard",
         href: "/dashboard",
         icon: "LayoutDashboard",
       },
@@ -18,6 +18,11 @@ export const userNavItems: INavSection[] = [
         title: "My Requests",
         href: "/dashboard/my-requests",
         icon: "ClipboardList",
+      },
+      {
+        title: "Received Donations",
+        href: "/dashboard/received-donations",
+        icon: "HandHeart",
       },
     ],
   },

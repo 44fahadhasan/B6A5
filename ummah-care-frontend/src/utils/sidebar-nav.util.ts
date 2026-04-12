@@ -1,6 +1,7 @@
 import { USER_ROLE, USER_TYPE } from "@/constants/user.const";
 import { adminNavItems } from "@/routes/admin.route";
 import { commonNavItems } from "@/routes/common.route";
+import { donorNavItems } from "@/routes/donor.route";
 import { organizationNavItems } from "@/routes/organization.route";
 import { userNavItems } from "@/routes/user-route";
 import { volunteerNavItems } from "@/routes/volunteer.route";
@@ -9,7 +10,6 @@ import { routeRulesUtil } from "./route-rules-util";
 
 const {
   canAccessProtectedRoute,
-  getDefaultDashboardRoute,
   hasActiveUserType,
   isActiveUser,
   normalizeRole,
@@ -39,9 +39,7 @@ const filterNavItems = (
 /**
  *  Dashboard (default route)
  */
-const getDashboardNavSections = (user: TokenPayload): INavSection[] => {
-  const defaultDashboardRoute = getDefaultDashboardRoute(user);
-
+const getDashboardNavSections = (): INavSection[] => {
   return [
     {
       items: [
@@ -49,11 +47,6 @@ const getDashboardNavSections = (user: TokenPayload): INavSection[] => {
           title: "Home",
           href: "/",
           icon: "Home",
-        },
-        {
-          title: "Default Dashboard",
-          href: defaultDashboardRoute,
-          icon: "LayoutDashboard",
         },
       ],
     },
@@ -66,12 +59,16 @@ const getDashboardNavSections = (user: TokenPayload): INavSection[] => {
 const getUserTypeSections = (user: TokenPayload): INavSection[] => {
   const sections: INavSection[] = [];
 
-  if (hasActiveUserType(user, USER_TYPE.ORGANIZATION)) {
-    sections.push(...organizationNavItems);
-  }
-
   if (hasActiveUserType(user, USER_TYPE.VOLUNTEER)) {
     sections.push(...volunteerNavItems);
+  }
+
+  if (hasActiveUserType(user, USER_TYPE.DONOR)) {
+    sections.push(...donorNavItems);
+  }
+
+  if (hasActiveUserType(user, USER_TYPE.ORGANIZATION)) {
+    sections.push(...organizationNavItems);
   }
 
   return sections;
@@ -81,7 +78,7 @@ export const getNavSectionsByRole = (user: TokenPayload): INavSection[] => {
   const sections: INavSection[] = [];
 
   // 1. Dashboard (always visible)
-  sections.push(...getDashboardNavSections(user));
+  sections.push(...getDashboardNavSections());
 
   // 2. If user is NOT active → stop early (minimal UI)
   if (!isActiveUser(user)) {
@@ -107,7 +104,7 @@ export const getNavSectionsByRole = (user: TokenPayload): INavSection[] => {
     sections.push(...userNavItems);
   }
 
-  // 6. USER TYPES (VOLUNTEER / ORGANIZATION)
+  // 6. USER TYPES (VOLUNTEER, DONOR, ORGANIZATION)
   sections.push(...getUserTypeSections(user));
 
   // 7. COMMON (always last)

@@ -13,6 +13,7 @@ import {
   ICreateMyResponse,
   IResponse,
   IUpdateMyResponse,
+  THelpType,
   TResponsePayload,
   TResponseType,
 } from "@/types";
@@ -23,18 +24,25 @@ import { getResponseTypeOptions } from "./response.utils";
 type ResponseFormProps = {
   data?: IResponse;
   requestId: string;
+  helpType: THelpType;
 };
 
-export default function ResponseForm({ data, requestId }: ResponseFormProps) {
+export default function ResponseForm({
+  data,
+  requestId,
+  helpType,
+}: ResponseFormProps) {
   const isUpdate = Boolean(data);
 
   const { refresh } = useRefreshQuery([QUERY_KEY.RESPONSE.MY_RESPONSES]);
 
   const session = useSession();
-
   if (!session || session.user.status !== USER_STATUS.ACTIVE) return null;
 
-  const responseTypeOptions = getResponseTypeOptions(session.user.userTypes);
+  const responseTypeOptions = getResponseTypeOptions(
+    session.user.userTypes,
+    helpType,
+  );
 
   if (responseTypeOptions.length === 0) {
     return <InactiveAccountCard />;

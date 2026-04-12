@@ -1,9 +1,4 @@
-import {
-  CATEGORY,
-  HELP_TYPE,
-  REQUEST_STATUS,
-  URGENCY,
-} from "@/constants/request.const";
+import { CATEGORY, REQUEST_STATUS, URGENCY } from "@/constants/request.const";
 
 export type FilterParam = "status" | "category" | "urgency" | "helpType";
 
@@ -28,10 +23,5 @@ export const FILTER_CONFIG: FilterConfig[] = [
     paramName: "urgency",
     placeholder: "Urgency",
     source: URGENCY,
-  },
-  {
-    paramName: "helpType",
-    placeholder: "Help Type",
-    source: HELP_TYPE,
   },
 ] as const;

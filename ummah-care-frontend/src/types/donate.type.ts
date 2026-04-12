@@ -10,6 +10,17 @@ export type TDonationStatus =
 export type TPaymentMethod =
   (typeof PAYMENT_METHOD)[keyof typeof PAYMENT_METHOD];
 
+export interface IRequestSummaryForDonate {
+  id: string;
+  title: string;
+  createdBy: string;
+}
+
+export interface ICampaignSummary {
+  id: string;
+  title: string;
+}
+
 export interface IDonationResponse extends TDonationPayload {
   id: string;
   donorId: string;
@@ -22,4 +33,8 @@ export interface IDonationResponse extends TDonationPayload {
   transactionId: string | null;
   createdAt: string;
   updatedAt: string;
+  request: IRequestSummaryForDonate;
+  campaign?: ICampaignSummary;
 }
+
+export type IDonationListResponse = IDonationResponse[];

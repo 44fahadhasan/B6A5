@@ -1,11 +1,15 @@
 import { stripe } from "@/app/config/stripe";
 import { prisma } from "@/app/lib/prisma";
 import AppError from "@/app/utils/app-error.util";
+import { paginationUtils } from "@/app/utils/pagination.util";
+import { parseSchema } from "@/app/utils/zod-error.util";
 import type { Donation } from "@/generated/prisma/client";
 import { DonationStatus, PaymentMethod } from "@/generated/prisma/enums";
+import type { DonationWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
 import Stripe from "stripe";
 import type { CreateDonationPayload, InitiateDonationPaymentPayload } from "./donation.type";
+import { donationListQuerySchema } from "./donation.validation";
 
 /**
  * Create a donation record and return it
@@ -238,8 +242,220 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
   };
 };
 
+/**
+ * Get all donations (admin only)
+ */
+const getAllDonations = async (query: unknown) => {
+  const typedQuery = parseSchema(donationListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: DonationWhereInput = {};
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        notes: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        request: {
+          title: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        donor: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(typedQuery.sortBy, typedQuery.sortOrder, [
+    "createdAt",
+    "amount",
+    "status",
+  ]);
+
+  const [total, donations] = await Promise.all([
+    prisma.donation.count({ where }),
+    prisma.donation.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+      include: {
+        donor: {
+          select: { id: true, name: true, email: true },
+        },
+        request: {
+          select: { id: true, title: true, createdBy: true },
+        },
+        campaign: {
+          select: { id: true, title: true },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: donations,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
+/**
+ * Get donations made by the user
+ */
+const getMyDonations = async (userId: string, query: unknown) => {
+  const typedQuery = parseSchema(donationListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: DonationWhereInput = {
+    donorId: userId,
+  };
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        notes: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        request: {
+          title: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(typedQuery.sortBy, typedQuery.sortOrder, [
+    "createdAt",
+    "amount",
+    "status",
+  ]);
+
+  const [total, donations] = await Promise.all([
+    prisma.donation.count({ where }),
+    prisma.donation.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+      include: {
+        request: {
+          select: { id: true, title: true, createdBy: true },
+        },
+        campaign: {
+          select: { id: true, title: true },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: donations,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
+/**
+ * Get donations received for user's requests
+ */
+const getReceivedDonations = async (userId: string, query: unknown) => {
+  const typedQuery = parseSchema(donationListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: DonationWhereInput = {
+    request: {
+      createdBy: userId,
+    },
+  };
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        notes: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        donor: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(typedQuery.sortBy, typedQuery.sortOrder, [
+    "createdAt",
+    "amount",
+    "status",
+  ]);
+
+  const [total, donations] = await Promise.all([
+    prisma.donation.count({ where }),
+    prisma.donation.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+      include: {
+        donor: {
+          select: { id: true, name: true, email: true },
+        },
+        request: {
+          select: { id: true, title: true },
+        },
+        campaign: {
+          select: { id: true, title: true },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: donations,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
 export const donationService = {
   createDonation,
   initiateDonationPayment,
   handleStripeWebhookEvent,
+  getAllDonations,
+  getMyDonations,
+  getReceivedDonations,
 };

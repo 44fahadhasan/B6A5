@@ -3,17 +3,20 @@
 import { AppModal } from "@/components/shared/app-modal";
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/hooks/use-session";
+import { THelpType } from "@/types";
 import { toast } from "sonner";
 import ResponseForm from "./response-form";
 
 type ResponseButtonProps = {
   isUrgent: boolean;
   requestId: string;
+  helpType: THelpType;
 };
 
 export default function ResponseButton({
   isUrgent,
   requestId,
+  helpType,
 }: ResponseButtonProps) {
   const session = useSession();
 
@@ -29,7 +32,7 @@ export default function ResponseButton({
           variant={buttonVariant}
           triggerText={buttonText}
         >
-          <ResponseForm requestId={requestId} />
+          <ResponseForm helpType={helpType} requestId={requestId} />
         </AppModal>
       ) : (
         <Button

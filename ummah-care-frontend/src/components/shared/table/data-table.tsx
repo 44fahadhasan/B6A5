@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { IApiErrorResponse, IApiResponse } from "@/types";
 import {
   flexRender,
   type ColumnDef,
@@ -18,9 +19,11 @@ import { DataTablePagination } from "./data-table-pagination";
 interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>;
   columns: ColumnDef<TData, TValue>[];
+  data: IApiResponse<TData[]> | IApiErrorResponse;
 }
 
 export function DataTable<TData, TValue>({
+  data,
   table,
   columns,
 }: DataTableProps<TData, TValue>) {
@@ -76,7 +79,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      {"meta" in data && data.meta && <DataTablePagination meta={data.meta} />}
     </div>
   );
 }

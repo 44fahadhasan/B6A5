@@ -67,7 +67,11 @@ export function RequestCard({ request }: { request: IRequestResponse }) {
       </div>
 
       <div className="flex gap-2 mt-auto">
-        <ResponseButton isUrgent={isUrgent} requestId={request.id} />
+        <ResponseButton
+          isUrgent={isUrgent}
+          requestId={request.id}
+          helpType={request.helpType}
+        />
 
         <Button variant="outline" size="sm" asChild>
           <Link href={`/requests/${request.id}`}>View</Link>

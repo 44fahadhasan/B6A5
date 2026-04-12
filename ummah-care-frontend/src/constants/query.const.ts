@@ -14,4 +14,9 @@ export const QUERY_KEY = {
   MESSAGE: {
     MY_CONVERSATION: "my-conversation",
   },
+  DONATION: {
+    DONATIONS: "donations",
+    MY_DONATIONS: "my-donations",
+    RECEIVED_DONATIONS: "received-donations",
+  },
 } as const;

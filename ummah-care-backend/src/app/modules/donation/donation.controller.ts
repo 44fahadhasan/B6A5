@@ -46,7 +46,66 @@ const initiateDonationPayment = asyncHandler(async (req: Request, res: Response)
   });
 });
 
+/**
+ * Get all donations (admin only)
+ * @route GET /api/v1/donations
+ */
+const getAllDonations = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await donationService.getAllDonations(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Donations fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+/**
+ * Get my donations
+ * @route GET /api/v1/donations/me
+ */
+const getMyDonations = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const query = req.query;
+
+  const result = await donationService.getMyDonations(userId, query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "My donations fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+/**
+ * Get donations received for my requests
+ * @route GET /api/v1/donations/received
+ */
+const getReceivedDonations = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const query = req.query;
+
+  const result = await donationService.getReceivedDonations(userId, query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Received donations fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 export const donationController = {
   createDonation,
   initiateDonationPayment,
+  getAllDonations,
+  getMyDonations,
+  getReceivedDonations,
 };

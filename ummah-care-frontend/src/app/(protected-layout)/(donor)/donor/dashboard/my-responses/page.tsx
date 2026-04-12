@@ -14,7 +14,7 @@ export default async function MyResponsesPage({
 
   const queryString = buildQueryString({
     ...queryParamsObjects,
-    responseType: RESPONSE_TYPE.VOLUNTEER,
+    responseType: RESPONSE_TYPE.DONATE,
   });
 
   return <MyResponses queryString={queryString} />;
