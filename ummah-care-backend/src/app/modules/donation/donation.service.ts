@@ -273,8 +273,54 @@ const getAllDonations = async (query: unknown) => {
         },
       },
       {
+        request: {
+          creator: {
+            name: {
+              contains: typedQuery.search,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+      {
+        request: {
+          creator: {
+            email: {
+              contains: typedQuery.search,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+      {
+        request: {
+          creator: {
+            phone: {
+              contains: typedQuery.search,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+      {
         donor: {
           name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        donor: {
+          email: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        donor: {
+          phone: {
             contains: typedQuery.search,
             mode: "insensitive",
           },
@@ -301,7 +347,18 @@ const getAllDonations = async (query: unknown) => {
           select: { id: true, name: true, email: true },
         },
         request: {
-          select: { id: true, title: true, createdBy: true },
+          select: {
+            id: true,
+            title: true,
+            createdBy: true,
+            creator: {
+              select: {
+                name: true,
+                email: true,
+                phone: true,
+              },
+            },
+          },
         },
         campaign: {
           select: { id: true, title: true },

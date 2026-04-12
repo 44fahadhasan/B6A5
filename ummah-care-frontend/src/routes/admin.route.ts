@@ -63,7 +63,7 @@ export const adminNavItems: INavSection[] = [
     items: [
       {
         title: "All Donations",
-        href: "/admin/donations",
+        href: "/admin/dashboard/all-donations",
         icon: "Heart",
       },
     ],
