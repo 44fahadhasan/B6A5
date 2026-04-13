@@ -43,3 +43,33 @@ export const getAllUsers = async (queryString?: string) =>
     const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
     return response;
   });
+
+export const getAllVolunteers = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/users/all-volunteers?${queryString}`
+      : "/users/all-volunteers";
+
+    const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
+    return response;
+  });
+
+export const getAllDonors = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/users/all-donors?${queryString}`
+      : "/users/all-donors";
+
+    const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
+    return response;
+  });
+
+export const getAllOrganizations = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/users/all-organizations?${queryString}`
+      : "/users/all-organizations";
+
+    const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
+    return response;
+  });

@@ -11,4 +11,18 @@ router.post("/me/onboarding", auth(), validateRequest(onboardingSchema), userCon
 
 router.get("/all-users", auth([Role.ADMIN, Role.SUPER_ADMIN]), userController.getAllUsers);
 
+router.get(
+  "/all-volunteers",
+  auth([Role.ADMIN, Role.SUPER_ADMIN]),
+  userController.getAllVolunteers,
+);
+
+router.get("/all-donors", auth([Role.ADMIN, Role.SUPER_ADMIN]), userController.getAllDonors);
+
+router.get(
+  "/all-organizations",
+  auth([Role.ADMIN, Role.SUPER_ADMIN]),
+  userController.getAllOrganizations,
+);
+
 export const userRoutes = router;

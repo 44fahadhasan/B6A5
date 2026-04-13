@@ -68,7 +68,52 @@ const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getAllVolunteers = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await userServices.getAllVolunteers(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "All volunteers fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+const getAllDonors = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await userServices.getAllDonors(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "All donors fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+const getAllOrganizations = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await userServices.getAllOrganizations(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "All organizations fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 export const userController = {
   onboarding,
   getAllUsers,
+  getAllVolunteers,
+  getAllDonors,
+  getAllOrganizations,
 };

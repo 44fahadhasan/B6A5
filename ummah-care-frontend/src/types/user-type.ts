@@ -66,6 +66,8 @@ export interface IAllUsersResponse extends IUser {
   _count: {
     createdRequests: number;
     donations: number;
+    responses?: number;
+    volunteerAssignments?: number;
   };
 }
 

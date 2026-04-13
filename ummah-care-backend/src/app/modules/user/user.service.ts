@@ -162,7 +162,134 @@ const getAllUsers = async (query: unknown) => {
   };
 };
 
+const getUsersByType = async (userType: UserType, query: unknown) => {
+  const typedQuery = parseSchema(userListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: UserWhereInput = {
+    userTypes: {
+      some: {
+        type: userType,
+      },
+    },
+  };
+
+  if (typedQuery.role) {
+    const roles = Array.isArray(typedQuery.role) ? typedQuery.role : [typedQuery.role];
+    where.role = { in: roles };
+  }
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        name: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        email: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        phone: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(typedQuery.sortBy, typedQuery.sortOrder, [
+    "name",
+    "email",
+    "createdAt",
+    "updatedAt",
+  ]);
+
+  // Different count fields based on user type
+  const countFields = {
+    [UserType.DONOR]: {
+      select: {
+        createdRequests: true,
+        donations: true,
+      },
+    },
+    [UserType.VOLUNTEER]: {
+      select: {
+        createdRequests: true,
+        donations: true,
+        responses: true,
+        volunteerAssignments: true,
+      },
+    },
+    [UserType.ORGANIZATION]: {
+      select: {
+        createdRequests: true,
+        donations: true,
+        responses: true,
+        volunteerAssignments: true,
+        managedAssignments: true,
+      },
+    },
+  };
+
+  const [total, users] = await Promise.all([
+    prisma.user.count({ where }),
+    prisma.user.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+      include: {
+        userTypes: {
+          select: {
+            type: true,
+            status: true,
+          },
+        },
+        organization: {
+          select: {
+            orgName: true,
+            description: true,
+            contactEmail: true,
+            contactPhone: true,
+          },
+        },
+        _count: countFields[userType],
+      },
+    }),
+  ]);
+
+  return {
+    data: users,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
+const getAllVolunteers = async (query: unknown) => {
+  return getUsersByType(UserType.VOLUNTEER, query);
+};
+
+const getAllDonors = async (query: unknown) => {
+  return getUsersByType(UserType.DONOR, query);
+};
+
+const getAllOrganizations = async (query: unknown) => {
+  return getUsersByType(UserType.ORGANIZATION, query);
+};
+
 export const userServices = {
   onboarding,
   getAllUsers,
+  getAllVolunteers,
+  getAllDonors,
+  getAllOrganizations,
 };
