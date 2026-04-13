@@ -5,5 +5,6 @@ export * from "./message.type";
 export * from "./request.type";
 export * from "./response.types";
 export * from "./sidebar-nav-type";
+export * from "./stats.type";
 export * from "./token.type";
 export * from "./user-type";

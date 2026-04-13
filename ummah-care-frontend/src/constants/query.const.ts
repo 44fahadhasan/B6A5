@@ -26,4 +26,5 @@ export const QUERY_KEY = {
     ALL_DONORS: "all_donors",
     ALL_ORGANIZATIONS: "all_organizations",
   },
+  DASHBOARD_STATS: "dashboard-stats",
 } as const;
