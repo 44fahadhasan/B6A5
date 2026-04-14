@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { IAllUsersResponse } from "@/types";
 import { format } from "date-fns";
+import { AllUserTypeStatusUpdate } from "./all-user-type-status-update";
 
 type AllUserDetailsProps = {
   data?: IAllUsersResponse;
@@ -70,15 +71,37 @@ export default function AllUserDetails({ data }: AllUserDetailsProps) {
         </div>
 
         <div className="mt-4">
-          <TypographyH3 className="text-lg">User Types</TypographyH3>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <TypographyH3 className="text-lg mb-3">User Types</TypographyH3>
+          <div className="space-y-2">
             {data.userTypes.map((userType) => (
-              <Badge
+              <div
                 key={userType.id}
-                variant={userType.status === "ACTIVE" ? "default" : "secondary"}
+                className="flex items-center justify-between gap-3 p-3 rounded-md border border-border bg-card hover:bg-muted/50 transition-colors"
               >
-                {userType.type} ({userType.status})
-              </Badge>
+                <div className="flex items-center gap-0.5 flex-1 min-w-0">
+                  <Badge
+                    variant={
+                      userType.status === "PENDING"
+                        ? "secondary"
+                        : userType.status === "ACTIVE"
+                          ? "default"
+                          : "destructive"
+                    }
+                    className="shrink-0"
+                  >
+                    {userType.type}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs shrink-0">
+                    {userType.status}
+                  </Badge>
+                </div>
+                <div className="shrink-0">
+                  <AllUserTypeStatusUpdate
+                    userTypeId={userType.id}
+                    userType={userType}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         </div>

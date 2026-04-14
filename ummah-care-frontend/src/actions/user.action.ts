@@ -73,3 +73,15 @@ export const getAllOrganizations = async (queryString?: string) =>
     const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
     return response;
   });
+
+export const updateUserTypeStatus = async (
+  userTypeEntryId: string,
+  status: string,
+) =>
+  safeRequest(async () => {
+    const response = await httpClient.put(
+      `/users/user-type-entries/${userTypeEntryId}/status`,
+      { status },
+    );
+    return response;
+  });
