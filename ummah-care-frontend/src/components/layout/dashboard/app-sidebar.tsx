@@ -1,4 +1,5 @@
 import { getSession } from "@/actions/auth-actions";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sidebar } from "@/components/ui/sidebar";
 import { routeRulesUtil } from "@/utils/route-rules-util";
 import { getNavSectionsByRole } from "@/utils/sidebar-nav.util";
@@ -20,7 +21,9 @@ export async function AppSidebar() {
   return (
     <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!">
       <SidebarHeaderContent dashboardPath={dashboardPath} />
-      <SidebarMainContent navSections={navSections} />
+      <ScrollArea className="min-h-0">
+        <SidebarMainContent navSections={navSections} />
+      </ScrollArea>
       <SidebarFooterContent />
     </Sidebar>
   );
