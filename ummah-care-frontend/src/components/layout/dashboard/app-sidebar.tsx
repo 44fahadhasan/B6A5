@@ -21,7 +21,7 @@ export async function AppSidebar() {
   return (
     <Sidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))]!">
       <SidebarHeaderContent dashboardPath={dashboardPath} />
-      <ScrollArea className="min-h-0">
+      <ScrollArea className="flex-1 min-h-0">
         <SidebarMainContent navSections={navSections} />
       </ScrollArea>
       <SidebarFooterContent />

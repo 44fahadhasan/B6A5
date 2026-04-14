@@ -10,7 +10,7 @@ import {
 export const buildDonorStatsCards = (stats: IDonorStats) => {
   const averageDonation =
     stats.donationCount > 0
-      ? (stats.totalDonated / stats.donationCount).toFixed(2)
+      ? Number(stats.totalDonated / stats.donationCount).toFixed(2)
       : "0.00";
 
   return [
@@ -24,7 +24,7 @@ export const buildDonorStatsCards = (stats: IDonorStats) => {
           ? "Actively donating"
           : "No donations yet",
       description: "Donations made",
-      footer: `$${stats.totalDonated?.toFixed(2) ?? "0.00"} total`,
+      footer: `$${Number(stats.totalDonated ?? 0).toFixed(2)} total`,
     },
     {
       title: "Total Amount",

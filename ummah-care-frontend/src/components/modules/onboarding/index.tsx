@@ -17,8 +17,8 @@ export const Onboarding = () => {
 
   const userTypes = session ? session.user.userTypes : [];
 
-  const hasPendingUserTypes = userTypes.some((ut) => ut.status !== "PENDING");
-  if (!hasPendingUserTypes && userTypes.length) return null;
+  const hasActiveUserTypes = userTypes.filter((ut) => ut.status === "ACTIVE");
+  if (hasActiveUserTypes.length === 3) return null;
 
   return (
     <Card className="mb-4 p-4 gap-2 bg-primary/15 ring-primary">
