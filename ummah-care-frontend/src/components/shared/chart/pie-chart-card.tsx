@@ -14,6 +14,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { LabelList, Pie, PieChart } from "recharts";
+import { TypographyMuted } from "../typography";
 
 type Props<T> = {
   title: string;
@@ -40,15 +41,29 @@ export function PieChartCard<T>({
       </CardHeader>
 
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={config}>
-          <PieChart>
-            <ChartTooltip content={<ChartTooltipContent />} />
+        {data.length > 0 ? (
+          <ChartContainer
+            config={config}
+            className="mx-auto aspect-square max-h-62.5"
+          >
+            <PieChart>
+              <ChartTooltip content={<ChartTooltipContent />} />
 
-            <Pie data={data} dataKey={dataKey} nameKey={nameKey}>
-              <LabelList dataKey={nameKey} />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+              <Pie data={data} dataKey={dataKey} nameKey={nameKey}>
+                <LabelList dataKey={nameKey} className="fill-background" />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        ) : (
+          <div className="flex h-62.5 flex-col items-center justify-center">
+            <TypographyMuted className="text-sm">
+              No data available
+            </TypographyMuted>
+            <TypographyMuted className="text-xs">
+              Nothing to display for this period
+            </TypographyMuted>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

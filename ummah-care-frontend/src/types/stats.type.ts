@@ -11,6 +11,7 @@ export type TAssignmentStatus =
   | "CANCELLED";
 
 export interface IStatsResponse {
+  userStats?: IUserStats;
   adminStats?: IAdminStats;
   organizationStats?: IOrganizationStats;
   volunteerStats?: IVolunteerStats;
@@ -183,4 +184,39 @@ export interface IDonorStats {
       amount: number;
     }
   >;
+}
+
+export interface IUserStats {
+  requestCount: number;
+  activeRequestCount: number;
+  completedRequestCount: number;
+  receivedDonationCount: number;
+  totalReceivedAmount: number;
+  recentRequests: Array<{
+    id: string;
+    title: string;
+    category: TCategory;
+    urgency: TUrgency;
+    status: TRequestStatus;
+    createdAt: string;
+  }>;
+  recentReceivedDonations: Array<{
+    id: string;
+    amount: number;
+    status: TDonationStatus;
+    createdAt: string;
+    donor: {
+      name: string;
+      email: string;
+    };
+    request: {
+      title: string;
+    };
+  }>;
+  requestStatusDistribution: Array<{
+    status: TRequestStatus;
+    _count: {
+      id: number;
+    };
+  }>;
 }

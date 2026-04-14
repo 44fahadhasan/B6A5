@@ -115,7 +115,7 @@ export function OnboardingForm() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Get Started</Button>
+        <Button size="sm">Get Started</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>

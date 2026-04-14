@@ -51,7 +51,11 @@ export const Onboarding = () => {
         </div>
         <div className="flex items-center gap-3">
           <OnboardingForm />
-          <Button variant="outline" onClick={() => setShowBanner(false)}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowBanner(false)}
+          >
             Skip
           </Button>
         </div>

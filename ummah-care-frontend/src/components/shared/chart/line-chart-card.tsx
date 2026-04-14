@@ -14,6 +14,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { TypographyMuted } from "../typography";
 
 type Series = {
   key: string;
@@ -45,20 +46,34 @@ export function LineChartCard<T>({
       </CardHeader>
 
       <CardContent>
-        <ChartContainer config={config}>
-          <LineChart data={data}>
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey={xKey} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            {series.map((s) => (
-              <Line
-                key={s.key}
-                dataKey={s.key}
-                stroke={`var(--color-${s.key})`}
-              />
-            ))}
-          </LineChart>
-        </ChartContainer>
+        {data.length > 0 ? (
+          <ChartContainer
+            config={config}
+            className="mx-auto aspect-square max-h-62.5"
+          >
+            <LineChart data={data}>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey={xKey} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              {series.map((s) => (
+                <Line
+                  key={s.key}
+                  dataKey={s.key}
+                  stroke={`var(--color-${s.key})`}
+                />
+              ))}
+            </LineChart>
+          </ChartContainer>
+        ) : (
+          <div className="flex h-62.5 flex-col items-center justify-center">
+            <TypographyMuted className="text-sm">
+              No data available
+            </TypographyMuted>
+            <TypographyMuted className="text-xs">
+              Nothing to display for this period
+            </TypographyMuted>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

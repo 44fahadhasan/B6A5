@@ -112,6 +112,11 @@ export const adminNavItems: INavSection[] = [
         href: "/dashboard/my-requests",
         icon: "ClipboardList",
       },
+      {
+        title: "Received Donations",
+        href: "/dashboard/received-donations",
+        icon: "HandHeart",
+      },
     ],
   },
 
