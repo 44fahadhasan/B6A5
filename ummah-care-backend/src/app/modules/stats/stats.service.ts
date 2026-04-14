@@ -16,8 +16,10 @@ type AdminStats = Awaited<ReturnType<typeof getAdminStats>>;
 type DonorStats = Awaited<ReturnType<typeof getDonorStats>>;
 type VolunteerStats = Awaited<ReturnType<typeof getVolunteerStats>>;
 type OrganizationStats = Awaited<ReturnType<typeof getOrganizationStats>>;
+type UserStats = Awaited<ReturnType<typeof getUserStats>>;
 
 type DashboardStats = {
+  userStats?: UserStats;
   adminStats?: AdminStats;
   donorStats?: DonorStats;
   volunteerStats?: VolunteerStats;
@@ -28,6 +30,13 @@ const getDashboardStatsData = async (user: TokenPayload): Promise<DashboardStats
   try {
     const stats: DashboardStats = {};
     const tasks: Promise<any>[] = [];
+
+    // All users get their personal stats (requests and received donations)
+    tasks.push(
+      getUserStats(user.id).then((data) => {
+        stats.userStats = data;
+      }),
+    );
 
     if (user.role === Role.ADMIN || user.role === Role.SUPER_ADMIN) {
       tasks.push(
@@ -365,6 +374,82 @@ const getDonorStats = async (userId: string) => {
     responseCount,
     recentDonations,
     donationStatusDistribution,
+  };
+};
+
+const getUserStats = async (userId: string) => {
+  const [
+    requestCount,
+    activeRequestCount,
+    completedRequestCount,
+    receivedDonationCount,
+    totalReceivedAmount,
+    recentRequests,
+    recentReceivedDonations,
+    requestStatusDistribution,
+  ] = await Promise.all([
+    prisma.request.count({ where: { creator: { id: userId } } }),
+    prisma.request.count({
+      where: { creator: { id: userId }, status: { not: "COMPLETED" } },
+    }),
+    prisma.request.count({
+      where: { creator: { id: userId }, status: "COMPLETED" },
+    }),
+    prisma.donation.count({
+      where: {
+        request: { creator: { id: userId } },
+        status: DonationStatus.COMPLETED,
+      },
+    }),
+
+    prisma.donation.aggregate({
+      _sum: { amount: true },
+      where: {
+        request: { creator: { id: userId } },
+        status: DonationStatus.COMPLETED,
+      },
+    }),
+
+    prisma.request.findMany({
+      where: { creator: { id: userId } },
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        urgency: true,
+        status: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+
+    prisma.donation.findMany({
+      where: { request: { creator: { id: userId } } },
+      include: {
+        donor: { select: { name: true, email: true } },
+        request: { select: { title: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
+
+    prisma.request.groupBy({
+      by: ["status"],
+      _count: { id: true },
+      where: { creator: { id: userId } },
+    }),
+  ]);
+
+  return {
+    requestCount,
+    activeRequestCount,
+    completedRequestCount,
+    receivedDonationCount,
+    totalReceivedAmount: totalReceivedAmount._sum.amount ?? 0,
+    recentRequests,
+    recentReceivedDonations,
+    requestStatusDistribution,
   };
 };
 
