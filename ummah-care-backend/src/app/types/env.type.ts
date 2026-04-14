@@ -32,11 +32,6 @@ export interface EnvConfig {
     };
   };
 
-  googleClient: {
-    id: string;
-    secret: string;
-  };
-
   email: {
     smtp: {
       host: string;

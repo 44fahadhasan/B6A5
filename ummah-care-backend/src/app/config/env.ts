@@ -40,11 +40,6 @@ export function loadConfig(): EnvConfig {
       },
     },
 
-    googleClient: {
-      id: requireEnv("GOOGLE_CLIENT_ID"),
-      secret: requireEnv("GOOGLE_CLIENT_SECRET"),
-    },
-
     email: {
       smtp: {
         host: requireEnv("EMAIL_SENDER_SMTP_HOST"),
