@@ -110,10 +110,25 @@ const getAllOrganizations = asyncHandler(async (req: Request, res: Response) => 
   });
 });
 
+const updateUserTypeStatus = asyncHandler(async (req: Request, res: Response) => {
+  const { userTypeEntryId } = req.params as { userTypeEntryId: string };
+  const { status: newStatus } = req.body as { status: UserTypeStatus };
+
+  const result = await userServices.updateUserTypeStatus(userTypeEntryId, newStatus);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "User type status updated successfully.",
+    data: result,
+  });
+});
+
 export const userController = {
   onboarding,
   getAllUsers,
   getAllVolunteers,
   getAllDonors,
   getAllOrganizations,
+  updateUserTypeStatus,
 };

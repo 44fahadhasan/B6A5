@@ -3,7 +3,7 @@ import { validateRequest } from "@/app/middlewares/validate-request.middleware";
 import { Role } from "@/generated/prisma/enums";
 import { Router } from "express";
 import { userController } from "./user.controller";
-import { onboardingSchema } from "./user.validation";
+import { onboardingSchema, updateUserTypeStatusSchema } from "./user.validation";
 
 const router: Router = Router();
 
@@ -23,6 +23,13 @@ router.get(
   "/all-organizations",
   auth([Role.ADMIN, Role.SUPER_ADMIN]),
   userController.getAllOrganizations,
+);
+
+router.put(
+  "/user-type-entries/:userTypeEntryId/status",
+  auth([Role.ADMIN, Role.SUPER_ADMIN]),
+  validateRequest(updateUserTypeStatusSchema),
+  userController.updateUserTypeStatus,
 );
 
 export const userRoutes = router;

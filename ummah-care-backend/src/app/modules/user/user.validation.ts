@@ -24,4 +24,9 @@ export const userListQuerySchema = paginationUtils.paginationQuerySchema.extend(
   search: z.string().optional(),
 });
 
+export const updateUserTypeStatusSchema = z.object({
+  status: z.enum(["PENDING", "ACTIVE", "REJECTED", "SUSPENDED"]),
+});
+
 export type OnboardingPayload = z.infer<typeof onboardingSchema>;
+export type UpdateUserTypeStatusPayload = z.infer<typeof updateUserTypeStatusSchema>;

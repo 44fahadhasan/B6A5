@@ -134,6 +134,7 @@ const getAllUsers = async (query: unknown) => {
       include: {
         userTypes: {
           select: {
+            id: true,
             type: true,
             status: true,
           },
@@ -251,6 +252,7 @@ const getUsersByType = async (userType: UserType, query: unknown) => {
       include: {
         userTypes: {
           select: {
+            id: true,
             type: true,
             status: true,
           },
@@ -286,10 +288,44 @@ const getAllOrganizations = async (query: unknown) => {
   return getUsersByType(UserType.ORGANIZATION, query);
 };
 
+const updateUserTypeStatus = async (userTypeEntryId: string, newStatus: UserTypeStatus) => {
+  const existUserTypeEntry = await prisma.userTypeEntry.findUnique({
+    where: { id: userTypeEntryId },
+  });
+
+  if (!existUserTypeEntry) {
+    throw new AppError(status.NOT_FOUND, "User type entry not found");
+  }
+
+  const updated = await prisma.userTypeEntry.update({
+    where: { id: userTypeEntryId },
+    data: { status: newStatus },
+    include: {
+      user: {
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          userTypes: {
+            select: {
+              id: true,
+              type: true,
+              status: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return updated;
+};
+
 export const userServices = {
   onboarding,
   getAllUsers,
   getAllVolunteers,
   getAllDonors,
   getAllOrganizations,
+  updateUserTypeStatus,
 };
