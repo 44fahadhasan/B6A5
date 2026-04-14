@@ -15,7 +15,7 @@ export const createDonationSchema = z.object({
   currency: z
     .string()
     .length(3)
-    .default("BDT")
+    .default("USD")
     .describe("ISO 4217 currency code"),
   notes: z.string().trim().min(1, "Notes cannot be empty").max(500),
 });

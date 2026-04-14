@@ -23,6 +23,8 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_APP_NAME: z.string().min(1, "NEXT_PUBLIC_APP_NAME is required"),
 
+    NEXT_PUBLIC_APP_URL: z.url("NEXT_PUBLIC_APP_URL must be a valid URL"),
+
     NEXT_PUBLIC_API_BASE_URL: z.url(
       "NEXT_PUBLIC_API_BASE_URL must be a valid URL",
     ),
@@ -30,6 +32,7 @@ export const env = createEnv({
 
   runtimeEnv: {
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     API_BASE_URL: process.env.API_BASE_URL,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
 

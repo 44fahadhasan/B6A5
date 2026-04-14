@@ -10,7 +10,7 @@ import AppSelectField from "@/components/shared/form/app-select-field";
 import AppTextareaField from "@/components/shared/form/app-textarea-field";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { FieldGroup } from "@/components/ui/field";
-import { PAYMENT_CALLBACK_URL } from "@/constants/donate.const";
+import { PAYMENT_CALLBACK_URL } from "@/constants/payment.const";
 import { QUERY_KEY } from "@/constants/query.const";
 import { useRefreshQuery } from "@/hooks/use-refresh-query";
 import { cn } from "@/lib/utils";
@@ -38,7 +38,7 @@ export default function DonateForm({ requestId, campaignId }: DonateFormProps) {
     requestId,
     campaignId,
     amount: "",
-    currency: "BDT",
+    currency: "USD",
     notes: "",
   };
 
@@ -99,11 +99,7 @@ export default function DonateForm({ requestId, campaignId }: DonateFormProps) {
                   field={field}
                   label="Currency"
                   placeholder="Select currency"
-                  options={[
-                    { label: "BDT (Bangladeshi Taka)", value: "BDT" },
-                    { label: "USD (US Dollar)", value: "USD" },
-                    { label: "EUR (Euro)", value: "EUR" },
-                  ]}
+                  options={[{ label: "USD (US Dollar)", value: "USD" }]}
                 />
               )}
             </form.Field>

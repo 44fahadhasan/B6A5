@@ -1,5 +1,6 @@
 import { createDonationSchema } from "@/components/modules/donate/donate.schema";
-import { DONATION_STATUS, PAYMENT_METHOD } from "@/constants/donate.const";
+import { DONATION_STATUS } from "@/constants/donate.const";
+import { PAYMENT_METHOD } from "@/constants/payment.const";
 import z from "zod";
 
 export type TDonationPayload = z.infer<typeof createDonationSchema>;
