@@ -29,6 +29,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { USER_TYPE } from "@/constants/user.const";
+import { IUserType } from "@/types";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
@@ -39,9 +40,18 @@ import {
 } from "./onboard-form.schema";
 import { onboardRoles } from "./onboard-roles";
 
-export function OnboardingForm() {
+interface OnboardingFormProps {
+  userTypes?: IUserType[];
+}
+
+export function OnboardingForm({ userTypes = [] }: OnboardingFormProps) {
   const [step, setStep] = useState(1);
   const [isOrgSelected, setIsOrgSelected] = useState(false);
+
+  // Get active user types
+  const activeUserTypes = userTypes
+    .filter((ut) => ut.status === "ACTIVE")
+    .map((ut) => ut.type);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async (payload: IOnboardingPayloadPayload) =>
@@ -168,60 +178,68 @@ export function OnboardingForm() {
 
                         {/* Onboarding Roles filed */}
                         <FieldGroup>
-                          {onboardRoles.map((role) => (
-                            <FieldLabel
-                              key={role.type}
-                              htmlFor={`onboarding-${role.type}`}
-                              className="cursor-pointer"
-                            >
-                              <Field className="flex items-start gap-3">
-                                <Checkbox
-                                  id={`onboarding-${role.type}`}
-                                  checked={selectedTypes.includes(role.type)}
-                                  onCheckedChange={(checked) => {
-                                    const current = selectedTypes ?? [];
-                                    const next = checked
-                                      ? [...current, role.type]
-                                      : current.filter((v) => v !== role.type);
-                                    field.handleChange(next);
-
-                                    if (role.type === USER_TYPE.ORGANIZATION) {
-                                      setIsOrgSelected(Boolean(checked));
-                                    }
-
-                                    // If Organization is uncheck, reset step and clear org fields
-                                    if (
-                                      role.type === USER_TYPE.ORGANIZATION &&
-                                      !next.includes(USER_TYPE.ORGANIZATION)
-                                    ) {
-                                      setStep(1);
-                                      setIsOrgSelected(false);
-
-                                      // keep selected roles intact
+                          {onboardRoles
+                            .filter(
+                              (role) => !activeUserTypes.includes(role.type),
+                            )
+                            .map((role) => (
+                              <FieldLabel
+                                key={role.type}
+                                htmlFor={`onboarding-${role.type}`}
+                                className="cursor-pointer"
+                              >
+                                <Field className="flex items-start gap-3">
+                                  <Checkbox
+                                    id={`onboarding-${role.type}`}
+                                    checked={selectedTypes.includes(role.type)}
+                                    onCheckedChange={(checked) => {
+                                      const current = selectedTypes ?? [];
+                                      const next = checked
+                                        ? [...current, role.type]
+                                        : current.filter(
+                                            (v) => v !== role.type,
+                                          );
                                       field.handleChange(next);
 
-                                      form.setFieldValue("orgName", "");
-                                      form.setFieldValue("description", "");
-                                      form.setFieldValue("logoUrl", "");
-                                      form.setFieldValue("website", "");
-                                      form.setFieldValue(
-                                        "registrationNumber",
-                                        "",
-                                      );
-                                      form.setFieldValue("contactEmail", "");
-                                      form.setFieldValue("contactPhone", "");
-                                    }
-                                  }}
-                                />
-                                <div>
-                                  <FieldTitle>{role.label}</FieldTitle>
-                                  <FieldDescription>
-                                    {role.description}
-                                  </FieldDescription>
-                                </div>
-                              </Field>
-                            </FieldLabel>
-                          ))}
+                                      if (
+                                        role.type === USER_TYPE.ORGANIZATION
+                                      ) {
+                                        setIsOrgSelected(Boolean(checked));
+                                      }
+
+                                      // If Organization is uncheck, reset step and clear org fields
+                                      if (
+                                        role.type === USER_TYPE.ORGANIZATION &&
+                                        !next.includes(USER_TYPE.ORGANIZATION)
+                                      ) {
+                                        setStep(1);
+                                        setIsOrgSelected(false);
+
+                                        // keep selected roles intact
+                                        field.handleChange(next);
+
+                                        form.setFieldValue("orgName", "");
+                                        form.setFieldValue("description", "");
+                                        form.setFieldValue("logoUrl", "");
+                                        form.setFieldValue("website", "");
+                                        form.setFieldValue(
+                                          "registrationNumber",
+                                          "",
+                                        );
+                                        form.setFieldValue("contactEmail", "");
+                                        form.setFieldValue("contactPhone", "");
+                                      }
+                                    }}
+                                  />
+                                  <div>
+                                    <FieldTitle>{role.label}</FieldTitle>
+                                    <FieldDescription>
+                                      {role.description}
+                                    </FieldDescription>
+                                  </div>
+                                </Field>
+                              </FieldLabel>
+                            ))}
                         </FieldGroup>
                       </FieldSet>
                     );
@@ -234,7 +252,14 @@ export function OnboardingForm() {
                   {(typesField) => {
                     const selectedTypes = typesField.state.value || [];
 
-                    if (!selectedTypes.includes(USER_TYPE.ORGANIZATION)) {
+                    const isOrgActive = activeUserTypes.includes(
+                      USER_TYPE.ORGANIZATION,
+                    );
+
+                    if (
+                      !selectedTypes.includes(USER_TYPE.ORGANIZATION) ||
+                      isOrgActive
+                    ) {
                       return null;
                     }
 

@@ -15,7 +15,10 @@ export const Onboarding = () => {
 
   if (!showBanner) return null;
 
-  const userTypes = session ? (session.user?.userTypes ?? []) : [];
+  const userTypes = session ? session.user.userTypes : [];
+
+  const hasPendingUserTypes = userTypes.some((ut) => ut.status !== "PENDING");
+  if (!hasPendingUserTypes && userTypes.length) return null;
 
   return (
     <Card className="mb-4 p-4 gap-2 bg-primary/15 ring-primary">
@@ -50,7 +53,7 @@ export const Onboarding = () => {
           </CardDescription>
         </div>
         <div className="flex items-center gap-3">
-          <OnboardingForm />
+          <OnboardingForm userTypes={userTypes} />
           <Button
             size="sm"
             variant="outline"

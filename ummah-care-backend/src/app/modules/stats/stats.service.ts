@@ -46,7 +46,9 @@ const getDashboardStatsData = async (user: TokenPayload): Promise<DashboardStats
       );
     }
 
-    const activeTypes = user.userTypes.map((ut) => ut.type);
+    const activeTypes = user.userTypes
+      .filter((ut) => ut.status === UserTypeStatus.ACTIVE)
+      .map((ut) => ut.type);
 
     if (activeTypes.includes(UserType.VOLUNTEER)) {
       tasks.push(
