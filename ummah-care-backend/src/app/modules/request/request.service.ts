@@ -264,10 +264,11 @@ const updateRequest = async (id: string, user: TokenPayload, payload: UpdateRequ
 
     // USER: only allow owner to cancel their request
     if (user.role === Role.USER) {
-      if (!isOwner || newStatus !== RequestStatus.CANCELLED) {
+      if (!isOwner && newStatus === RequestStatus.CANCELLED) {
         throw new AppError(status.BAD_REQUEST, "You can only cancel your own request.");
       }
     }
+
     // VOLUNTEER / ORGANIZATION: allow only IN_PROGRESS or COMPLETED
     else if (!isAdmin) {
       if (newStatus !== RequestStatus.IN_PROGRESS && newStatus !== RequestStatus.COMPLETED) {
