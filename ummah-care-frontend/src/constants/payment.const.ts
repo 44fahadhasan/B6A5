@@ -8,6 +8,6 @@ export const PAYMENT_METHOD = {
 } as const;
 
 export const PAYMENT_CALLBACK_URL = {
-  SUCCESS: `${appUrl}/donor/dashboard/payment-success`,
-  CANCEL: `${appUrl}/donor/dashboard/payment-cancel`,
+  SUCCESS: `${appUrl}/payment-success`,
+  CANCEL: `${appUrl}/payment-cancel`,
 } as const;

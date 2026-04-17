@@ -50,13 +50,13 @@ export default function MangeRequestStatus({
                 field={field}
                 label="Request Status"
                 placeholder="Select status"
-                options={statusOptions}
+                options={statusOptions.slice(0, 3)}
               />
             )}
           </form.Field>
           <FieldDescription className="text-destructive">
-            Note: Requests marked as <strong>Completed</strong> or{" "}
-            <strong>Cancelled</strong> cannot be updated.
+            Note: Requests marked as <strong>Completed</strong> cannot be
+            updated.
           </FieldDescription>
         </FieldGroup>
       )}

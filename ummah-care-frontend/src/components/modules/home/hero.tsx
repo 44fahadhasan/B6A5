@@ -44,7 +44,7 @@ export function Hero() {
             <Link href="/dashboard/my-requests">Post a Help Request</Link>
           </Button>
           <Button variant="outline" size="sm" asChild>
-            <Link href="/sign-up">Volunteer to Help</Link>
+            <Link href="/volunteer/dashboard">Volunteer to Help</Link>
           </Button>
         </div>
       </div>
