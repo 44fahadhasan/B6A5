@@ -3,11 +3,13 @@ import { CampaignStatus } from "@/generated/prisma/enums";
 import { z } from "zod";
 
 export const createCampaignSchema = z.object({
-  orgId: z.uuid(),
-  linkedRequestId: z.uuid().optional(),
+  linkedRequestId: z
+    .uuid()
+    .optional()
+    .transform((val) => val ?? null),
   title: z.string().min(5).max(200),
   description: z.string().max(5000).optional(),
-  goalAmount: z.number().positive(),
+  goalAmount: z.number().min(0),
   currency: z.string().max(3).default("BDT"),
   status: z.enum(CampaignStatus).optional(),
   startDate: z.preprocess(
@@ -25,7 +27,7 @@ export const updateCampaignSchema = createCampaignSchema
 
 export const campaignListQuerySchema = paginationUtils.paginationQuerySchema.extend({
   orgId: z.uuid().optional(),
-  status: z.enum(CampaignStatus).optional(),
+  status: z.union([z.enum(CampaignStatus), z.array(z.enum(CampaignStatus))]).optional(),
   linkedRequestId: z.uuid().optional(),
   search: z.string().optional(),
 });

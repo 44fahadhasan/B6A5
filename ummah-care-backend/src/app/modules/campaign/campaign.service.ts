@@ -13,10 +13,7 @@ import { campaignListQuerySchema } from "./campaign.validation";
 const createCampaign = async (userId: string, payload: CreateCampaignPayload) => {
   // Verify organization exists and belongs to user
   const organization = await prisma.organization.findFirst({
-    where: {
-      id: payload.orgId,
-      userId,
-    },
+    where: { userId },
   });
 
   if (!organization) {
@@ -35,7 +32,7 @@ const createCampaign = async (userId: string, payload: CreateCampaignPayload) =>
   }
 
   return campaignRepository.create({
-    orgId: payload.orgId,
+    orgId: organization.id,
     linkedRequestId: payload.linkedRequestId,
     title: payload.title,
     description: payload.description,
@@ -56,7 +53,10 @@ const getCampaigns = async (query: unknown) => {
   };
 
   if (typedQuery.orgId) where.orgId = typedQuery.orgId;
-  if (typedQuery.status) where.status = typedQuery.status;
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
   if (typedQuery.linkedRequestId) where.linkedRequestId = typedQuery.linkedRequestId;
 
   if (typedQuery.search) {
@@ -117,7 +117,10 @@ const getMyCampaigns = async (userId: string, query: unknown) => {
     orgId: { in: orgIds },
   };
 
-  if (typedQuery.status) where.status = typedQuery.status;
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
   if (typedQuery.linkedRequestId) where.linkedRequestId = typedQuery.linkedRequestId;
 
   if (typedQuery.search) {
