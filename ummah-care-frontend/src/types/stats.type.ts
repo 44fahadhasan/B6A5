@@ -1,9 +1,9 @@
+import { TCampaignStatus } from "./campaign.type";
 import { TDonationStatus } from "./donate.type";
 import { TCategory, TRequestStatus, TUrgency } from "./request.type";
 import { TResponseType } from "./response.types";
 import { TUserType } from "./user-type";
 
-export type TCampaignStatus = "DRAFT" | "ACTIVE" | "COMPLETED" | "CANCELLED";
 export type TAssignmentStatus =
   | "ASSIGNED"
   | "IN_PROGRESS"

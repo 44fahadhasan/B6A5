@@ -22,21 +22,21 @@ export const adminNavItems: INavSection[] = [
         href: "/admin/dashboard/all-users",
         icon: "Users",
       },
-      // {
-      //   title: "Volunteers",
-      //   href: "/admin/dashboard/all-volunteers",
-      //   icon: "HeartHandshake",
-      // },
-      // {
-      //   title: "Donors",
-      //   href: "/admin/dashboard/all-donors",
-      //   icon: "HandHeart",
-      // },
-      // {
-      //   title: "Organizations",
-      //   href: "/admin/dashboard/all-organizations",
-      //   icon: "Building2",
-      // },
+      {
+        title: "Volunteers",
+        href: "/admin/dashboard/all-volunteers",
+        icon: "HeartHandshake",
+      },
+      {
+        title: "Donors",
+        href: "/admin/dashboard/all-donors",
+        icon: "HandHeart",
+      },
+      {
+        title: "Organizations",
+        href: "/admin/dashboard/all-organizations",
+        icon: "Building2",
+      },
     ],
   },
 
@@ -160,19 +160,19 @@ export const adminNavItems: INavSection[] = [
   },
 
   // ORGANIZATION ROLE AREA
-  // {
-  //   title: "Organization Area",
-  //   items: [
-  //     {
-  //       title: "Organization Dashboard",
-  //       href: "/organization/dashboard",
-  //       icon: "LayoutDashboard",
-  //     },
-  //     {
-  //       title: "Organization Requests",
-  //       href: "/organization/dashboard/requests",
-  //       icon: "ClipboardList",
-  //     },
-  //   ],
-  // },
+  {
+    title: "Organization Area",
+    items: [
+      {
+        title: "Organization Dashboard",
+        href: "/organization/dashboard",
+        icon: "LayoutDashboard",
+      },
+      {
+        title: "Organization Requests",
+        href: "/organization/dashboard/requests",
+        icon: "ClipboardList",
+      },
+    ],
+  },
 ];

@@ -6,6 +6,11 @@ export const QUERY_KEY = {
     REQUEST_DETAILS: "request-details",
     MY_REQUEST: "my-requests",
   },
+  CAMPAIGN: {
+    CAMPAIGN: "campaigns",
+    MY_CAMPAIGN: "my-campaigns",
+    CAMPAIGN_DETAILS: "campaign-details",
+  },
   RESPONSE: {
     ALL_RESPONSE: "all_response",
     MY_RESPONSES: "my-responses",

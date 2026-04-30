@@ -1,5 +1,6 @@
 export * from "./api-type";
 export * from "./auth-type";
+export * from "./campaign.type";
 export * from "./donate.type";
 export * from "./message.type";
 export * from "./request.type";

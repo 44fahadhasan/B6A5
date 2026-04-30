@@ -2,7 +2,7 @@ import { INavSection } from "@/types";
 
 export const donorNavItems: INavSection[] = [
   {
-    title: "Dashboard",
+    title: "Overview",
     items: [
       {
         title: "Donor Dashboard",
