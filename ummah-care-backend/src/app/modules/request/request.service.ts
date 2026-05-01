@@ -219,27 +219,6 @@ const getMyRequests = async (userId: string, query: unknown) => {
   };
 };
 
-const getRequestById = async (id: string) => {
-  const request = await requestRepository.findById(id, {
-    include: {
-      creator: {
-        select: {
-          name: true,
-          email: true,
-          phone: true,
-          avatarUrl: true,
-        },
-      },
-    },
-  });
-
-  if (!request) {
-    throw new AppError(status.NOT_FOUND, "Request not found");
-  }
-
-  return request;
-};
-
 const getRequestList = async (query: unknown) => {
   const typedQuery = parseSchema(requestListQuerySchema, query);
 
@@ -304,6 +283,27 @@ const getRequestList = async (query: unknown) => {
     value: request.title,
     _id: request.id,
   }));
+};
+
+const getRequestById = async (id: string) => {
+  const request = await requestRepository.findById(id, {
+    include: {
+      creator: {
+        select: {
+          name: true,
+          email: true,
+          phone: true,
+          avatarUrl: true,
+        },
+      },
+    },
+  });
+
+  if (!request) {
+    throw new AppError(status.NOT_FOUND, "Request not found");
+  }
+
+  return request;
 };
 
 const updateRequest = async (id: string, user: TokenPayload, payload: UpdateRequestPayload) => {
