@@ -90,7 +90,13 @@ export default function OrganizationDashboardContent() {
                     </div>
                     <p className="text-sm font-semibold">
                       {Number(campaign.currentAmount || 0).toFixed(2)} /{" "}
-                      {Number(campaign.goalAmount || 0).toFixed(2)}
+                      {!Number(campaign.goalAmount) ? (
+                        <span className="text-xs text-muted-foreground">
+                          (No goal set)
+                        </span>
+                      ) : (
+                        Number(campaign.goalAmount).toFixed(2)
+                      )}
                     </p>
                   </div>
                   <TypographyMuted className="mt-2">
