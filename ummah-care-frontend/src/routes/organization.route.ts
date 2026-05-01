@@ -19,11 +19,6 @@ export const organizationNavItems: INavSection[] = [
         href: "/organization/dashboard/my-campaigns",
         icon: "Megaphone",
       },
-      {
-        title: "Donations",
-        href: "/organization/dashboard/donations",
-        icon: "Wallet",
-      },
     ],
   },
   {
