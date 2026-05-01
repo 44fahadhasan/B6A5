@@ -16,12 +16,12 @@ export const organizationNavItems: INavSection[] = [
     items: [
       {
         title: "My Campaigns",
-        href: "/organization/my-campaigns",
+        href: "/organization/dashboard/my-campaigns",
         icon: "Megaphone",
       },
       {
         title: "Donations",
-        href: "/organization/donations",
+        href: "/organization/dashboard/donations",
         icon: "Wallet",
       },
     ],
@@ -31,7 +31,7 @@ export const organizationNavItems: INavSection[] = [
     items: [
       {
         title: "Assignments",
-        href: "/organization/assignments",
+        href: "/organization/dashboard/assignments",
         icon: "Users",
       },
     ],
