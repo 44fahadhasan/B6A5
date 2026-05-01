@@ -1,5 +1,14 @@
 import { prisma } from "@/app/lib/prisma";
-import type { Prisma } from "@/generated/prisma/client";
+import type {
+  AssignmentInclude,
+  AssignmentSelect,
+  AssignmentWhereInput,
+} from "@/generated/prisma/models";
+
+type AssignmentRepoOptions = {
+  select?: AssignmentSelect;
+  include?: AssignmentInclude;
+};
 
 const create = async (data: any) => {
   return prisma.assignment.create({
@@ -35,84 +44,45 @@ const create = async (data: any) => {
   });
 };
 
-const findById = async (id: string) => {
-  return prisma.assignment.findUnique({
-    where: { id },
-    include: {
-      request: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-      volunteer: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-      organization: {
-        select: {
-          id: true,
-          orgName: true,
-        },
-      },
-      assignedByUser: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-    },
-  });
+const count = (where: AssignmentWhereInput) => {
+  return prisma.assignment.count({ where });
 };
 
-const findMany = async (
-  where: Prisma.AssignmentWhereInput,
+const findMany = (
+  where: AssignmentWhereInput,
   skip: number,
   take: number,
   orderBy: Record<string, "asc" | "desc"> = { createdAt: "desc" },
+  options?: AssignmentRepoOptions,
 ) => {
-  return prisma.assignment.findMany({
+  const query: Record<string, unknown> = {
     where,
     skip,
     take,
     orderBy,
-    include: {
-      request: {
-        select: {
-          id: true,
-          title: true,
-        },
-      },
-      volunteer: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-      organization: {
-        select: {
-          id: true,
-          orgName: true,
-        },
-      },
-      assignedByUser: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      },
-    },
-  });
+  };
+
+  if (options?.select) {
+    query.select = options.select;
+  } else if (options?.include) {
+    query.include = options.include;
+  }
+
+  return prisma.assignment.findMany(query as any);
 };
 
-const count = async (where: Prisma.AssignmentWhereInput) => {
-  return prisma.assignment.count({ where });
+const findById = (id: string, options?: AssignmentRepoOptions) => {
+  const query: Record<string, unknown> = {
+    where: { id },
+  };
+
+  if (options?.select) {
+    query.select = options.select;
+  } else if (options?.include) {
+    query.include = options.include;
+  }
+
+  return prisma.assignment.findUnique(query as any);
 };
 
 const update = async (id: string, data: any) => {
@@ -150,17 +120,15 @@ const update = async (id: string, data: any) => {
   });
 };
 
-const deleteById = async (id: string) => {
-  return prisma.assignment.delete({
-    where: { id },
-  });
+const remove = (id: string) => {
+  return prisma.assignment.delete({ where: { id } });
 };
 
 export const assignmentRepository = {
   create,
-  findById,
-  findMany,
   count,
+  findMany,
+  findById,
   update,
-  deleteById,
+  delete: remove,
 };

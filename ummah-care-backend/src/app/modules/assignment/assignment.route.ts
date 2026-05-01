@@ -1,5 +1,6 @@
 import { auth } from "@/app/middlewares/auth-middleware";
 import { validateRequest } from "@/app/middlewares/validate-request.middleware";
+import { Role } from "@/generated/prisma/enums";
 import { Router } from "express";
 import { assignmentController } from "./assignment.controller";
 import { createAssignmentSchema, updateAssignmentSchema } from "./assignment.validation";
@@ -13,6 +14,12 @@ router.post("/", validateRequest(createAssignmentSchema), assignmentController.c
 router.get("/", assignmentController.getAssignments);
 
 router.get("/me", assignmentController.getMyAssignments);
+
+router.get(
+  "/all-assignment",
+  auth([Role.ADMIN, Role.SUPER_ADMIN]),
+  assignmentController.getAllAssignment,
+);
 
 router.get("/:id", assignmentController.getAssignmentById);
 

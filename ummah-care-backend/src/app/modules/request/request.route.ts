@@ -13,6 +13,8 @@ router.get("/", requestController.getRequests);
 
 router.get("/me", auth(), requestController.getMyRequests);
 
+router.get("/list", auth(), requestController.getRequestList);
+
 router.get("/all-requests", auth([Role.ADMIN, Role.SUPER_ADMIN]), requestController.getAllRequests);
 
 router.get("/:id", requestController.getRequestById);

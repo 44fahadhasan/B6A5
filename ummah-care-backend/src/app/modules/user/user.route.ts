@@ -17,6 +17,8 @@ router.get(
   userController.getAllVolunteers,
 );
 
+router.get("/volunteers/list", auth(), userController.getVolunteersList);
+
 router.get("/all-donors", auth([Role.ADMIN, Role.SUPER_ADMIN]), userController.getAllDonors);
 
 router.get(

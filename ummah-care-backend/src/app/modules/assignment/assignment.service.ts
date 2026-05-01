@@ -1,11 +1,10 @@
 import { prisma } from "@/app/lib/prisma";
-import type { TokenPayload } from "@/app/types";
 import AppError from "@/app/utils/app-error.util";
 import { paginationUtils } from "@/app/utils/pagination.util";
 import { parseSchema } from "@/app/utils/zod-error.util";
 import type { Prisma } from "@/generated/prisma/client";
-import { AssignmentStatus, UserType } from "@/generated/prisma/enums";
-import type { AssignmentWhereInput } from "@/generated/prisma/models";
+import { AssignmentStatus } from "@/generated/prisma/enums";
+import type { AssignmentInclude, AssignmentWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
 import { assignmentConsts } from "./assignment.const";
 import { assignmentRepository } from "./assignment.repository";
@@ -54,33 +53,29 @@ const createAssignment = async (userId: string, payload: CreateAssignmentPayload
   });
 };
 
-const getAssignments = async (query: unknown, user: TokenPayload) => {
+const getAssignments = async (userId: string, query: unknown) => {
   const typedQuery = parseSchema(assignmentListQuerySchema, query);
   const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
 
-  const where: AssignmentWhereInput = {};
+  const where: AssignmentWhereInput = {
+    assignedBy: userId,
+  };
 
-  const hasActiveRole = (type: UserType) =>
-    user.userTypes?.some((ut) => ut.type === type && ut.status === "ACTIVE");
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
 
-  // Role-based filtering
-  if (hasActiveRole(UserType.VOLUNTEER)) {
-    where.volunteerId = user.id;
-  } else if (hasActiveRole(UserType.ORGANIZATION)) {
-    const org = await prisma.organization.findUnique({
-      where: { userId: user.id },
-    });
-
-    if (org) {
-      where.organizationId = org.id;
-    }
+    where.status = { in: statuses };
   }
 
-  if (typedQuery.status) where.status = typedQuery.status;
-  if (typedQuery.targetType) where.targetType = typedQuery.targetType;
+  if (typedQuery.targetType) {
+    const targetTypes = Array.isArray(typedQuery.targetType)
+      ? typedQuery.targetType
+      : [typedQuery.targetType];
+
+    where.targetType = { in: targetTypes };
+  }
+
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
-  if (typedQuery.volunteerId) where.volunteerId = typedQuery.volunteerId;
-  if (typedQuery.organizationId) where.organizationId = typedQuery.organizationId;
 
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
@@ -88,9 +83,26 @@ const getAssignments = async (query: unknown, user: TokenPayload) => {
     assignmentConsts.allowedSortByFields,
   );
 
+  const assignmentInclude: AssignmentInclude = {
+    request: {
+      select: {
+        id: true,
+        title: true,
+      },
+    },
+    volunteer: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarUrl: true,
+      },
+    },
+  };
+
   const [total, assignments] = await Promise.all([
     assignmentRepository.count(where),
-    assignmentRepository.findMany(where, skip, take, orderBy),
+    assignmentRepository.findMany(where, skip, take, orderBy, { include: assignmentInclude }),
   ]);
 
   return {
@@ -100,10 +112,41 @@ const getAssignments = async (query: unknown, user: TokenPayload) => {
 };
 
 const getAssignmentById = async (id: string) => {
-  const assignment = await assignmentRepository.findById(id);
+  const assignmentInclude: AssignmentInclude = {
+    request: {
+      select: {
+        id: true,
+        title: true,
+      },
+    },
+    volunteer: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+    organization: {
+      select: {
+        id: true,
+        orgName: true,
+      },
+    },
+    assignedByUser: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+  };
+
+  const assignment = await assignmentRepository.findById(id, { include: assignmentInclude });
+
   if (!assignment) {
     throw new AppError(status.NOT_FOUND, "Assignment not found");
   }
+
   return assignment;
 };
 
@@ -111,16 +154,24 @@ const getMyAssignments = async (userId: string, query: unknown) => {
   const typedQuery = parseSchema(assignmentListQuerySchema, query);
   const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
 
-  // Get user's organization if they're an org
-  const org = await prisma.organization.findUnique({
-    where: { userId },
-  });
-
   const where: AssignmentWhereInput = {
-    OR: [{ volunteerId: userId }, ...(org ? [{ organizationId: org.id }] : [])],
+    volunteerId: userId,
   };
 
-  if (typedQuery.status) where.status = typedQuery.status;
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.targetType) {
+    const targetTypes = Array.isArray(typedQuery.targetType)
+      ? typedQuery.targetType
+      : [typedQuery.targetType];
+
+    where.targetType = { in: targetTypes };
+  }
+
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
 
   const orderBy = paginationUtils.getOrderBy(
@@ -129,9 +180,99 @@ const getMyAssignments = async (userId: string, query: unknown) => {
     assignmentConsts.allowedSortByFields,
   );
 
+  const assignmentInclude: AssignmentInclude = {
+    request: {
+      select: {
+        id: true,
+        title: true,
+      },
+    },
+    organization: {
+      select: {
+        id: true,
+        orgName: true,
+      },
+    },
+    assignedByUser: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+  };
+
   const [total, assignments] = await Promise.all([
     assignmentRepository.count(where),
-    assignmentRepository.findMany(where, skip, take, orderBy),
+    assignmentRepository.findMany(where, skip, take, orderBy, { include: assignmentInclude }),
+  ]);
+
+  return {
+    data: assignments,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
+const getAllAssignment = async (query: unknown) => {
+  const typedQuery = parseSchema(assignmentListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const where: AssignmentWhereInput = {};
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.targetType) {
+    const targetTypes = Array.isArray(typedQuery.targetType)
+      ? typedQuery.targetType
+      : [typedQuery.targetType];
+
+    where.targetType = { in: targetTypes };
+  }
+
+  if (typedQuery.requestId) where.requestId = typedQuery.requestId;
+
+  const orderBy = paginationUtils.getOrderBy(
+    typedQuery.sortBy,
+    typedQuery.sortOrder,
+    assignmentConsts.allowedSortByFields,
+  );
+
+  const assignmentInclude: AssignmentInclude = {
+    request: {
+      select: {
+        id: true,
+        title: true,
+      },
+    },
+    volunteer: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+    organization: {
+      select: {
+        id: true,
+        orgName: true,
+      },
+    },
+    assignedByUser: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    },
+  };
+
+  const [total, assignments] = await Promise.all([
+    assignmentRepository.count(where),
+    assignmentRepository.findMany(where, skip, take, orderBy, { include: assignmentInclude }),
   ]);
 
   return {
@@ -178,7 +319,7 @@ const deleteAssignment = async (id: string, userId: string) => {
     throw new AppError(status.FORBIDDEN, "You are not authorized to delete this assignment");
   }
 
-  return assignmentRepository.deleteById(id);
+  return assignmentRepository.delete(id);
 };
 
 export const assignmentServices = {
@@ -186,6 +327,7 @@ export const assignmentServices = {
   getAssignments,
   getAssignmentById,
   getMyAssignments,
+  getAllAssignment,
   updateAssignment,
   deleteAssignment,
 };

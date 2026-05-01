@@ -20,8 +20,10 @@ export const updateAssignmentSchema = z.object({
 });
 
 export const assignmentListQuerySchema = paginationUtils.paginationQuerySchema.extend({
-  status: z.enum(AssignmentStatus).optional(),
-  targetType: z.enum(AssignmentTargetType).optional(),
+  status: z.union([z.enum(AssignmentStatus), z.array(z.enum(AssignmentStatus))]).optional(),
+  targetType: z
+    .union([z.enum(AssignmentTargetType), z.array(z.enum(AssignmentTargetType))])
+    .optional(),
   requestId: z.uuid().optional(),
   volunteerId: z.string().optional(),
   organizationId: z.uuid().optional(),

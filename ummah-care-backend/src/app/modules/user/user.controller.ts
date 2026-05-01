@@ -124,6 +124,19 @@ const updateUserTypeStatus = asyncHandler(async (req: Request, res: Response) =>
   });
 });
 
+const getVolunteersList = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await userServices.getVolunteersList(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Active volunteers list fetched successfully.",
+    data: result,
+  });
+});
+
 export const userController = {
   onboarding,
   getAllUsers,
@@ -131,4 +144,5 @@ export const userController = {
   getAllDonors,
   getAllOrganizations,
   updateUserTypeStatus,
+  getVolunteersList,
 };

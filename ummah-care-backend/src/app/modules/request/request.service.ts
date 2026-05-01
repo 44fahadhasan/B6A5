@@ -240,6 +240,72 @@ const getRequestById = async (id: string) => {
   return request;
 };
 
+const getRequestList = async (query: unknown) => {
+  const typedQuery = parseSchema(requestListQuerySchema, query);
+
+  const where: RequestWhereInput = {
+    status: RequestStatus.OPEN,
+  };
+
+  if (typedQuery.category) {
+    const categories = Array.isArray(typedQuery.category)
+      ? typedQuery.category
+      : [typedQuery.category];
+
+    where.category = { in: categories };
+  }
+
+  if (typedQuery.urgency) {
+    const urgencies = Array.isArray(typedQuery.urgency) ? typedQuery.urgency : [typedQuery.urgency];
+
+    where.urgency = { in: urgencies };
+  }
+
+  if (typedQuery.helpType) {
+    const helpTypes = Array.isArray(typedQuery.helpType)
+      ? typedQuery.helpType
+      : [typedQuery.helpType];
+
+    where.helpType = { in: helpTypes };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        title: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        description: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  const requests = await requestRepository.findMany(
+    where,
+    0,
+    1000,
+    { createdAt: "desc" },
+    {
+      select: {
+        id: true,
+        title: true,
+      },
+    },
+  );
+
+  return requests.map((request) => ({
+    label: request.title,
+    value: request.title,
+    _id: request.id,
+  }));
+};
+
 const updateRequest = async (id: string, user: TokenPayload, payload: UpdateRequestPayload) => {
   const existing = await requestRepository.findById(id);
 
@@ -322,6 +388,7 @@ export const requestServices = {
   getRequests,
   getMyRequests,
   getAllRequests,
+  getRequestList,
   getRequestById,
   updateRequest,
   deleteRequest,

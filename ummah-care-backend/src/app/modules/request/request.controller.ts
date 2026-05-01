@@ -63,6 +63,19 @@ const getAllRequests = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getRequestList = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await requestServices.getRequestList(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Open request list fetched successfully.",
+    data: result,
+  });
+});
+
 const getRequestById = asyncHandler(async (req: Request, res: Response) => {
   const requestId = req.params.id;
 
@@ -122,6 +135,7 @@ export const requestController = {
   getRequests,
   getMyRequests,
   getAllRequests,
+  getRequestList,
   getRequestById,
   updateRequest,
   deleteRequest,

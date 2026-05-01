@@ -321,6 +321,53 @@ const updateUserTypeStatus = async (userTypeEntryId: string, newStatus: UserType
   return updated;
 };
 
+const getVolunteersList = async (query: unknown) => {
+  const typedQuery = parseSchema(userListQuerySchema, query);
+
+  const where: UserWhereInput = {
+    userTypes: {
+      some: {
+        type: UserType.VOLUNTEER,
+        status: UserTypeStatus.ACTIVE,
+      },
+    },
+    status: UserStatus.ACTIVE,
+  };
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        name: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        email: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  const volunteers = await prisma.user.findMany({
+    where,
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: { createdAt: "desc" },
+    take: 1000,
+  });
+
+  return volunteers.map((volunteer) => ({
+    label: volunteer.name,
+    value: volunteer.name,
+    _id: volunteer.id,
+  }));
+};
+
 export const userServices = {
   onboarding,
   getAllUsers,
@@ -328,4 +375,5 @@ export const userServices = {
   getAllDonors,
   getAllOrganizations,
   updateUserTypeStatus,
+  getVolunteersList,
 };

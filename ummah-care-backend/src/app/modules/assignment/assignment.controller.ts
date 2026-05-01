@@ -21,10 +21,10 @@ const createAssignment = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getAssignments = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
   const query = req.query;
-  const user = req.user;
 
-  const result = await assignmentServices.getAssignments(query, user);
+  const result = await assignmentServices.getAssignments(userId, query);
 
   sendResponse(res, {
     httpStatusCode: status.OK,
@@ -62,6 +62,20 @@ const getMyAssignments = asyncHandler(async (req: Request, res: Response) => {
     httpStatusCode: status.OK,
     success: true,
     message: "My assignments fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+const getAllAssignment = asyncHandler(async (req: Request, res: Response) => {
+  const query = req.query;
+
+  const result = await assignmentServices.getAllAssignment(query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "All assignments fetched successfully.",
     data: result.data,
     meta: result.meta,
   });
@@ -109,6 +123,7 @@ export const assignmentController = {
   getAssignments,
   getAssignmentById,
   getMyAssignments,
+  getAllAssignment,
   updateAssignment,
   deleteAssignment,
 };
