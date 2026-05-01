@@ -44,6 +44,12 @@ export interface IRequestDetailsResponse extends IRequestResponse {
   createdBy: string;
 }
 
+export interface IRequestListItemResponse {
+  label: string;
+  value: string;
+  _id: string;
+}
+
 export interface IAllRequestResponse extends IRequestResponse {
   creator: ICreator;
   _count: {

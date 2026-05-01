@@ -2,6 +2,7 @@ export const QUERY_KEY = {
   SESSION: "session",
   REQUEST: {
     REQUEST: "requests",
+    REQUEST_LIST: "request-list",
     ALL_REQUEST: "all_requests",
     REQUEST_DETAILS: "request-details",
     MY_REQUEST: "my-requests",
@@ -24,6 +25,10 @@ export const QUERY_KEY = {
     DONATIONS: "donations",
     MY_DONATIONS: "my-donations",
     RECEIVED_DONATIONS: "received-donations",
+  },
+  ASSIGNMENT: {
+    ASSIGNMENTS: "assignments",
+    ASSIGNMENT_DETAILS: "assignment-details",
   },
   USER: {
     ALL_USERS: "all_users",

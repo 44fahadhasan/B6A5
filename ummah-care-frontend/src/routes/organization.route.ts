@@ -30,8 +30,8 @@ export const organizationNavItems: INavSection[] = [
     title: "Team Management",
     items: [
       {
-        title: "Volunteers",
-        href: "/organization/volunteers",
+        title: "Assignments",
+        href: "/organization/assignments",
         icon: "Users",
       },
     ],

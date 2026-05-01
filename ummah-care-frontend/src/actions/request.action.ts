@@ -9,6 +9,7 @@ import { httpClient } from "@/lib/http-client";
 import {
   IAllRequestResponse,
   IRequestDetailsResponse,
+  IRequestListItemResponse,
   IRequestResponse,
 } from "@/types";
 import { safeRequest } from "@/utils/safe-request";
@@ -53,6 +54,16 @@ export const getAllRequests = async (queryString?: string) =>
       : "/requests/all-requests";
 
     const response = await httpClient.get<IAllRequestResponse[]>(endpoint);
+    return response;
+  });
+
+export const getRequestList = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/requests/list?${queryString}`
+      : "/requests/list";
+
+    const response = await httpClient.get<IRequestListItemResponse[]>(endpoint);
     return response;
   });
 
