@@ -12,6 +12,11 @@ import type { CreateAssignmentPayload, UpdateAssignmentPayload } from "./assignm
 import { assignmentListQuerySchema } from "./assignment.validation";
 
 const createAssignment = async (userId: string, payload: CreateAssignmentPayload) => {
+  // At least one target required
+  if (!payload.volunteerId && !payload.organizationId) {
+    throw new AppError(status.BAD_REQUEST, "Either volunteer or organization is required");
+  }
+
   // Verify request exists
   const request = await prisma.request.findUnique({
     where: { id: payload.requestId, status: "OPEN" },
