@@ -6,7 +6,7 @@ import Link from "next/link";
 export function Hero() {
   return (
     <div className="relative">
-      <div className="min-h-[calc(100svh-10rem)] max-w-5xl mx-auto text-center flex flex-col justify-center items-center px-6">
+      <div className="min-h-[calc(90svh-10rem)] max-w-5xl mx-auto text-center flex flex-col justify-center items-center px-6">
         <Link
           href="#how-it-works"
           className="group flex w-fit items-center gap-3 rounded-full border bg-card px-2 py-0.5 shadow-lg
