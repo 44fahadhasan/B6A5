@@ -1,3 +1,5 @@
+import OrganizationDashboard from "@/components/modules/organization-dashboard";
+
 export default async function OrganizationDashboardPage() {
-  return <div>OrganizationDashboardPage</div>;
+  return <OrganizationDashboard />;
 }
