@@ -33,6 +33,7 @@ export const QUERY_KEY = {
   USER: {
     ALL_USERS: "all_users",
     ALL_VOLUNTEERS: "all_volunteers",
+    VOLUNTEER_LIST: "volunteer-list",
     ALL_DONORS: "all_donors",
     ALL_ORGANIZATIONS: "all_organizations",
   },

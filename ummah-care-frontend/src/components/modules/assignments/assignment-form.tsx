@@ -4,8 +4,10 @@ import {
   createAssignment,
   updateAssignment,
 } from "@/actions/assignment.action";
+import { getRequestList } from "@/actions/request.action";
+import { getVolunteerList } from "@/actions/user.action";
 import { AppForm } from "@/components/shared/form/app-form";
-import AppInputField from "@/components/shared/form/app-input-field ";
+import AppSearchableSingleCombobox from "@/components/shared/form/app-searchable-single-combobox";
 import AppTextareaField from "@/components/shared/form/app-textarea-field";
 import { FieldGroup } from "@/components/ui/field";
 import {
@@ -19,6 +21,7 @@ import {
   TCreateAssignmentPayload,
 } from "@/types/assignment.type";
 import { createAssignmentSchema } from "./assignments.schema";
+import VolunteerListItem from "./volunteer-list-item";
 
 type AssignmentFormProps = {
   data?: IAssignmentResponse;
@@ -71,19 +74,24 @@ export default function AssignmentForm({ data }: AssignmentFormProps) {
           <FieldGroup>
             <form.Field name="requestId">
               {(field) => (
-                <AppInputField
+                <AppSearchableSingleCombobox
                   field={field}
-                  label="Request ID"
-                  placeholder="Enter request ID"
+                  label="Request"
+                  queryFn={getRequestList}
+                  placeholder="Select Request"
+                  queryKey={QUERY_KEY.REQUEST.REQUEST_LIST}
                 />
               )}
             </form.Field>
             <form.Field name="volunteerId">
               {(field) => (
-                <AppInputField
+                <AppSearchableSingleCombobox
                   field={field}
-                  label="Volunteer ID"
-                  placeholder="Enter volunteer ID"
+                  label="Volunteer"
+                  queryFn={getVolunteerList}
+                  placeholder="Select Volunteer"
+                  queryKey={QUERY_KEY.USER.VOLUNTEER_LIST}
+                  renderItem={(item) => <VolunteerListItem item={item} />}
                 />
               )}
             </form.Field>

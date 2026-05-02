@@ -356,15 +356,21 @@ const getVolunteersList = async (query: unknown) => {
     select: {
       id: true,
       name: true,
+      email: true,
+      avatarUrl: true,
     },
     orderBy: { createdAt: "desc" },
     take: 1000,
   });
 
   return volunteers.map((volunteer) => ({
+    id: volunteer.id,
     label: volunteer.name,
-    value: volunteer.name,
-    _id: volunteer.id,
+    value: volunteer.id,
+    meta: {
+      email: volunteer.email,
+      avatarUrl: volunteer.avatarUrl,
+    },
   }));
 };
 

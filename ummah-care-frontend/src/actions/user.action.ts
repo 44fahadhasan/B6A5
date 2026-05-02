@@ -3,7 +3,11 @@
 import { onboardingSchema } from "@/components/modules/onboarding/onboard-form.schema";
 import { USER_TYPE } from "@/constants/user.const";
 import { httpClient } from "@/lib/http-client";
-import { IAllUsersResponse, IOnboardingResponse } from "@/types";
+import {
+  IAllUsersResponse,
+  IOnboardingResponse,
+  IVolunteerListItemResponse,
+} from "@/types";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
 
@@ -51,6 +55,17 @@ export const getAllVolunteers = async (queryString?: string) =>
       : "/users/all-volunteers";
 
     const response = await httpClient.get<IAllUsersResponse[]>(endpoint);
+    return response;
+  });
+
+export const getVolunteerList = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/users/volunteers/list?${queryString}`
+      : "/users/volunteers/list";
+
+    const response =
+      await httpClient.get<IVolunteerListItemResponse[]>(endpoint);
     return response;
   });
 

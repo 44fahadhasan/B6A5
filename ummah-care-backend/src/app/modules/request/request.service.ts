@@ -279,9 +279,9 @@ const getRequestList = async (query: unknown) => {
   );
 
   return requests.map((request) => ({
+    id: request.id,
     label: request.title,
-    value: request.title,
-    _id: request.id,
+    value: request.id,
   }));
 };
 

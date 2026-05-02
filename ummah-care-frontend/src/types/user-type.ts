@@ -82,3 +82,13 @@ export interface IOnboardWithOrg
 }
 
 export type IOnboardingResponse = IOnboardWithNoOrg | IOnboardWithOrg;
+
+export interface IVolunteerListItemResponse {
+  id: string;
+  label: string;
+  value: string;
+  meta: {
+    email: string;
+    avatarUrl: string;
+  };
+}

@@ -45,9 +45,9 @@ export interface IRequestDetailsResponse extends IRequestResponse {
 }
 
 export interface IRequestListItemResponse {
+  id: string;
   label: string;
   value: string;
-  _id: string;
 }
 
 export interface IAllRequestResponse extends IRequestResponse {
