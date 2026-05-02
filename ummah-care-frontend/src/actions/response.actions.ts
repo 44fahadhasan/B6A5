@@ -7,6 +7,7 @@ import {
   IDeleteMyResponse,
   IMyResponse,
   IMyResponseDetails,
+  IOrganizationResponse,
   IResponses,
   IUpdateMyResponse,
 } from "@/types";
@@ -41,6 +42,16 @@ export const getMyResponses = async (queryString?: string) =>
 
     const response = await httpClient.get<IMyResponse[]>(endpoint);
 
+    return response;
+  });
+
+export const getOrganizationResponses = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/responses/organization?${queryString}`
+      : "/responses/organization";
+
+    const response = await httpClient.get<IOrganizationResponse[]>(endpoint);
     return response;
   });
 

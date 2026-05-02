@@ -18,6 +18,8 @@ router.get("/", auth(), responseController.getResponses);
 
 router.get("/me", auth(), responseController.getMyResponses);
 
+router.get("/organization", auth(), responseController.getOrganizationResponses);
+
 router.get("/:id", auth(), responseController.getResponseById);
 
 router.patch(

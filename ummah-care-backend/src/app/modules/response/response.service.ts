@@ -280,6 +280,96 @@ const getMyResponses = async (userId: string, query: unknown) => {
   };
 };
 
+const getOrganizationResponses = async (user: TokenPayload, query: unknown) => {
+  const typedQuery = parseSchema(responseListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const organization = await prisma.organization.findUnique({
+    where: { userId: user.id },
+    select: { id: true },
+  });
+
+  if (!organization) {
+    throw new AppError(
+      status.FORBIDDEN,
+      "You must own an organization to view organization responses",
+    );
+  }
+
+  const where: ResponseWhereInput = {
+    userId: user.id,
+    responseType: ResponseType.COORDINATE,
+  };
+
+  where.request = {
+    is: {
+      ...(typedQuery.status && {
+        status: Array.isArray(typedQuery.status) ? { in: typedQuery.status } : typedQuery.status,
+      }),
+      ...(typedQuery.category && { category: typedQuery.category }),
+      ...(typedQuery.urgency && {
+        urgency: Array.isArray(typedQuery.urgency)
+          ? { in: typedQuery.urgency }
+          : typedQuery.urgency,
+      }),
+      ...(typedQuery.helpType && { helpType: typedQuery.helpType }),
+    },
+  };
+
+  if (typedQuery.requestId) where.requestId = typedQuery.requestId;
+
+  if (typedQuery.search) {
+    const search = typedQuery.search.trim();
+    where.OR = [
+      { request: { title: { contains: search, mode: "insensitive" } } },
+      { request: { description: { contains: search, mode: "insensitive" } } },
+      { request: { creator: { name: { contains: search, mode: "insensitive" } } } },
+      { request: { creator: { email: { contains: search, mode: "insensitive" } } } },
+      { request: { creator: { phone: { contains: search, mode: "insensitive" } } } },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(
+    typedQuery.sortBy,
+    typedQuery.sortOrder,
+    responseConsts.allowedSortByFields,
+  );
+
+  const [total, responses] = await Promise.all([
+    responseRepository.count(where),
+    responseRepository.findMany(where, skip, take, orderBy, {
+      include: {
+        request: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            category: true,
+            urgency: true,
+            helpType: true,
+            expiresAt: true,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                avatarUrl: true,
+                role: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: responses,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
 const getResponseById = async (id: string, user: TokenPayload) => {
   const response = await responseRepository.findById(id, {
     include: {
@@ -372,6 +462,7 @@ export const responseServices = {
   createResponse,
   getResponses,
   getMyResponses,
+  getOrganizationResponses,
   getResponseById,
   updateResponse,
   deleteResponse,

@@ -50,6 +50,21 @@ const getMyResponses = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getOrganizationResponses = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+  const query = req.query;
+
+  const result = await responseServices.getOrganizationResponses(user, query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Organization responses fetched successfully.",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 const getResponseById = asyncHandler(async (req: Request, res: Response) => {
   const responseId = req.params.id;
   const user = req.user;
@@ -109,6 +124,7 @@ export const responseController = {
   createResponse,
   getResponses,
   getMyResponses,
+  getOrganizationResponses,
   getResponseById,
   updateResponse,
   deleteResponse,

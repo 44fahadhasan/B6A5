@@ -19,6 +19,11 @@ export const organizationNavItems: INavSection[] = [
         href: "/organization/dashboard/my-campaigns",
         icon: "Megaphone",
       },
+      {
+        title: "Organization Responses",
+        href: "/organization/dashboard/organization-responses",
+        icon: "MessageCircle",
+      },
     ],
   },
   {

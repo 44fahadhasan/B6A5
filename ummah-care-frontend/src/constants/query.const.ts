@@ -15,6 +15,7 @@ export const QUERY_KEY = {
   RESPONSE: {
     ALL_RESPONSE: "all_response",
     MY_RESPONSES: "my-responses",
+    ORGANIZATION_RESPONSES: "organization-responses",
     MY_RESPONSES_DETAILS: "my-responses-details",
     MY_REQUEST_RESPONSES: "my-request-response",
   },

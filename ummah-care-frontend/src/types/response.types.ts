@@ -62,6 +62,10 @@ export interface IMyResponse extends IResponse {
   request: IRequestSummary;
 }
 
+export interface IOrganizationResponse extends IResponse {
+  request: IRequestSummary;
+}
+
 export interface IMyResponseDetails extends IResponse {
   request: IRequestSummary;
 }
