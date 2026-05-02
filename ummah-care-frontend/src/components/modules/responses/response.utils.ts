@@ -27,11 +27,17 @@ export const getResponseTypeOptions = (
     })
     .filter((responseType) => {
       if (helpType === HELP_TYPE.PHYSICAL) {
-        return responseType === RESPONSE_TYPE.VOLUNTEER;
+        return (
+          responseType === RESPONSE_TYPE.VOLUNTEER ||
+          responseType === RESPONSE_TYPE.COORDINATE
+        );
       }
 
       if (helpType === HELP_TYPE.FINANCIAL) {
-        return responseType === RESPONSE_TYPE.DONATE;
+        return (
+          responseType === RESPONSE_TYPE.DONATE ||
+          responseType === RESPONSE_TYPE.COORDINATE
+        );
       }
 
       if (helpType === HELP_TYPE.BOTH) {

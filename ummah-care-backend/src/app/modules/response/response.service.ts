@@ -3,7 +3,7 @@ import type { TokenPayload } from "@/app/types";
 import AppError from "@/app/utils/app-error.util";
 import { paginationUtils } from "@/app/utils/pagination.util";
 import { parseSchema } from "@/app/utils/zod-error.util";
-import { RequestStatus, Role } from "@/generated/prisma/enums";
+import { HelpType, RequestStatus, ResponseType, Role } from "@/generated/prisma/enums";
 import type { ResponseInclude, ResponseWhereInput } from "@/generated/prisma/models";
 import status from "http-status";
 import { responseConsts } from "./response.const";
@@ -25,7 +25,11 @@ const createResponse = async (user: TokenPayload, payload: CreateResponsePayload
   // Check if request exists and is open
   const request = await prisma.request.findUnique({
     where: { id: payload.requestId },
-    select: { status: true, createdBy: true },
+    select: {
+      status: true,
+      createdBy: true,
+      helpType: true,
+    },
   });
 
   if (!request) {
@@ -38,6 +42,50 @@ const createResponse = async (user: TokenPayload, payload: CreateResponsePayload
 
   if (request.createdBy === user.id) {
     throw new AppError(status.BAD_REQUEST, "You are not allowed to respond to your own request.");
+  }
+
+  if (payload.responseType === ResponseType.COORDINATE) {
+    const org = await prisma.organization.findUnique({ where: { userId: user.id } });
+
+    if (!org) {
+      throw new AppError(
+        status.NOT_FOUND,
+        "Only organization owners are permitted to respond as COORDINATE.",
+      );
+    }
+
+    const activeCampaigns = await prisma.campaign.findMany({
+      where: {
+        orgId: org.id,
+        status: "ACTIVE",
+      },
+      select: { id: true },
+    });
+
+    if (!activeCampaigns.length) {
+      throw new AppError(
+        status.NOT_FOUND,
+        "This operation requires at least one active campaign under the organization.",
+      );
+    }
+
+    if (request.helpType === HelpType.FINANCIAL) {
+      const financialCampaigns = await prisma.campaign.findMany({
+        where: {
+          orgId: org.id,
+          status: "ACTIVE",
+          goalAmount: { gt: 1 },
+        },
+        select: { id: true },
+      });
+
+      if (!financialCampaigns.length) {
+        throw new AppError(
+          status.BAD_REQUEST,
+          "At least one active financial campaign with a valid goal amount is required to respond as COORDINATE.",
+        );
+      }
+    }
   }
 
   return responseRepository.create({
