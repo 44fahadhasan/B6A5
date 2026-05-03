@@ -124,7 +124,7 @@ export default function OrganizationDashboardContent() {
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <p className="font-semibold">
-                        ${donation.amount.toFixed(2)}
+                        ${Number(donation.amount || 0).toFixed(2)}
                       </p>
                       <TypographyMuted>
                         {donation.request.title}

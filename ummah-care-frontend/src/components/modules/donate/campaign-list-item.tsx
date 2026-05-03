@@ -23,13 +23,6 @@ export default function CampaignListItem({ item }: CampaignListItemProps) {
 
         <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground mt-0.5">
           <div className="flex flex-col">
-            <span className="uppercase tracking-wide">Raised</span>
-            <span className="font-medium text-foreground">
-              {currentAmount} {currency}
-            </span>
-          </div>
-
-          <div className="flex flex-col">
             <span className="uppercase tracking-wide">Goal</span>
             <span className="font-medium text-foreground">
               {goalAmount} {currency}
