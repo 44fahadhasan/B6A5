@@ -22,21 +22,21 @@ export const adminNavItems: INavSection[] = [
         href: "/admin/dashboard/all-users",
         icon: "Users",
       },
-      {
-        title: "Volunteers",
-        href: "/admin/dashboard/all-volunteers",
-        icon: "HeartHandshake",
-      },
-      {
-        title: "Donors",
-        href: "/admin/dashboard/all-donors",
-        icon: "HandHeart",
-      },
-      {
-        title: "Organizations",
-        href: "/admin/dashboard/all-organizations",
-        icon: "Building2",
-      },
+      // {
+      //   title: "Volunteers",
+      //   href: "/admin/dashboard/all-volunteers",
+      //   icon: "HeartHandshake",
+      // },
+      // {
+      //   title: "Donors",
+      //   href: "/admin/dashboard/all-donors",
+      //   icon: "HandHeart",
+      // },
+      // {
+      //   title: "Organizations",
+      //   href: "/admin/dashboard/all-organizations",
+      //   icon: "Building2",
+      // },
     ],
   },
 
