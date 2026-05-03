@@ -15,14 +15,19 @@ export const organizationNavItems: INavSection[] = [
     title: "Organization Activities",
     items: [
       {
-        title: "My Campaigns",
-        href: "/organization/dashboard/my-campaigns",
+        title: "Campaigns",
+        href: "/organization/dashboard/campaigns",
         icon: "Megaphone",
       },
       {
-        title: "Organization Responses",
-        href: "/organization/dashboard/organization-responses",
+        title: "Responses",
+        href: "/organization/dashboard/responses",
         icon: "MessageCircle",
+      },
+      {
+        title: "Donations",
+        href: "/organization/dashboard/donations",
+        icon: "HandCoins",
       },
     ],
   },

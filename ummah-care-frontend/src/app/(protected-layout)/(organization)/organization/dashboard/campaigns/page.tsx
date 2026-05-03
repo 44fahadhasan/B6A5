@@ -1,10 +1,10 @@
-import MyCampaigns from "@/components/modules/my-campaign";
+import Campaigns from "@/components/modules/campaigns";
 import {
   buildQueryString,
   RawQueryParams,
 } from "@/utils/build-query-string.util";
 
-export default async function MyCampaignsPage({
+export default async function CampaignsPage({
   searchParams,
 }: {
   searchParams: Promise<RawQueryParams>;
@@ -12,5 +12,5 @@ export default async function MyCampaignsPage({
   const queryParamsObjects = await searchParams;
   const queryString = buildQueryString(queryParamsObjects);
 
-  return <MyCampaigns queryString={queryString} />;
+  return <Campaigns queryString={queryString} />;
 }

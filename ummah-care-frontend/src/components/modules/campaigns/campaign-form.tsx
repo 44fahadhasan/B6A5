@@ -11,17 +11,17 @@ import { QUERY_KEY } from "@/constants/query.const";
 import { useRefreshQuery } from "@/hooks/use-refresh-query";
 import { ICampaignResponse, TCampaignPayload } from "@/types/campaign.type";
 import { createOptions } from "@/utils/form-utils";
-import { createCampaignSchema } from "./my-campaign.schema";
+import { createCampaignSchema } from "./campaign.schema";
 
 const currencyOptions = createOptions(CAMPAIGN_CURRENCY);
 const statusOptions = createOptions(CAMPAIGN_STATUS);
 
-type MyCampaignFormProps = {
+type CampaignFormProps = {
   data?: ICampaignResponse;
 };
 
-export default function MyCampaignForm({ data }: MyCampaignFormProps) {
-  const { refresh } = useRefreshQuery([QUERY_KEY.CAMPAIGN.MY_CAMPAIGN]);
+export default function CampaignForm({ data }: CampaignFormProps) {
+  const { refresh } = useRefreshQuery([QUERY_KEY.CAMPAIGN.CAMPAIGNS]);
 
   const isUpdate = Boolean(data);
 

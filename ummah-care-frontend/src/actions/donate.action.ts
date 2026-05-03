@@ -47,6 +47,16 @@ export const getMyDonations = async (queryString?: string) =>
     return response;
   });
 
+export const getMyOrganizationDonations = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/donations/organization?${queryString}`
+      : "/donations/organization";
+
+    const response = await httpClient.get<IDonationListResponse>(endpoint);
+    return response;
+  });
+
 export const getReceivedDonations = async (queryString?: string) =>
   safeRequest(async () => {
     const endpoint = queryString

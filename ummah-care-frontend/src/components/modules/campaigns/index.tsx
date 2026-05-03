@@ -3,15 +3,15 @@ import { TypographyH3, TypographyMuted } from "@/components/shared/typography";
 import { QUERY_KEY } from "@/constants/query.const";
 import { prefetchQuery } from "@/utils/server-query";
 import { HydrationBoundary } from "@tanstack/react-query";
-import MyCampaignTable from "./my-campaign-table";
+import CampaignTable from "./campaign-table";
 
-export default async function MyCampaigns({
+export default async function Campaigns({
   queryString,
 }: {
   queryString: string;
 }) {
   const { dehydratedState } = await prefetchQuery(
-    [QUERY_KEY.CAMPAIGN.MY_CAMPAIGN, queryString],
+    [QUERY_KEY.CAMPAIGN.CAMPAIGNS, queryString],
     () => getMyCampaigns(queryString),
   );
 
@@ -24,7 +24,7 @@ export default async function MyCampaigns({
         </TypographyMuted>
       </div>
       <HydrationBoundary state={dehydratedState}>
-        <MyCampaignTable queryString={queryString} />
+        <CampaignTable queryString={queryString} />
       </HydrationBoundary>
     </div>
   );

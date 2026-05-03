@@ -3,7 +3,6 @@
 import { deleteCampaign } from "@/actions/campaign.action";
 import { DataTableRowDeleteAction } from "@/components/shared/table/data-table-row-delete-action";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
 import { CAMPAIGN_STATUS } from "@/constants/campaign.const";
@@ -11,15 +10,14 @@ import { QUERY_KEY } from "@/constants/query.const";
 import { ICampaignResponse } from "@/types/campaign.type";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import Link from "next/link";
 import { DataTableColumnHeader } from "../../shared/table/data-table-column-header";
 import { DataTableModal } from "../../shared/table/data-table-modal";
 import { DataTableRowActions } from "../../shared/table/data-table-row-actions";
-import CampaignDetails from "./my-campaign-details";
-import CampaignForm from "./my-campaign-form";
-import { statuses } from "./my-campaign-table-data";
+import CampaignDetails from "./campaign-details";
+import CampaignForm from "./campaign-form";
+import { statuses } from "./campaign-table-data";
 
-export const myCampaignTableColumns: ColumnDef<ICampaignResponse>[] = [
+export const campaignTableColumns: ColumnDef<ICampaignResponse>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -138,21 +136,6 @@ export const myCampaignTableColumns: ColumnDef<ICampaignResponse>[] = [
     ),
   },
   {
-    id: "donations",
-    accessorKey: "currentAmount",
-    enableSorting: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Donations" />
-    ),
-    cell: ({ row }) => (
-      <Button asChild variant="link" className="pl-0">
-        <Link href={`/dashboard/campaigns/${row.original.id}/donations`}>
-          View Donations
-        </Link>
-      </Button>
-    ),
-  },
-  {
     id: "actions",
     cell: ({ row }) => (
       <DataTableRowActions
@@ -193,7 +176,7 @@ export const myCampaignTableColumns: ColumnDef<ICampaignResponse>[] = [
             <DataTableRowDeleteAction
               label={row.getValue("title")}
               id={rowData.id}
-              queryKey={QUERY_KEY.CAMPAIGN.MY_CAMPAIGN}
+              queryKey={QUERY_KEY.CAMPAIGN.CAMPAIGNS}
               deleteFun={deleteCampaign}
             />
           ),

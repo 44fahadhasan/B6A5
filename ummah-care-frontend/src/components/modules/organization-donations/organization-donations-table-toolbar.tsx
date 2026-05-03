@@ -1,8 +1,7 @@
 "use client";
 
-import { statuses } from "@/components/modules/my-campaign/my-campaign-table-data";
+import { statuses } from "@/components/modules/organization-donations/organization-donations-table-data";
 import { DataTableFacetedFilter } from "@/components/shared/table/data-table-faceted-filter";
-import { DataTableModal } from "@/components/shared/table/data-table-modal";
 import { DataTableViewOptions } from "@/components/shared/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,15 +10,14 @@ import { type Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import MyCampaignForm from "./my-campaign-form";
 
-interface CampaignTableToolbarProps<TData> {
+interface OrganizationDonationsTableToolbarProps<TData> {
   table: Table<TData>;
 }
 
-export function MyCampaignTableToolbar<TData>({
+export function OrganizationDonationsTableToolbar<TData>({
   table,
-}: CampaignTableToolbarProps<TData>) {
+}: OrganizationDonationsTableToolbarProps<TData>) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -50,7 +48,7 @@ export function MyCampaignTableToolbar<TData>({
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
         <Input
-          placeholder="Search campaigns..."
+          placeholder="Filter donations..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           className="h-8 w-37.5 lg:w-62.5"
@@ -80,13 +78,6 @@ export function MyCampaignTableToolbar<TData>({
       </div>
       <div className="flex items-center gap-2">
         <DataTableViewOptions table={table} />
-        <DataTableModal
-          mode="create"
-          title="Create Campaign"
-          description="Create a new fundraising campaign."
-        >
-          <MyCampaignForm />
-        </DataTableModal>
       </div>
     </div>
   );

@@ -8,8 +8,7 @@ export const QUERY_KEY = {
     MY_REQUEST: "my-requests",
   },
   CAMPAIGN: {
-    CAMPAIGN: "campaigns",
-    MY_CAMPAIGN: "my-campaigns",
+    CAMPAIGNS: "campaigns",
     MY_CAMPAIGN_LIST: "my-campaigns-list",
     CAMPAIGN_DETAILS: "campaign-details",
   },
@@ -26,6 +25,7 @@ export const QUERY_KEY = {
   DONATION: {
     DONATIONS: "donations",
     MY_DONATIONS: "my-donations",
+    ORGANIZATION_DONATIONS: "organization-donations",
     RECEIVED_DONATIONS: "received-donations",
   },
   ASSIGNMENT: {

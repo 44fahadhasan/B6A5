@@ -1,12 +1,12 @@
 "use server";
 
-import { createCampaignSchema } from "@/components/modules/my-campaign/my-campaign.schema";
+import { createCampaignSchema } from "@/components/modules/campaigns/campaign.schema";
 import { httpClient } from "@/lib/http-client";
 import {
   ICampaignDetailsResponse,
+  ICampaignListItemResponse,
   ICampaignListResponse,
   ICampaignResponse,
-  IMyCampaignListItemResponse,
 } from "@/types/campaign.type";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
@@ -62,7 +62,7 @@ export const getMyCampaignList = async (queryString?: string) =>
       : "/campaigns/me/list";
 
     const response =
-      await httpClient.get<IMyCampaignListItemResponse[]>(endpoint);
+      await httpClient.get<ICampaignListItemResponse[]>(endpoint);
     console.log(response);
     return response;
   });

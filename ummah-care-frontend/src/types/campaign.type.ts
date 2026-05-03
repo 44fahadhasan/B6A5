@@ -1,4 +1,4 @@
-import { createCampaignSchema } from "@/components/modules/my-campaign/my-campaign.schema";
+import { createCampaignSchema } from "@/components/modules/campaigns/campaign.schema";
 import { CAMPAIGN_CURRENCY, CAMPAIGN_STATUS } from "@/constants/campaign.const";
 import z from "zod";
 
@@ -42,7 +42,7 @@ export interface ICampaignDetailsResponse extends ICampaignResponse {
   title: string;
 }
 
-export interface IMyCampaignListItemResponse {
+export interface ICampaignListItemResponse {
   id: string;
   label: string;
   value: string;
