@@ -31,6 +31,7 @@ export const QUERY_KEY = {
   ASSIGNMENT: {
     ASSIGNMENTS: "assignments",
     MY_ASSIGNMENTS: "my-assignments",
+    ALL_ASSIGNMENTS: "all-assignments",
     ASSIGNMENT_DETAILS: "assignment-details",
   },
   USER: {

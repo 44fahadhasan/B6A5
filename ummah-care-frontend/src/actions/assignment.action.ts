@@ -33,10 +33,10 @@ export const getMyAssignments = async (queryString?: string) =>
 export const getAllAssignment = async (queryString?: string) =>
   safeRequest(async () => {
     const endpoint = queryString
-      ? `/assignment/all-assignment?${queryString}`
-      : "/assignment/all-assignment";
+      ? `/assignments/all-assignment?${queryString}`
+      : "/assignments/all-assignment";
 
-    const response = await httpClient.get<IAssignmentListResponse[]>(endpoint);
+    const response = await httpClient.get<IAssignmentResponse[]>(endpoint);
     return response;
   });
 

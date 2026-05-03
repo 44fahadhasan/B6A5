@@ -340,6 +340,14 @@ const getAllAssignment = async (query: unknown) => {
           },
         },
       },
+      {
+        assignedByUser: {
+          email: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
     ];
   }
 

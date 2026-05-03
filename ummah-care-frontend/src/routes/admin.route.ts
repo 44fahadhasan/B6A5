@@ -69,6 +69,18 @@ export const adminNavItems: INavSection[] = [
     ],
   },
 
+  // TASK MANAGEMENT
+  {
+    title: "Task Management",
+    items: [
+      {
+        title: "All Tasks",
+        href: "/admin/dashboard/all-tasks",
+        icon: "CheckSquare",
+      },
+    ],
+  },
+
   // REPORTING
   // {
   //   title: "Reports & Monitoring",
