@@ -88,6 +88,7 @@ export const getNavSectionsByRole = (user: TokenPayload): INavSection[] => {
   // 3. SUPER ADMIN → full access
   if (user.role === USER_ROLE.SUPER_ADMIN) {
     sections.push(...adminNavItems);
+    sections.push(...userNavItems);
     sections.push(...getUserTypeSections(user));
     sections.push(...commonNavItems);
 
@@ -97,6 +98,8 @@ export const getNavSectionsByRole = (user: TokenPayload): INavSection[] => {
   // 4. ADMIN (normalized)
   if (normalizeRole(user.role) === USER_ROLE.ADMIN) {
     sections.push(...adminNavItems);
+    sections.push(...userNavItems);
+    sections.push(...getUserTypeSections(user));
   }
 
   // 5. USER
