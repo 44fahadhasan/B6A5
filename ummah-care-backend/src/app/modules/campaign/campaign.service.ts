@@ -37,6 +37,7 @@ const createCampaign = async (userId: string, payload: CreateCampaignPayload) =>
     title: payload.title,
     description: payload.description,
     goalAmount: payload.goalAmount,
+    currentAmount: payload.goalAmount,
     currency: payload.currency,
     status: payload.status,
     startDate: payload.startDate,
@@ -157,6 +158,65 @@ const getMyCampaigns = async (userId: string, query: unknown) => {
   };
 };
 
+const getMyCampaignList = async (userId: string, query: unknown) => {
+  const typedQuery = parseSchema(campaignListQuerySchema, query);
+
+  const organizations = await prisma.organization.findMany({
+    where: { userId },
+    select: { id: true },
+  });
+
+  const orgIds = organizations.map((org) => org.id);
+
+  const where: CampaignWhereInput = {
+    orgId: { in: orgIds },
+    status: CampaignStatus.ACTIVE,
+    currentAmount: { gt: 1 },
+    goalAmount: { gt: 1 },
+  };
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        title: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        description: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  const campaigns = await prisma.campaign.findMany({
+    where,
+    select: {
+      id: true,
+      title: true,
+      currency: true,
+      currentAmount: true,
+      goalAmount: true,
+    },
+    orderBy: { createdAt: "desc" },
+    take: 1000,
+  });
+
+  return campaigns.map((campaign) => ({
+    id: campaign.id,
+    label: campaign.title,
+    value: campaign.id,
+    meta: {
+      currency: campaign.currency,
+      currentAmount: campaign.currentAmount,
+      goalAmount: campaign.goalAmount,
+    },
+  }));
+};
+
 const updateCampaign = async (id: string, userId: string, payload: UpdateCampaignPayload) => {
   const campaign = await campaignRepository.findById(id);
   if (!campaign) {
@@ -202,6 +262,7 @@ const deleteCampaign = async (id: string, userId: string) => {
 export const campaignServices = {
   createCampaign,
   getCampaigns,
+  getMyCampaignList,
   getCampaignById,
   getMyCampaigns,
   updateCampaign,

@@ -30,20 +30,19 @@ export default function MyCampaignDetails({ data }: MyCampaignDetailsProps) {
     );
   }
 
-  const goalAmountRaw = data.goalAmount;
-  const currentAmountRaw = data.currentAmount;
+  const goalAmount = data.goalAmount;
+  const currentAmount = data.currentAmount;
 
-  const goalAmount = Number(goalAmountRaw);
-  const safeGoal = Number.isFinite(goalAmount) ? goalAmount : 0;
-  const safeCurrent = Number.isFinite(currentAmountRaw) ? currentAmountRaw : 0;
+  const hasGoal = goalAmount > 0;
 
-  const hasGoal = safeGoal > 0;
+  const remainingAmount = Math.max(currentAmount, 0);
 
-  const progressPercentage = hasGoal
-    ? Math.min((safeCurrent / safeGoal) * 100, 100)
-    : 0;
+  const raisedAmount = Math.max(goalAmount - remainingAmount, 0);
 
-  const isCompleted = hasGoal && safeCurrent >= safeGoal;
+  const progressPercentage =
+    goalAmount > 0 ? Math.min((raisedAmount / goalAmount) * 100, 100) : 0;
+
+  const isCompleted = hasGoal && raisedAmount >= goalAmount;
 
   return (
     <Card className="w-full max-w-2xl mx-auto ring-0">
@@ -66,8 +65,7 @@ export default function MyCampaignDetails({ data }: MyCampaignDetailsProps) {
 
         <div className="mb-4 space-y-2">
           <div className="text-sm font-medium flex items-center gap-2">
-            {safeCurrent.toLocaleString()} / {safeGoal.toLocaleString()}{" "}
-            {data.currency}
+            {currentAmount} / {goalAmount} {data.currency}
             {!hasGoal && (
               <span className="text-xs text-muted-foreground">
                 (No goal set)

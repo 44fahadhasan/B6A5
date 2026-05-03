@@ -19,6 +19,7 @@ import { getInitials } from "@/lib/utils";
 import { IOrganizationResponse } from "@/types";
 import { formatExpiryDate } from "@/utils/date-utils";
 import { format } from "date-fns";
+import { useCallback, useState } from "react";
 import DonateForm from "../donate/donate-form";
 import MessageConversation from "../message/message-conversation";
 import MessageForm from "../message/message-form";
@@ -33,6 +34,13 @@ type OrganizationResponseCardProps = {
 export default function OrganizationResponseCard({
   response,
 }: OrganizationResponseCardProps) {
+  const [dialogContentContainer, setDialogContentContainer] =
+    useState<HTMLElement | null>(null);
+
+  const dialogContentRef = useCallback((node: HTMLDivElement | null) => {
+    setDialogContentContainer(node);
+  }, []);
+
   const { request, responseType, message, createdAt } = response;
   const creator = request.creator;
 
@@ -129,7 +137,13 @@ export default function OrganizationResponseCard({
                 title="Make a Donation"
                 description="Your contribution can bring relief and make a meaningful difference within the Ummah."
               >
-                <DonateForm requestId={response.requestId} />
+                <div ref={dialogContentRef} className="relative">
+                  <DonateForm
+                    showCampaignField
+                    requestId={response.requestId}
+                    dialogContentContainer={dialogContentContainer}
+                  />
+                </div>
               </AppModal>
             )}
           <AppModal

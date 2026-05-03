@@ -10,6 +10,7 @@ export const QUERY_KEY = {
   CAMPAIGN: {
     CAMPAIGN: "campaigns",
     MY_CAMPAIGN: "my-campaigns",
+    MY_CAMPAIGN_LIST: "my-campaigns-list",
     CAMPAIGN_DETAILS: "campaign-details",
   },
   RESPONSE: {

@@ -58,7 +58,7 @@ export default function AppSearchableSingleCombobox({
   const [search, setSearch] = useState("");
 
   const modalPortalContainer = useContext(DataTableModalPortalContext);
-  const container = portalContainer || modalPortalContainer || undefined;
+  const container = portalContainer ?? modalPortalContainer ?? undefined;
 
   const debouncedQuery = useDebounce(search.trim());
 

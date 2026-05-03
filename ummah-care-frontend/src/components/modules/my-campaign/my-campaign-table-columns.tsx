@@ -70,27 +70,25 @@ export const myCampaignTableColumns: ColumnDef<ICampaignResponse>[] = [
       <DataTableColumnHeader column={column} title="Goal Amount" />
     ),
     cell: ({ row }) => {
-      const goalAmountRaw = row.getValue("goalAmount");
+      const goalAmount = row.getValue("goalAmount") as number;
       const currency = row.original.currency;
       const currentAmount = row.original.currentAmount;
 
-      const goalAmount = Number(goalAmountRaw);
-      const safeGoal = Number.isFinite(goalAmount) ? goalAmount : 0;
-      const safeCurrent = Number.isFinite(currentAmount) ? currentAmount : 0;
+      const hasGoal = goalAmount > 0;
 
-      const hasGoal = safeGoal > 0;
+      const remainingAmount = Math.max(currentAmount, 0);
 
-      const progressPercentage = hasGoal
-        ? Math.min((safeCurrent / safeGoal) * 100, 100)
-        : 0;
+      const raisedAmount = Math.max(goalAmount - remainingAmount, 0);
 
-      const isCompleted = hasGoal && safeCurrent >= safeGoal;
+      const progressPercentage =
+        goalAmount > 0 ? Math.min((raisedAmount / goalAmount) * 100, 100) : 0;
+
+      const isCompleted = hasGoal && raisedAmount >= goalAmount;
 
       return (
         <div className="space-y-1">
           <div className="text-sm font-medium flex items-center gap-2">
-            {safeCurrent.toLocaleString()} / {safeGoal.toLocaleString()}{" "}
-            {currency}
+            {currentAmount} / {goalAmount} {currency}
             {!hasGoal && (
               <span className="text-xs text-muted-foreground">
                 (No goal set)

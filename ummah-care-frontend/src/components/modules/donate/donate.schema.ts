@@ -2,7 +2,7 @@ import z from "zod";
 
 export const createDonationSchema = z.object({
   requestId: z.uuid("Invalid request ID"),
-  campaignId: z.uuid("Invalid campaign ID").optional(),
+  campaignId: z.uuid("Campaign is required").optional(),
   amount: z
     .string()
     .refine((val) => !isNaN(Number(val)), {

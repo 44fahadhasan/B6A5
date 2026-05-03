@@ -6,6 +6,7 @@ import {
   ICampaignDetailsResponse,
   ICampaignListResponse,
   ICampaignResponse,
+  IMyCampaignListItemResponse,
 } from "@/types/campaign.type";
 import { safeRequest } from "@/utils/safe-request";
 import { validatePayload } from "@/utils/validation-util";
@@ -51,6 +52,18 @@ export const getMyCampaigns = async (queryString?: string) =>
 
     const response = await httpClient.get<ICampaignListResponse>(endpoint);
 
+    return response;
+  });
+
+export const getMyCampaignList = async (queryString?: string) =>
+  safeRequest(async () => {
+    const endpoint = queryString
+      ? `/campaigns/me/list?${queryString}`
+      : "/campaigns/me/list";
+
+    const response =
+      await httpClient.get<IMyCampaignListItemResponse[]>(endpoint);
+    console.log(response);
     return response;
   });
 

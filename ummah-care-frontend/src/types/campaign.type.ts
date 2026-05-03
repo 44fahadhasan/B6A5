@@ -42,4 +42,15 @@ export interface ICampaignDetailsResponse extends ICampaignResponse {
   title: string;
 }
 
+export interface IMyCampaignListItemResponse {
+  id: string;
+  label: string;
+  value: string;
+  meta: {
+    currency: string;
+    currentAmount: number;
+    goalAmount: number;
+  };
+}
+
 export type ICampaignListResponse = ICampaignResponse[];

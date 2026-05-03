@@ -1,11 +1,13 @@
 "use client";
 
+import { getMyCampaignList } from "@/actions/campaign.action";
 import {
   createDonation,
   initiateDonationPayment,
 } from "@/actions/donate.action";
 import { AppForm } from "@/components/shared/form/app-form";
 import AppInputField from "@/components/shared/form/app-input-field ";
+import AppSearchableSingleCombobox from "@/components/shared/form/app-searchable-single-combobox";
 import AppSelectField from "@/components/shared/form/app-select-field";
 import AppTextareaField from "@/components/shared/form/app-textarea-field";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -17,15 +19,21 @@ import { cn } from "@/lib/utils";
 import { IDonationResponse, TDonationPayload } from "@/types";
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
+import CampaignListItem from "./campaign-list-item";
 import { createDonationSchema } from "./donate.schema";
 import { PaymentActionCard } from "./payment-action-card";
 
 type DonateFormProps = {
   requestId: string;
-  campaignId?: string;
+  showCampaignField?: boolean;
+  dialogContentContainer: HTMLElement | null;
 };
 
-export default function DonateForm({ requestId, campaignId }: DonateFormProps) {
+export default function DonateForm({
+  requestId,
+  showCampaignField,
+  dialogContentContainer,
+}: DonateFormProps) {
   const [paymentUrl, setPaymentUrl] = useState("");
   const [paymentError, setPaymentError] = useState("");
   const [showPaymentCard, setShowPaymentCard] = useState(false);
@@ -36,7 +44,7 @@ export default function DonateForm({ requestId, campaignId }: DonateFormProps) {
 
   const defaultValues: TDonationPayload = {
     requestId,
-    campaignId,
+    campaignId: showCampaignField ? "" : undefined,
     amount: "",
     currency: "USD",
     notes: "",
@@ -81,6 +89,21 @@ export default function DonateForm({ requestId, campaignId }: DonateFormProps) {
       >
         {(form) => (
           <FieldGroup>
+            {showCampaignField && (
+              <form.Field name="campaignId">
+                {(field) => (
+                  <AppSearchableSingleCombobox
+                    field={field}
+                    label="Campaign"
+                    queryFn={getMyCampaignList}
+                    placeholder="Select Campaign"
+                    queryKey={QUERY_KEY.CAMPAIGN.MY_CAMPAIGN_LIST}
+                    portalContainer={dialogContentContainer}
+                    renderItem={(item) => <CampaignListItem item={item} />}
+                  />
+                )}
+              </form.Field>
+            )}
             <form.Field name="amount">
               {(field) => (
                 <AppInputField

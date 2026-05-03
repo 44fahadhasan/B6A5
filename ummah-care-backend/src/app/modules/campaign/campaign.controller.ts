@@ -66,6 +66,20 @@ const getMyCampaigns = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getMyCampaignList = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const query = req.query;
+
+  const result = await campaignServices.getMyCampaignList(userId, query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Active my campaign list fetched successfully.",
+    data: result,
+  });
+});
+
 const updateCampaign = asyncHandler(async (req: Request, res: Response) => {
   const campaignId = req.params.id;
   const payload = req.body as UpdateCampaignPayload;
@@ -107,6 +121,7 @@ export const campaignController = {
   createCampaign,
   getCampaigns,
   getCampaignById,
+  getMyCampaignList,
   getMyCampaigns,
   updateCampaign,
   deleteCampaign,

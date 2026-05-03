@@ -14,6 +14,7 @@ router.get("/:id", campaignController.getCampaignById);
 router.post("/", auth(), validateRequest(createCampaignSchema), campaignController.createCampaign);
 
 router.get("/me/campaigns", auth(), campaignController.getMyCampaigns);
+router.get("/me/list", auth(), campaignController.getMyCampaignList);
 
 router.patch(
   "/:id",
