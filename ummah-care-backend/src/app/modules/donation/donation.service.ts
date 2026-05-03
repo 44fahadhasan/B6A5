@@ -24,14 +24,24 @@ const createDonation = async (userId: string, payload: CreateDonationPayload) =>
     throw new AppError(status.NOT_FOUND, "Request not found");
   }
 
-  // Verify campaign if provided
   if (payload.campaignId) {
     const campaign = await prisma.campaign.findUnique({
       where: { id: payload.campaignId },
+      select: { id: true, currentAmount: true },
     });
 
     if (!campaign) {
       throw new AppError(status.NOT_FOUND, "Campaign not found");
+    }
+
+    const currentAmount = campaign.currentAmount.toNumber();
+    const requiredAmount = Number(payload.amount ?? 0);
+
+    if (currentAmount < requiredAmount) {
+      throw new AppError(
+        status.BAD_REQUEST,
+        `Insufficient balance: ${requiredAmount.toFixed(2)}, Available: ${currentAmount.toFixed(2)}`,
+      );
     }
   }
 
@@ -110,15 +120,13 @@ const initiateDonationPayment = async (
         quantity: 1,
       },
     ],
-
     metadata: {
       donationId: donation.id,
       donorId: donation.donorId,
       requestId: donation.requestId,
       campaignId: donation.campaignId,
     },
-
-    success_url: payload.successUrl,
+    success_url: donation.campaignId ? `${payload.successUrl}?campaign=true` : payload.successUrl,
     cancel_url: payload.cancelUrl,
   });
 
@@ -154,6 +162,7 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
     case "checkout.session.completed": {
       const session = event.data.object as Stripe.Checkout.Session;
       const donationId = session.metadata?.donationId;
+      const campaignId = session.metadata?.campaignId;
 
       if (!donationId) {
         return {
@@ -164,6 +173,7 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
 
       const donation = await prisma.donation.findUnique({
         where: { id: donationId },
+        select: { id: true, amount: true },
       });
 
       if (!donation) {
@@ -171,6 +181,18 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
           success: false,
           message: `Donation with id ${donationId} not found`,
         };
+      }
+
+      if (campaignId) {
+        // Update campaign currentAmount by decrement the donation amount
+        await prisma.campaign.update({
+          where: { id: campaignId },
+          data: {
+            currentAmount: {
+              decrement: donation.amount,
+            },
+          },
+        });
       }
 
       // Update donation status based on payment status
