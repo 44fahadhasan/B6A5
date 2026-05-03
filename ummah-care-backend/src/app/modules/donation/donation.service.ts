@@ -460,6 +460,98 @@ const getMyDonations = async (userId: string, query: unknown) => {
   };
 };
 
+const getMyOrganizationDonations = async (userId: string, query: unknown) => {
+  const typedQuery = parseSchema(donationListQuerySchema, query);
+  const { page, limit, skip, take } = paginationUtils.getPaginationOptions(typedQuery);
+
+  const organization = await prisma.organization.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+
+  if (!organization) {
+    throw new AppError(status.NOT_FOUND, "Organization not found");
+  }
+
+  const where: DonationWhereInput = {
+    campaign: {
+      orgId: organization.id,
+    },
+  };
+
+  if (typedQuery.status) {
+    const statuses = Array.isArray(typedQuery.status) ? typedQuery.status : [typedQuery.status];
+    where.status = { in: statuses };
+  }
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        notes: {
+          contains: typedQuery.search,
+          mode: "insensitive",
+        },
+      },
+      {
+        donor: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        donor: {
+          email: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        campaign: {
+          title: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
+  const orderBy = paginationUtils.getOrderBy(typedQuery.sortBy, typedQuery.sortOrder, [
+    "createdAt",
+    "amount",
+    "status",
+  ]);
+
+  const [total, donations] = await Promise.all([
+    prisma.donation.count({ where }),
+    prisma.donation.findMany({
+      where,
+      skip,
+      take,
+      orderBy,
+      include: {
+        donor: {
+          select: { id: true, name: true, email: true },
+        },
+        request: {
+          select: { id: true, title: true },
+        },
+        campaign: {
+          select: { id: true, title: true },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    data: donations,
+    meta: paginationUtils.getPaginationMeta(total, page, limit),
+  };
+};
+
 /**
  * Get donations received for user's requests
  */
@@ -536,5 +628,6 @@ export const donationService = {
   handleStripeWebhookEvent,
   getAllDonations,
   getMyDonations,
+  getMyOrganizationDonations,
   getReceivedDonations,
 };

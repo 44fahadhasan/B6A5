@@ -33,6 +33,11 @@ router.get("/", auth([Role.ADMIN, Role.SUPER_ADMIN]), donationController.getAllD
 router.get("/me", auth(), donationController.getMyDonations);
 
 /**
+ * Get my organization donations
+ */
+router.get("/organization", auth(), donationController.getMyOrganizationDonations);
+
+/**
  * Get donations received for my requests
  */
 router.get("/received", auth(), donationController.getReceivedDonations);

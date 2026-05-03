@@ -84,6 +84,25 @@ const getMyDonations = asyncHandler(async (req: Request, res: Response) => {
 });
 
 /**
+ * Get donations made to my organization campaigns
+ * @route GET /api/v1/donations/organization
+ */
+const getMyOrganizationDonations = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user.id;
+  const query = req.query;
+
+  const result = await donationService.getMyOrganizationDonations(userId, query);
+
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "My organization donations fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+/**
  * Get donations received for my requests
  * @route GET /api/v1/donations/received
  */
@@ -107,5 +126,6 @@ export const donationController = {
   initiateDonationPayment,
   getAllDonations,
   getMyDonations,
+  getMyOrganizationDonations,
   getReceivedDonations,
 };
