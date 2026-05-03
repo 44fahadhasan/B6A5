@@ -19,11 +19,11 @@ export const volunteerNavItems: INavSection[] = [
         href: "/volunteer/dashboard/my-responses",
         icon: "HelpingHand",
       },
-      // {
-      //   title: "Assigned Tasks",
-      //   href: "/volunteer/dashboard/tasks",
-      //   icon: "CheckCircle",
-      // },
+      {
+        title: "Assigned Tasks",
+        href: "/volunteer/dashboard/tasks",
+        icon: "CheckCircle",
+      },
     ],
   },
 ];

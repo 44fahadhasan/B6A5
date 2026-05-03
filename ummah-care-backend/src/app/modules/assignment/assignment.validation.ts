@@ -20,6 +20,7 @@ export const updateAssignmentSchema = z.object({
 });
 
 export const assignmentListQuerySchema = paginationUtils.paginationQuerySchema.extend({
+  search: z.string().optional(),
   status: z.union([z.enum(AssignmentStatus), z.array(z.enum(AssignmentStatus))]).optional(),
   targetType: z
     .union([z.enum(AssignmentTargetType), z.array(z.enum(AssignmentTargetType))])

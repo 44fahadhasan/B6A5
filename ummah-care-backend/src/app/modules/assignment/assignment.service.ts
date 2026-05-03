@@ -82,6 +82,35 @@ const getAssignments = async (userId: string, query: unknown) => {
 
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
 
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        request: {
+          title: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        volunteer: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        volunteer: {
+          email: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
     typedQuery.sortOrder,
@@ -179,6 +208,35 @@ const getMyAssignments = async (userId: string, query: unknown) => {
 
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
 
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        request: {
+          title: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        organization: {
+          orgName: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        assignedByUser: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
+
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
     typedQuery.sortOrder,
@@ -239,6 +297,51 @@ const getAllAssignment = async (query: unknown) => {
   }
 
   if (typedQuery.requestId) where.requestId = typedQuery.requestId;
+
+  if (typedQuery.search) {
+    where.OR = [
+      {
+        request: {
+          title: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        volunteer: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        volunteer: {
+          email: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        organization: {
+          orgName: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+      {
+        assignedByUser: {
+          name: {
+            contains: typedQuery.search,
+            mode: "insensitive",
+          },
+        },
+      },
+    ];
+  }
 
   const orderBy = paginationUtils.getOrderBy(
     typedQuery.sortBy,
