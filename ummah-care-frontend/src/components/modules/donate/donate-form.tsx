@@ -26,7 +26,7 @@ import { PaymentActionCard } from "./payment-action-card";
 type DonateFormProps = {
   requestId: string;
   showCampaignField?: boolean;
-  dialogContentContainer: HTMLElement | null;
+  dialogContentContainer?: HTMLElement | null;
 };
 
 export default function DonateForm({
