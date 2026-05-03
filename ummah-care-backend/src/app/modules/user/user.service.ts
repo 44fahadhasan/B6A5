@@ -318,6 +318,28 @@ const updateUserTypeStatus = async (userTypeEntryId: string, newStatus: UserType
     },
   });
 
+  // Update organization verification status if user type is ORGANIZATION
+  if (existUserTypeEntry.type === UserType.ORGANIZATION) {
+    const organization = await prisma.organization.findUnique({
+      where: { userId: existUserTypeEntry.userId },
+    });
+
+    if (organization) {
+      const isVerified = newStatus === UserTypeStatus.ACTIVE;
+
+      await prisma.organization.update({
+        where: { userId: existUserTypeEntry.userId },
+        data: {
+          isVerified,
+          ...(isVerified && {
+            verifiedAt: new Date(),
+            verifiedBy: updated.user.id,
+          }),
+        },
+      });
+    }
+  }
+
   return updated;
 };
 
