@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import DemoSign from "./demo-sign";
 import { ISignInPayload, signInSchema } from "./sign-in.form.schema";
 
 interface SignInFromProps {
@@ -29,6 +30,42 @@ export default function SignInForm({ redirectPath }: SignInFromProps) {
       await signInUser(payload, redirectPath),
   });
 
+  const handleSignIn = async (payload: ISignInPayload) => {
+    const toastId = toast.loading("Sign in...");
+
+    try {
+      const res = await mutateAsync(payload);
+
+      if (!res.success) {
+        if (res.message?.includes("Email not verified")) {
+          toast.error("Please verify your email first.", { id: toastId });
+          router.push("/verify-email");
+          return;
+        }
+
+        toast.error(res.message ?? "Sign in failed", {
+          id: toastId,
+          style: {
+            whiteSpace: "pre-line",
+          },
+        });
+        return;
+      }
+
+      toast.success(res.message ?? "Sign in Successful!", { id: toastId });
+
+      if ("redirectTo" in res && res.redirectTo) {
+        router.push(res.redirectTo);
+      }
+    } catch (error) {
+      toast.error((error as Error).message ?? "Something went wrong", {
+        id: toastId,
+      });
+    } finally {
+      form.reset();
+    }
+  };
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -38,117 +75,89 @@ export default function SignInForm({ redirectPath }: SignInFromProps) {
       onSubmit: signInSchema,
     },
     onSubmit: async ({ value }) => {
-      const toastId = toast.loading("Sign in...");
-
-      try {
-        const res = await mutateAsync(value);
-
-        if (!res.success) {
-          if (res.message?.includes("Email not verified")) {
-            toast.error("Please verify your email first.", { id: toastId });
-            router.push("/verify-email");
-            return;
-          }
-
-          toast.error(res.message ?? "Sign in failed", {
-            id: toastId,
-            style: {
-              whiteSpace: "pre-line",
-            },
-          });
-          return;
-        }
-
-        toast.success(res.message ?? "Sign in Successful!", { id: toastId });
-
-        if ("redirectTo" in res && res.redirectTo) {
-          router.push(res.redirectTo);
-        }
-      } catch (error) {
-        toast.error((error as Error).message ?? "Something went wrong", {
-          id: toastId,
-        });
-      } finally {
-        form.reset();
-      }
+      await handleSignIn(value);
     },
   });
 
   return (
-    <form
-      noValidate
-      method="post"
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-      className="space-y-5 pt-8"
-    >
-      <FieldGroup>
-        <form.Field name="email">
-          {(field) => (
-            <AppInputField
-              field={field}
-              label="Email"
-              type="email"
-              aria-label="Email address"
-              placeholder="Enter your email address"
-            />
-          )}
-        </form.Field>
-
-        <Field>
-          <div className="flex items-center justify-between">
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <TypographySmall className="text-xs">
-              <Link
-                href="/forgot-password"
-                className="font-normal underline-offset-4 hover:underline"
-              >
-                Forgot your password?
-              </Link>
-            </TypographySmall>
-          </div>
-          <form.Field name="password">
+    <div className="space-y-5 ">
+      <form
+        noValidate
+        method="post"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="space-y-5 pt-8"
+      >
+        <FieldGroup>
+          <form.Field name="email">
             {(field) => (
               <AppInputField
                 field={field}
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                append={
-                  <Button
-                    size="icon"
-                    type="button"
-                    variant="ghost"
-                    aria-pressed={showPassword}
-                    onClick={() => setShowPassword((prev) => !prev)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="size-4" aria-hidden="true" />
-                    ) : (
-                      <Eye className="size-4" aria-hidden="true" />
-                    )}
-                  </Button>
-                }
+                label="Email"
+                type="email"
+                aria-label="Email address"
+                placeholder="Enter your email address"
               />
             )}
           </form.Field>
-        </Field>
-      </FieldGroup>
 
-      <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
-        {([canSubmit, isSubmitting]) => (
-          <AppSubmitButton
-            disabled={!canSubmit}
-            pendingLabel="Please wait...."
-            isPending={isPending || isSubmitting}
-          >
-            Sign In
-          </AppSubmitButton>
-        )}
-      </form.Subscribe>
-    </form>
+          <Field>
+            <div className="flex items-center justify-between">
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <TypographySmall className="text-xs">
+                <Link
+                  href="/forgot-password"
+                  className="font-normal underline-offset-4 hover:underline"
+                >
+                  Forgot your password?
+                </Link>
+              </TypographySmall>
+            </div>
+            <form.Field name="password">
+              {(field) => (
+                <AppInputField
+                  field={field}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  append={
+                    <Button
+                      size="icon"
+                      type="button"
+                      variant="ghost"
+                      aria-pressed={showPassword}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="size-4" aria-hidden="true" />
+                      ) : (
+                        <Eye className="size-4" aria-hidden="true" />
+                      )}
+                    </Button>
+                  }
+                />
+              )}
+            </form.Field>
+          </Field>
+        </FieldGroup>
+
+        <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
+            <AppSubmitButton
+              disabled={!canSubmit}
+              pendingLabel="Please wait...."
+              isPending={isPending || isSubmitting}
+            >
+              Sign In
+            </AppSubmitButton>
+          )}
+        </form.Subscribe>
+      </form>
+
+      <DemoSign isPending={isPending} handleSignIn={handleSignIn} />
+    </div>
   );
 }
