@@ -6,11 +6,9 @@ import { DataTableModal } from "@/components/shared/table/data-table-modal";
 import { DataTableViewOptions } from "@/components/shared/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useDebounce from "@/hooks/use-debounce";
+import useTableToolbar from "@/hooks/use-table-toolbar";
 import { type Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import AssignmentForm from "./assignment-form";
 
 interface AssignmentsTableToolbarProps<TData> {
@@ -20,49 +18,16 @@ interface AssignmentsTableToolbarProps<TData> {
 export function AssignmentsTableToolbar<TData>({
   table,
 }: AssignmentsTableToolbarProps<TData>) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-  const debouncedSearch = useDebounce(search);
-  const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(
-    new Set(searchParams.getAll("status")),
-  );
-  const [selectedTargetTypes, setSelectedTargetTypes] = useState<Set<string>>(
-    new Set(searchParams.getAll("targetType")),
-  );
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.delete("status");
-    params.delete("targetType");
-
-    selectedStatuses.forEach((status) => params.append("status", status));
-    selectedTargetTypes.forEach((targetType) =>
-      params.append("targetType", targetType),
-    );
-
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    } else {
-      params.delete("search");
-    }
-
-    if (params.toString() !== searchParams.toString()) {
-      router.replace(`?${params.toString()}`, { scroll: false });
-    }
-  }, [
-    debouncedSearch,
-    selectedStatuses,
-    selectedTargetTypes,
-    router,
-    searchParams,
-  ]);
-
-  const isFiltered =
-    selectedStatuses.size > 0 ||
-    selectedTargetTypes.size > 0 ||
-    search.length > 0;
+  const {
+    search,
+    setSearch,
+    filterValues,
+    setFilterValues,
+    isFiltered,
+    resetFilters,
+  } = useTableToolbar({
+    filterKeys: ["status", "targetType"],
+  });
 
   return (
     <div className="flex items-center justify-between">
@@ -78,18 +43,14 @@ export function AssignmentsTableToolbar<TData>({
             column={table.getColumn("status")}
             title="Status"
             options={statuses}
-            selectedValues={selectedStatuses}
-            onSelectionChange={setSelectedStatuses}
+            selectedValues={filterValues.status}
+            onSelectionChange={(values) => setFilterValues("status", values)}
           />
         )}
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => {
-              setSearch("");
-              setSelectedStatuses(new Set());
-              setSelectedTargetTypes(new Set());
-            }}
+            onClick={resetFilters}
             className="h-8 px-2 lg:px-3"
           >
             Reset

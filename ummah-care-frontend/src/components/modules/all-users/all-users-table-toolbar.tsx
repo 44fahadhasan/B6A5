@@ -8,11 +8,9 @@ import { DataTableFacetedFilter } from "@/components/shared/table/data-table-fac
 import { DataTableViewOptions } from "@/components/shared/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useDebounce from "@/hooks/use-debounce";
+import useTableToolbar from "@/hooks/use-table-toolbar";
 import { type Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface AllUsersTableToolbarProps<TData> {
   table: Table<TData>;
@@ -21,37 +19,16 @@ interface AllUsersTableToolbarProps<TData> {
 export function AllUsersTableToolbar<TData>({
   table,
 }: AllUsersTableToolbarProps<TData>) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [selectedRoles, setSelectedRoles] = useState<Set<string>>(
-    new Set(searchParams.getAll("role")),
-  );
-  const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(
-    new Set(searchParams.getAll("status")),
-  );
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-
-  const debouncedSearch = useDebounce(search);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.delete("role");
-    selectedRoles.forEach((r) => params.append("role", r));
-    params.delete("status");
-    selectedStatuses.forEach((s) => params.append("status", s));
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    } else {
-      params.delete("search");
-    }
-    if (params.toString() !== searchParams.toString()) {
-      router.replace(`?${params}`, { scroll: false });
-    }
-  }, [selectedRoles, selectedStatuses, debouncedSearch, router, searchParams]);
-
-  const isFiltered =
-    selectedRoles.size > 0 || selectedStatuses.size > 0 || search.length > 0;
+  const {
+    search,
+    setSearch,
+    filterValues,
+    setFilterValues,
+    isFiltered,
+    resetFilters,
+  } = useTableToolbar({
+    filterKeys: ["role", "status"],
+  });
 
   return (
     <div className="flex items-center justify-between">
@@ -67,8 +44,8 @@ export function AllUsersTableToolbar<TData>({
             column={table.getColumn("role")}
             title="Role"
             options={roles}
-            selectedValues={selectedRoles}
-            onSelectionChange={setSelectedRoles}
+            selectedValues={filterValues.role}
+            onSelectionChange={(values) => setFilterValues("role", values)}
           />
         )}
         {table.getColumn("status") && (
@@ -76,18 +53,14 @@ export function AllUsersTableToolbar<TData>({
             column={table.getColumn("status")}
             title="Status"
             options={statuses}
-            selectedValues={selectedStatuses}
-            onSelectionChange={setSelectedStatuses}
+            selectedValues={filterValues.status}
+            onSelectionChange={(values) => setFilterValues("status", values)}
           />
         )}
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => {
-              setSelectedRoles(new Set());
-              setSelectedStatuses(new Set());
-              setSearch("");
-            }}
+            onClick={resetFilters}
             className="h-8 px-2 lg:px-3"
           >
             Reset

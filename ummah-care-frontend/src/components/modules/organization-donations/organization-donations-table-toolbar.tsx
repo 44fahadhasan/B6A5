@@ -5,11 +5,9 @@ import { DataTableFacetedFilter } from "@/components/shared/table/data-table-fac
 import { DataTableViewOptions } from "@/components/shared/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useDebounce from "@/hooks/use-debounce";
+import useTableToolbar from "@/hooks/use-table-toolbar";
 import { type Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface OrganizationDonationsTableToolbarProps<TData> {
   table: Table<TData>;
@@ -18,31 +16,16 @@ interface OrganizationDonationsTableToolbarProps<TData> {
 export function OrganizationDonationsTableToolbar<TData>({
   table,
 }: OrganizationDonationsTableToolbarProps<TData>) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(
-    new Set(searchParams.getAll("status")),
-  );
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-
-  const debouncedSearch = useDebounce(search);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.delete("status");
-    selectedStatuses.forEach((s) => params.append("status", s));
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    } else {
-      params.delete("search");
-    }
-    if (params.toString() !== searchParams.toString()) {
-      router.replace(`?${params}`, { scroll: false });
-    }
-  }, [selectedStatuses, debouncedSearch, router, searchParams]);
-
-  const isFiltered = selectedStatuses.size > 0 || search.length > 0;
+  const {
+    search,
+    setSearch,
+    filterValues,
+    setFilterValues,
+    isFiltered,
+    resetFilters,
+  } = useTableToolbar({
+    filterKeys: ["status"],
+  });
 
   return (
     <div className="flex items-center justify-between">
@@ -58,17 +41,14 @@ export function OrganizationDonationsTableToolbar<TData>({
             column={table.getColumn("status")}
             title="Status"
             options={statuses}
-            selectedValues={selectedStatuses}
-            onSelectionChange={setSelectedStatuses}
+            selectedValues={filterValues.status}
+            onSelectionChange={(values) => setFilterValues("status", values)}
           />
         )}
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => {
-              setSelectedStatuses(new Set());
-              setSearch("");
-            }}
+            onClick={resetFilters}
             className="h-8 px-2 lg:px-3"
           >
             Reset

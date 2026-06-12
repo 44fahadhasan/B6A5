@@ -4,11 +4,9 @@ import { DataTableFacetedFilter } from "@/components/shared/table/data-table-fac
 import { DataTableViewOptions } from "@/components/shared/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import useDebounce from "@/hooks/use-debounce";
+import useTableToolbar from "@/hooks/use-table-toolbar";
 import { type Table } from "@tanstack/react-table";
 import { type LucideIcon, X } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export interface UserTableToolbarConfig {
   showStatusFilter?: boolean;
@@ -35,45 +33,21 @@ export function UserTableToolbar<TData>({
     userTypes = [],
   } = config;
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const filterKeys = ["status"];
+  if (showUserTypeFilter) {
+    filterKeys.push("userType");
+  }
 
-  const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(
-    new Set(searchParams.getAll("status")),
-  );
-  const [selectedUserTypes, setSelectedUserTypes] = useState<Set<string>>(
-    new Set(searchParams.getAll("userType")),
-  );
-  const [search, setSearch] = useState(searchParams.get("search") ?? "");
-
-  const debouncedSearch = useDebounce(search);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.delete("status");
-    selectedStatuses.forEach((s) => params.append("status", s));
-    params.delete("userType");
-    selectedUserTypes.forEach((t) => params.append("userType", t));
-    if (debouncedSearch) {
-      params.set("search", debouncedSearch);
-    } else {
-      params.delete("search");
-    }
-    if (params.toString() !== searchParams.toString()) {
-      router.replace(`?${params}`, { scroll: false });
-    }
-  }, [
-    selectedStatuses,
-    selectedUserTypes,
-    debouncedSearch,
-    router,
-    searchParams,
-  ]);
-
-  const isFiltered =
-    selectedStatuses.size > 0 ||
-    selectedUserTypes.size > 0 ||
-    search.length > 0;
+  const {
+    search,
+    setSearch,
+    filterValues,
+    setFilterValues,
+    isFiltered,
+    resetFilters,
+  } = useTableToolbar({
+    filterKeys,
+  });
 
   return (
     <div className="flex items-center justify-between">
@@ -91,8 +65,8 @@ export function UserTableToolbar<TData>({
               column={table.getColumn("status")}
               title="Status"
               options={statuses}
-              selectedValues={selectedStatuses}
-              onSelectionChange={setSelectedStatuses}
+              selectedValues={filterValues.status}
+              onSelectionChange={(values) => setFilterValues("status", values)}
             />
           )}
         {showUserTypeFilter &&
@@ -102,18 +76,16 @@ export function UserTableToolbar<TData>({
               column={table.getColumn("userTypes")}
               title="User Type"
               options={userTypes}
-              selectedValues={selectedUserTypes}
-              onSelectionChange={setSelectedUserTypes}
+              selectedValues={filterValues.userType}
+              onSelectionChange={(values) =>
+                setFilterValues("userType", values)
+              }
             />
           )}
         {isFiltered && (
           <Button
             variant="ghost"
-            onClick={() => {
-              setSelectedStatuses(new Set());
-              setSelectedUserTypes(new Set());
-              setSearch("");
-            }}
+            onClick={resetFilters}
             className="h-8 px-2 lg:px-3"
           >
             Reset
