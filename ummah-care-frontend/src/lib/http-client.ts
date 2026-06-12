@@ -28,7 +28,7 @@ const createAxiosInstance = async (isProtected: boolean) => {
 
   return axios.create({
     baseURL: env.API_BASE_URL,
-    timeout: 15000, // 15 seconds
+    timeout: 10000, // 10s
     headers,
     withCredentials: false, // Manually handle cookies via headers
   });
@@ -174,6 +174,7 @@ const apiRequest = async <T>(
     // Extract only cookie name=value pairs (not attributes like Path, Secure, etc)
     // Only include auth-related cookies, filter out Next.js internal cookies
     const cookieList: string[] = [];
+
     cookieStore.getAll().forEach((cookie) => {
       // Only forward auth-related cookies to the API
       if (
@@ -185,6 +186,7 @@ const apiRequest = async <T>(
         console.debug(`📋 [Http-Client] Including cookie: ${cookie.name}`);
       }
     });
+
     const cookieHeader = cookieList.join("; ");
 
     if (cookieHeader) {
