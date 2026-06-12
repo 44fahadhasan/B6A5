@@ -145,6 +145,7 @@ const getAllUsers = async (query: unknown) => {
             description: true,
             contactEmail: true,
             contactPhone: true,
+            isVerified: true,
           },
         },
         _count: {
